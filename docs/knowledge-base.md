@@ -34,14 +34,19 @@ Refresh:
 curl -o /tmp/releases_macos.json \
   https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json
 cd packages/reforge_core
+dart run tool/new_flutter_releases.dart --manifest /tmp/releases_macos.json
 dart run tool/generate_flutter_knowledge.dart --flutter <flutter checkout with tags> \
-  --manifest /tmp/releases_macos.json [--gradle-cache ~/.gradle/caches/modules-2/files-2.1]
+  --manifest /tmp/releases_macos.json [--gradle-cache ~/.gradle/caches/modules-2/files-2.1] \
+  [--download-aars]
 ```
 
-The compileSdk the Android embedding requires comes from the AAR metadata of
-its AndroidX libraries, read from the Gradle module cache. Building any app
-with a release puts them there; the generator lists missing AARs with their
-Google Maven URLs.
+`new_flutter_releases.dart` lists the stable releases the knowledge base does
+not describe yet. The compileSdk the Android embedding requires comes from the
+AAR metadata of its AndroidX libraries, read from the Gradle module cache.
+Building any app with a release puts them there; otherwise `--download-aars`
+fetches them from Google's Maven repository, and without it the generator
+lists the missing AARs. The output is rewritten only when the knowledge
+changed.
 
 The generator reports every value it cannot extract. Review the diff; the
 tests in `test/knowledge/knowledge_base_test.dart` pin values verified by hand.

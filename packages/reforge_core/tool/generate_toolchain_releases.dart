@@ -16,6 +16,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'src/generated_file.dart';
+
 final _stable = RegExp(r'^\d+\.\d+(\.\d+)?$');
 
 Future<void> main(List<String> arguments) async {
@@ -131,10 +133,14 @@ Future<void> main(List<String> arguments) async {
           '\n')
       ..writeln()
       ..writeln('];');
-    File('lib/src/knowledge/data/toolchain_releases.g.dart')
-        .writeAsStringSync(out.toString());
+    const path = 'lib/src/knowledge/data/toolchain_releases.g.dart';
+    final written = await writeGeneratedDart(path, out.toString(), volatile: [
+      RegExp(r'^// Generated on '),
+      RegExp(r'^const toolchainReleasesGeneratedOn = '),
+    ]);
     stdout.writeln(
-        'Gradle ${gradle.length}, AGP ${agp.length}, Kotlin ${kotlin.length}');
+        'Gradle ${gradle.length}, AGP ${agp.length}, Kotlin ${kotlin.length}'
+        '${written ? '' : ' (unchanged)'}');
   } finally {
     client.close();
   }

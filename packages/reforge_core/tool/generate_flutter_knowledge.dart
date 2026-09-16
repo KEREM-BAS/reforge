@@ -16,10 +16,14 @@
 //   dart run tool/generate_flutter_knowledge.dart \
 //     --flutter <flutter git checkout with tags> \
 //     --manifest /tmp/releases_macos.json \
-//     [--gradle-cache ~/.gradle/caches/modules-2/files-2.1]
+//     [--gradle-cache ~/.gradle/caches/modules-2/files-2.1] [--download-aars]
 //
 // The AndroidX AARs are in the Gradle cache after building any app with the
-// release; the generator lists the ones it cannot find.
+// release. --download-aars fetches the missing ones from Google's Maven
+// repository instead; otherwise the generator lists them.
+//
+// The output file is only rewritten when the knowledge changed, so its
+// generation date says when Flutter's releases last changed it.
 //
 // Review the diff of the generated file before committing it.
 
@@ -29,6 +33,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:reforge_core/src/parsing/properties/properties_file.dart';
+
+import 'src/generated_file.dart';
 
 Future<void> main(List<String> arguments) async {
   final parser = ArgParser()
@@ -40,7 +46,16 @@ Future<void> main(List<String> arguments) async {
     ..addOption('gradle-cache',
         defaultsTo: '${Platform.environment['HOME']}/.gradle/caches/modules-2/'
             'files-2.1',
-        help: 'Gradle module cache holding the AndroidX AARs.');
+        help: 'Gradle module cache holding the AndroidX AARs.')
+    ..addFlag('download-aars',
+        help: 'Download AndroidX AARs missing from the Gradle cache from '
+            '--maven-repository into --aar-cache.')
+    ..addOption('maven-repository',
+        defaultsTo: 'https://dl.google.com/android/maven2',
+        help: 'Maven repository to download AndroidX AARs from.')
+    ..addOption('aar-cache',
+        defaultsTo: '${Directory.systemTemp.path}/reforge_aars',
+        help: 'Directory for downloaded AARs.');
   final args = parser.parse(arguments);
   final checkout = args['flutter'] as String;
   final minVersion = Version.parse(args['min-version'] as String);
@@ -71,7 +86,13 @@ Future<void> main(List<String> arguments) async {
   final versions = releases.keys.map(Version.parse).toList()..sort();
 
   final git = await _GitObjectReader.start(checkout);
-  final gradleCache = args['gradle-cache'] as String;
+  final aars = _AarSource(
+    gradleCache: args['gradle-cache'] as String,
+    downloadCache: args['aar-cache'] as String,
+    repository: args['download-aars'] as bool
+        ? args['maven-repository'] as String
+        : null,
+  );
   final missingAars = <String>{};
   final records = <String>[];
   final warnings = <String>[];
@@ -341,7 +362,7 @@ Future<void> main(List<String> arguments) async {
           in (jsonDecode(androidx) as List).cast<Map<String, Object?>>()) {
         if (!(entry['url']! as String).endsWith('.aar')) continue;
         final coordinate = entry['maven_dependency']! as String;
-        final metadata = _aarMetadata(gradleCache, coordinate);
+        final metadata = await aars.metadata(coordinate);
         if (metadata == null) {
           missingAars.add('$coordinate (${entry['url']})');
           continue;
@@ -403,9 +424,11 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
   ),''');
   }
   await git.close();
+  aars.close();
   if (missingAars.isNotEmpty) {
     stderr.writeln('AndroidX AARs of the Android embedding are missing from '
-        '$gradleCache. Build an app with the releases once, or download:');
+        '${aars.gradleCache}. Build an app with the releases once, or run '
+        'with --download-aars:');
     for (final missing in missingAars.toList()..sort()) {
       stderr.writeln('  $missing');
     }
@@ -452,37 +475,85 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     ..writeAll(records, '\n')
     ..writeln()
     ..writeln('];');
-  File(args['out'] as String).writeAsStringSync(output.toString());
-  // Format like the rest of the repository so regenerating is reproducible.
-  final format = Process.runSync('dart', ['format', args['out'] as String]);
-  if (format.exitCode != 0) {
-    warnings.add('dart format failed: ${format.stderr}');
-  }
+  final written = await writeGeneratedDart(
+    args['out'] as String,
+    output.toString(),
+    volatile: [
+      RegExp(r'^//    \(checkout HEAD '),
+      RegExp(r'^const flutterKnowledgeGeneratedOn = '),
+    ],
+  );
   for (final warning in warnings) {
     stderr.writeln('warning: $warning');
   }
-  stdout.writeln('Wrote ${records.length} releases to ${args['out']}.');
+  stdout.writeln(written
+      ? 'Wrote ${records.length} releases to ${args['out']}.'
+      : 'No knowledge changed; ${args['out']} is up to date.');
 }
 
-/// `META-INF/com/android/build/gradle/aar-metadata.properties` of the AAR
-/// [coordinate] (`group:artifact:version`) in the Gradle module cache, or
-/// `null` when the AAR is not cached. An AAR without metadata yields `''`.
-String? _aarMetadata(String gradleCache, String coordinate) {
-  final [group, artifact, version] = coordinate.split(':');
-  final directory = Directory('$gradleCache/$group/$artifact/$version');
-  if (!directory.existsSync()) return null;
-  final aar = directory
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((f) => f.path.endsWith('/$artifact-$version.aar'))
-      .firstOrNull;
-  if (aar == null) return null;
-  final result = Process.runSync('unzip', [
-    '-p',
-    aar.path,
-    'META-INF/com/android/build/gradle/aar-metadata.properties'
-  ]);
-  return result.exitCode == 0 ? result.stdout as String : '';
+/// Finds AARs in the Gradle module cache, or downloads them.
+final class _AarSource {
+  _AarSource(
+      {required this.gradleCache,
+      required this.downloadCache,
+      required this.repository});
+
+  final String gradleCache;
+  final String downloadCache;
+
+  /// The Maven repository to download from, or `null` to only read caches.
+  final String? repository;
+
+  final HttpClient _client = HttpClient();
+
+  /// `META-INF/com/android/build/gradle/aar-metadata.properties` of the AAR
+  /// [coordinate] (`group:artifact:version`), or `null` when the AAR is not
+  /// available. An AAR without metadata yields `''`.
+  Future<String?> metadata(String coordinate) async {
+    final aar = _cached(coordinate) ?? await _download(coordinate);
+    if (aar == null) return null;
+    final result = Process.runSync('unzip', [
+      '-p',
+      aar.path,
+      'META-INF/com/android/build/gradle/aar-metadata.properties',
+    ]);
+    return result.exitCode == 0 ? result.stdout as String : '';
+  }
+
+  File? _cached(String coordinate) {
+    final [group, artifact, version] = coordinate.split(':');
+    final directory = Directory('$gradleCache/$group/$artifact/$version');
+    final fromGradle = directory.existsSync()
+        ? directory
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((f) => f.path.endsWith('/$artifact-$version.aar'))
+            .firstOrNull
+        : null;
+    final downloaded = File('$downloadCache/$group/$artifact-$version.aar');
+    return fromGradle ?? (downloaded.existsSync() ? downloaded : null);
+  }
+
+  Future<File?> _download(String coordinate) async {
+    final repository = this.repository;
+    if (repository == null) return null;
+    final [group, artifact, version] = coordinate.split(':');
+    final url = Uri.parse('$repository/${group.replaceAll('.', '/')}/'
+        '$artifact/$version/$artifact-$version.aar');
+    final request = await _client.getUrl(url);
+    final response = await request.close();
+    if (response.statusCode != HttpStatus.ok) {
+      await response.drain<void>();
+      stderr.writeln('warning: GET $url returned ${response.statusCode}.');
+      return null;
+    }
+    final file = File('$downloadCache/$group/$artifact-$version.aar')
+      ..parent.createSync(recursive: true);
+    await response.pipe(file.openWrite());
+    return file;
+  }
+
+  void close() => _client.close();
 }
 
 /// A single-quoted Dart string literal with the value of [value].

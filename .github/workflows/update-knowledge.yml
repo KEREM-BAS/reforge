@@ -1,0 +1,142 @@
+name: Update knowledge base
+
+# Every week, looks for stable Flutter releases that the bundled knowledge base
+# does not describe. When there are any, regenerates the Flutter and toolchain
+# knowledge, runs the tests and opens a pull request for review.
+#
+# Requires "Allow GitHub Actions to create and approve pull requests" in the
+# repository's Actions settings. See docs/releasing.md.
+
+on:
+  schedule:
+    # Mondays at 05:23 UTC.
+    - cron: '23 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-knowledge
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - run: dart pub get
+
+      - name: Find stable Flutter releases the knowledge base does not describe
+        id: releases
+        run: |
+          curl --fail --silent --show-error --location \
+            --output "$RUNNER_TEMP/releases_macos.json" \
+            https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json
+          versions=$(cd packages/reforge_core &&
+            dart run tool/new_flutter_releases.dart \
+              --manifest "$RUNNER_TEMP/releases_macos.json" |
+            { grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' || true; } |
+            paste -sd ' ' -)
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
+          echo "branch=knowledge/flutter-${versions##* }" >> "$GITHUB_OUTPUT"
+          if [ -z "$versions" ]; then
+            echo "The knowledge base describes every stable Flutter release."
+          else
+            echo "New stable Flutter releases: $versions"
+          fi
+
+      - name: Decide whether to update
+        id: decide
+        if: steps.releases.outputs.versions != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.releases.outputs.branch }}
+        run: |
+          open=$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')
+          if [ "$open" = "0" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "A pull request from $BRANCH is already open."
+          fi
+
+      - name: Clone Flutter with its release tags
+        if: steps.decide.outputs.run == 'true'
+        run: git clone --quiet --no-checkout https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+
+      - name: Regenerate the knowledge base
+        if: steps.decide.outputs.run == 'true'
+        working-directory: packages/reforge_core
+        run: |
+          dart run tool/generate_flutter_knowledge.dart \
+            --flutter "$RUNNER_TEMP/flutter" \
+            --manifest "$RUNNER_TEMP/releases_macos.json" \
+            --download-aars 2>&1 | tee "$RUNNER_TEMP/generate.log"
+          dart run tool/generate_toolchain_releases.dart 2>&1 | tee -a "$RUNNER_TEMP/generate.log"
+
+      - name: Format, analyze and test
+        id: test
+        if: steps.decide.outputs.run == 'true'
+        continue-on-error: true
+        run: |
+          dart format --output=none --set-exit-if-changed packages
+          dart analyze --fatal-infos
+          (cd packages/reforge_core && dart test)
+          (cd packages/reforge && dart test)
+
+      - name: Open a pull request
+        if: steps.decide.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.repository.default_branch }}
+          BRANCH: ${{ steps.releases.outputs.branch }}
+          VERSIONS: ${{ steps.releases.outputs.versions }}
+          TESTS: ${{ steps.test.outcome }}
+        run: |
+          if git diff --quiet; then
+            echo "The generators changed nothing (release tags may not be published yet)."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch --create "$BRANCH"
+          git commit --all --quiet --message "Update the knowledge base for Flutter $VERSIONS"
+          git push --force origin "$BRANCH"
+
+          warnings=$(grep '^warning:' "$RUNNER_TEMP/generate.log" || true)
+          {
+            echo "The Flutter release manifest lists stable releases that the knowledge base did not describe: $VERSIONS."
+            echo
+            echo "Regenerated with \`tool/generate_flutter_knowledge.dart\` and \`tool/generate_toolchain_releases.dart\`."
+            echo
+            echo "**Format, analyze and test:** $TESTS. GitHub does not run CI for pull requests opened by GitHub Actions; close and reopen this pull request to run it."
+            echo
+            if [ -n "$warnings" ]; then
+              echo "**Generator warnings**"
+              echo
+              echo '```'
+              echo "$warnings"
+              echo '```'
+              echo
+            fi
+            echo "Before merging:"
+            echo
+            echo "- [ ] Review the generated knowledge: floors, template versions, migrations, minimums."
+            echo "- [ ] Check the curated tables in \`packages/reforge_core/lib/src/knowledge/data/android_toolchain.dart\` for new Android Gradle Plugin versions and API levels."
+            echo "- [ ] Look for breaking changes in the new releases that need recipes or failure signatures."
+            echo "- [ ] Build a migrated fixture with the new release and record it in \`docs/validation.md\`."
+            echo "- [ ] Release a new Reforge version (\`docs/releasing.md\`)."
+          } > "$RUNNER_TEMP/pull_request.md"
+
+          draft=()
+          if [ "$TESTS" != "success" ]; then draft=(--draft); fi
+          gh pr create --base "$BASE" --head "$BRANCH" \
+            --title "Update the knowledge base for Flutter $VERSIONS" \
+            --body-file "$RUNNER_TEMP/pull_request.md" "${draft[@]}"
