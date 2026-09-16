@@ -16,6 +16,7 @@ Raise the iOS deployment target to 15.0.
 - ANDROID_AGP9_OPT_OUTS: android/gradle.properties already sets android.builtInKotlin and android.newDsl.
 - ANDROID_AGP_VERSION: Android Gradle Plugin 9.0.1 already satisfies Flutter 3.47.4.
 - ANDROID_KOTLIN_VERSION: Kotlin Gradle plugin 2.3.20 already satisfies Flutter 3.47.4.
+- ANDROID_APP_KOTLIN_PLUGIN: The app module does not apply the Kotlin Gradle plugin.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
 - ANDROID_CLEAN_TASK: The Flutter tool only migrates a Groovy android/build.gradle.

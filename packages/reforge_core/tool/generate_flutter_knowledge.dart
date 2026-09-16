@@ -169,6 +169,17 @@ Future<void> main(List<String> arguments) async {
         entry.key: entry.value,
     };
 
+    // Whether Flutter's Gradle plugin applies the Kotlin Gradle plugin to app
+    // and plugin modules that do not apply it (while built-in Kotlin is off).
+    final pluginUtils = await git.read(tag,
+            'packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt') ??
+        '';
+    final appliesKotlinPlugin =
+        pluginUtils.contains('pluginManager.apply("kotlin-android")');
+    final templateAppKotlinPlugin = appBuild != null &&
+        RegExp(r'''(['"])(kotlin-android|org\.jetbrains\.kotlin\.android)\1''')
+            .hasMatch(appBuild);
+
     // Project migrations the tool runs before every Android Gradle build.
     final gradleDart = await git.read(
             tag, 'packages/flutter_tools/lib/src/android/gradle.dart') ??
@@ -251,6 +262,8 @@ Future<void> main(List<String> arguments) async {
     templateDeclarativePlugins: $declarative,
     templateNamespace: ${appBuild?.contains('namespace') ?? false},
     androidMigrations: [${androidMigrations.map((m) => "'$m'").join(', ')}],
+    appliesKotlinPlugin: $appliesKotlinPlugin,
+    templateAppKotlinPlugin: $templateAppKotlinPlugin,
     templateGradleProperties: {
 ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartString(e.value)},\n').join()}    },
     compileSdk: ${sdkDefault('compileSdkVersion')},

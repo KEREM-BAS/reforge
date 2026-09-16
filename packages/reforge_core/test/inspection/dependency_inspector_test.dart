@@ -107,6 +107,8 @@ void main() {
           reason: 'namespace inside if (hasProperty) counts');
       expect(modern.android!.v1EmbeddingReferences, isEmpty,
           reason: 'mentions in comments do not count');
+      expect(modern.android!.appliesKotlinPlugin, isTrue);
+      expect(legacy.android!.appliesKotlinPlugin, isFalse);
 
       expect(report.package('string_tools')!.android, isNull);
       expect(report.dependentsOf('string_tools').map((p) => p.name),
@@ -219,6 +221,48 @@ void main() {
           contains('packages that depend on old_dart'));
       expect(find(analyze('3.47.4'), 'DEPENDENCY_FILES_UNAVAILABLE')!.message,
           contains('missing'));
+    });
+
+    test('plugins applying the Kotlin Gradle plugin, with AGP 9 only', () {
+      final files = MemoryProjectFileSystem({
+        'pubspec.yaml': 'name: app\nenvironment:\n  sdk: ^3.4.0\n',
+        'android/settings.gradle': 'plugins {\n'
+            '    id "com.android.application" version "9.0.1" apply false\n'
+            '}\n',
+      });
+      final project = _inspect(files);
+      DependencyReport report(bool applies) => DependencyReport(
+            configPath: '.dart_tool/package_config.json',
+            packages: [
+              ResolvedPackage(
+                name: 'share_kgp',
+                rootPath: '/cache/share_kgp-1.0.0',
+                android: AndroidPluginFacts(
+                  buildFile:
+                      const SourceRef('share_kgp 1.0.0/android/build.gradle'),
+                  declaresNamespace: true,
+                  appliesKotlinPlugin: applies,
+                ),
+              ),
+            ],
+          );
+      List<Finding> analyze(String target, {bool applies = true}) =>
+          CompatibilityAnalyzer(knowledge).analyze(project,
+              release: knowledge.resolveFlutterVersion(target),
+              dependencies: report(applies));
+
+      final finding = analyze('3.47.4')
+          .singleWhere((f) => f.code == 'PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN');
+      expect(finding.severity, Severity.warning);
+      expect(finding.message, startsWith('share_kgp apply'));
+      expect(
+          analyze('3.41.0')
+              .where((f) => f.code == 'PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN'),
+          isEmpty);
+      expect(
+          analyze('3.47.4', applies: false)
+              .where((f) => f.code == 'PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN'),
+          isEmpty);
     });
 
     test('unresolved projects are reported, not guessed', () {

@@ -36,7 +36,8 @@ bool crossesMajor(ToolVersion from, ToolVersion to) => from.major != to.major;
 ///
 /// When the removed lines are surrounded by blank lines (or the start or end
 /// of the file), one adjacent blank line is removed too, so removing a
-/// paragraph does not leave a double blank line behind.
+/// paragraph does not leave a double blank line behind. Likewise, a blank line
+/// before removed lines that end a block (the next line is `}`) is removed.
 TextRange removalRange(GradleScript script, int start, int end) {
   final lines = script.lineIndex;
   final source = script.source;
@@ -61,8 +62,16 @@ TextRange removalRange(GradleScript script, int start, int end) {
   final blankOrStartBefore = firstLine == 1 || isBlank(firstLine - 1);
   if (blankOrStartBefore && isBlank(lastLine + 1)) {
     rangeEnd = lines.lineEndIncludingTerminator(lastLine + 1);
-  } else if (!exists(lastLine + 1) && firstLine > 1 && isBlank(firstLine - 1)) {
-    // Removing the last paragraph of the file: drop the blank line before it.
+  } else if (firstLine > 1 &&
+      isBlank(firstLine - 1) &&
+      (!exists(lastLine + 1) ||
+          source
+              .substring(
+                  lines.lineStart(lastLine + 1), lines.lineEnd(lastLine + 1))
+              .trim()
+              .startsWith('}'))) {
+    // Removing the last paragraph of the file or of a block: drop the blank
+    // line before it.
     rangeStart = lines.lineStart(firstLine - 1);
   }
   return TextRange.fromBounds(rangeStart, rangeEnd);

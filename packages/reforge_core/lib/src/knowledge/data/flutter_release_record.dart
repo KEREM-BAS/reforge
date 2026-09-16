@@ -21,6 +21,8 @@ final class FlutterReleaseRecord {
     required this.templateDeclarativePlugins,
     required this.templateNamespace,
     required this.androidMigrations,
+    required this.appliesKotlinPlugin,
+    required this.templateAppKotlinPlugin,
     required this.templateGradleProperties,
     required this.compileSdk,
     required this.targetSdk,
@@ -46,6 +48,8 @@ final class FlutterReleaseRecord {
   final bool templateDeclarativePlugins;
   final bool templateNamespace;
   final List<String> androidMigrations;
+  final bool appliesKotlinPlugin;
+  final bool templateAppKotlinPlugin;
   final Map<String, String> templateGradleProperties;
   final int compileSdk;
   final int targetSdk;

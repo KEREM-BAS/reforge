@@ -216,6 +216,40 @@ bool? _booleanOf(GradleToken token) {
   return null;
 }
 
+/// Plugin ids of the Kotlin Android Gradle plugin.
+const kotlinAndroidPluginIds = {
+  'kotlin-android',
+  'org.jetbrains.kotlin.android'
+};
+
+/// Top-level statements of [script] that apply the Kotlin Android Gradle
+/// plugin: `plugins {}` declarations (including `kotlin("android")` and the
+/// `libs.plugins.kotlin.android` catalog alias, but not `apply false`) and
+/// `apply plugin:` statements.
+List<GradleStatement> kotlinAndroidPluginApplications(GradleScript script) {
+  final found = <GradleStatement>[];
+  for (final statement in script.statements) {
+    if (statement.isBlockNamed('plugins')) {
+      for (final block in statement.blocks) {
+        for (final declaration in parsePluginsBlock(block).declarations) {
+          final kotlin = kotlinAndroidPluginIds.contains(declaration.id) ||
+              declaration.catalogAlias == 'libs.plugins.kotlin.android';
+          if (kotlin && declaration.apply != false) {
+            found.add(declaration.statement);
+          }
+        }
+      }
+    }
+    final apply = parseApplyStatement(statement);
+    if (apply != null &&
+        apply.kind == 'plugin' &&
+        kotlinAndroidPluginIds.contains(apply.value?.constantValue)) {
+      found.add(statement);
+    }
+  }
+  return found;
+}
+
 /// `apply plugin: 'x'`, `apply from: 'x'` (Groovy) or
 /// `apply(plugin = "x")`, `apply(from = "x")` (Kotlin).
 final class GradleApplyStatement {

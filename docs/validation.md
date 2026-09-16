@@ -118,6 +118,26 @@ Follow-up: files that Flutter's app templates ignore (`gradlew`,
 `gradle-wrapper.jar`, `Flutter.podspec`, ...) are no longer reported as tool
 changes, and signing secrets are never read.
 
+### Run 5: every recommended step, Android Gradle Plugin 9 (Reforge 7ee46fb + ANDROID_APP_KOTLIN_PLUGIN)
+
+```bash
+reforge apply --to 3.47.4 --accept-all --include-recommended --yes
+flutter pub get && dart fix --apply
+reforge verify --check android
+```
+
+- 12 steps: Gradle 7.4 to 9.1.0, Android Gradle Plugin 7.1.2 to 9.0.1, Kotlin
+  1.6.10 to 2.3.20, the AGP 9 opt-outs, the Kotlin Android plugin removed from
+  the app module with `kotlinOptions { jvmTarget = '1.8' }` turned into
+  `kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_1_8 } }`, JVM
+  arguments, Jetifier removal, namespace, clean task and the iOS deployment
+  target.
+- `flutter build apk --debug` succeeded in 69 s. The Flutter tool applied the
+  Kotlin Gradle plugin itself, and its warning that the app "applies the Kotlin
+  Gradle Plugin, which will cause build failures in future versions of
+  Flutter" (present in run 1) no longer appeared.
+- No project file was changed by the build.
+
 ### Caveat
 
 The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The

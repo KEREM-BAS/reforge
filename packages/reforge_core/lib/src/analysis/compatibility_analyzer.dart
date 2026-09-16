@@ -10,6 +10,7 @@ import '../model/declarations.dart';
 import '../model/dependencies.dart';
 import '../model/finding.dart';
 import '../model/flutter_project.dart';
+import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/sdk_constraint.dart';
 import '../version/tool_version.dart';
@@ -378,6 +379,46 @@ final class CompatibilityAnalyzer {
 
     final minSdk = _minSdkFinding(android, release);
     if (minSdk != null) yield minSdk;
+
+    final agpVersion = android.toolchain.androidGradlePlugin?.version;
+    final app = android.app;
+    if (release.appliesKotlinPlugin &&
+        agpVersion != null &&
+        agpVersion.major >= 9 &&
+        app != null &&
+        app.script.isReliable) {
+      final applications = kotlinAndroidPluginApplications(app.script);
+      if (applications.isNotEmpty) {
+        final builtIn = android.toolchain.builtInKotlin ?? true;
+        yield Finding(
+          code: 'ANDROID_APP_APPLIES_KOTLIN_PLUGIN',
+          severity: builtIn ? Severity.error : Severity.warning,
+          title: 'The app module applies the Kotlin Gradle plugin',
+          message: builtIn
+              ? 'Built-in Kotlin is enabled, and Android Gradle Plugin '
+                  '$agpVersion rejects applying the Kotlin Android plugin.'
+              : 'Flutter ${release.version} applies the plugin itself and '
+                  'warns that apps applying it will fail to build in future '
+                  'versions.',
+          impact: builtIn
+              ? 'Android builds fail.'
+              : 'Builds print a warning; a future Flutter release will fail.',
+          suggestedAction: 'Remove the Kotlin Android plugin from '
+              '${app.script.path} and move kotlinOptions to '
+              'kotlin { compilerOptions { } }.',
+          evidence: [
+            for (final statement in applications)
+              Evidence.file('Applies the Kotlin Android plugin',
+                  app.script.refAt(statement.start)),
+            Evidence.knowledge(
+                'Flutter ${release.version} applies the Kotlin Gradle plugin '
+                'itself while built-in Kotlin is disabled',
+                release.appliesKotlinPluginSource),
+          ],
+          relatedRecipes: const [RecipeIds.androidAppKotlinPlugin],
+        );
+      }
+    }
   }
 
   Iterable<Finding> _dependencies(FlutterProject project,
@@ -523,6 +564,42 @@ final class CompatibilityAnalyzer {
           subject: package.name,
         );
       }
+    }
+
+    final kotlinPlugins = [
+      for (final package in report.packages)
+        if (package.android?.appliesKotlinPlugin ?? false) package,
+    ];
+    if (kotlinPlugins.isNotEmpty &&
+        release.appliesKotlinPlugin &&
+        declaredAgp != null &&
+        declaredAgp.major >= 9) {
+      final names = [for (final plugin in kotlinPlugins) plugin.name];
+      yield Finding(
+        code: 'PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN',
+        severity: Severity.warning,
+        title: '${names.length} plugin(s) apply the Kotlin Gradle plugin',
+        message: '${_list(names)} apply the Kotlin Gradle plugin. With '
+            'Android Gradle Plugin 9, Flutter ${release.version} warns that '
+            'future versions will fail to build apps using such plugins.',
+        impact: 'Builds print a warning; a future Flutter release will fail.',
+        suggestedAction: 'Upgrade these plugins to versions that support '
+            'built-in Kotlin (`flutter pub outdated` lists newer versions); '
+            'report plugins without such a version to their authors.',
+        evidence: [
+          for (final plugin in kotlinPlugins)
+            Evidence(
+                EvidenceKind.dependencyFile, 'Applies the Kotlin Gradle plugin',
+                location: plugin.android!.buildFile),
+          Evidence.knowledge(
+              'Flutter ${release.version} warns about plugins that apply the '
+              'Kotlin Gradle plugin with Android Gradle Plugin 9',
+              release.appliesKotlinPluginSource),
+          const Evidence.knowledge('Migrating to built-in Kotlin',
+              KnowledgeBase.builtInKotlinGuideSource),
+        ],
+        project: project.path,
+      );
     }
   }
 

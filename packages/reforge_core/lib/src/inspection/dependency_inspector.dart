@@ -8,6 +8,7 @@ import '../model/dependencies.dart';
 import '../model/flutter_project.dart';
 import '../parsing/gradle/gradle_lexer.dart';
 import '../parsing/gradle/gradle_script.dart';
+import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/parse_diagnostic.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
@@ -154,6 +155,9 @@ final class DependencyInspector {
           buildFile: SourceRef(package.displayPath(buildPath)),
           declaresNamespace:
               script.isReliable ? _declaresNamespace(script) : null,
+          appliesKotlinPlugin: script.isReliable
+              ? kotlinAndroidPluginApplications(script).isNotEmpty
+              : null,
           v1EmbeddingReferences: _v1EmbeddingReferences(package, files),
         );
       }

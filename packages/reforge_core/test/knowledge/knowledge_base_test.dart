@@ -140,6 +140,11 @@ void main() {
               .url,
           endsWith(
               '/android/migrations/cmake_android_16k_pages_migration.dart'));
+      expect(release('3.41.0').appliesKotlinPlugin, isFalse);
+      expect(release('3.41.0').template.appAppliesKotlinPlugin, isTrue);
+      expect(release('3.44.0').appliesKotlinPlugin, isTrue);
+      expect(release('3.44.0').template.appAppliesKotlinPlugin, isFalse);
+      expect(release('3.0.0').template.appAppliesKotlinPlugin, isTrue);
       expect(release('3.13.0').androidDefaults.minSdk, 19);
       expect(release('3.35.0').androidDefaults.minSdk, 24);
       expect(release('3.10.0').androidDefaultsSource.url,

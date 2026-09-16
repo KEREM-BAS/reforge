@@ -43,7 +43,7 @@ Summary
   ✓ Complete: applying this plan resolves every known blocker for Flutter 3.47.4.
 ```
 
-> Status: early development. The engine, twelve migration recipes and the CLI
+> Status: early development. The engine, thirteen migration recipes and the CLI
 > work end to end on the fixture projects in this repository. Expect breaking
 > changes before 1.0.
 
@@ -100,6 +100,7 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 | [ANDROID_MIN_SDK](docs/recipes/ANDROID_MIN_SDK.md) | `minSdk` below the Flutter minimum |
 | [ANDROID_AGP9_OPT_OUTS](docs/recipes/ANDROID_AGP9_OPT_OUTS.md) | AGP 9 opt-out properties Flutter adds at build time |
 | [ANDROID_CLEAN_TASK](docs/recipes/ANDROID_CLEAN_TASK.md) | Lazy `clean` task Flutter migrates at build time |
+| [ANDROID_APP_KOTLIN_PLUGIN](docs/recipes/ANDROID_APP_KOTLIN_PLUGIN.md) | Let Flutter apply the Kotlin Gradle plugin; `kotlinOptions` to `compilerOptions` |
 | [ANDROID_GRADLE_JVM_ARGS](docs/recipes/ANDROID_GRADLE_JVM_ARGS.md) | Gradle memory settings of an older template (recommended) |
 | [ANDROID_JETIFIER](docs/recipes/ANDROID_JETIFIER.md) | Stop running Jetifier (recommended) |
 | [IOS_DEPLOYMENT_TARGET](docs/recipes/IOS_DEPLOYMENT_TARGET.md) | Minimum iOS deployment target |

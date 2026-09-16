@@ -155,6 +155,9 @@ final class KnowledgeBase {
 
   static const agp9ReleaseNotesSource = android.agp9ReleaseNotesSource;
   static const agp8NamespaceSource = android.agp8NamespaceSource;
+  static const builtInKotlinGuideSource = android.builtInKotlinGuideSource;
+  static const kotlinCompilerOptionsSource =
+      android.kotlinCompilerOptionsSource;
 
   /// The first Flutter release without the Android v1 embedding API.
   static final Fact<Version> androidV1EmbeddingRemoval = Fact(
@@ -289,10 +292,12 @@ FlutterRelease _releaseFromRecord(FlutterReleaseRecord record) {
       declarativePlugins: record.templateDeclarativePlugins,
       namespaceInBuildScript: record.templateNamespace,
       gradleProperties: record.templateGradleProperties,
+      appAppliesKotlinPlugin: record.templateAppKotlinPlugin,
     ),
     imperativeGradleApply:
         ImperativeGradleApply.values.byName(record.imperativeApply),
     iosMinimumDeploymentTarget: ToolVersion.parse(record.iosMinimum),
     androidMigrations: record.androidMigrations,
+    appliesKotlinPlugin: record.appliesKotlinPlugin,
   );
 }

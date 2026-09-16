@@ -264,6 +264,155 @@ void main() {
       });
     });
 
+    group('Kotlin Gradle plugin in the app module', () {
+      Map<String, String> agp9App(
+              {required String app,
+              String properties = 'android.newDsl=false\n'
+                  'android.builtInKotlin=false\n',
+              bool kotlinDeclared = true,
+              String appPath = 'android/app/build.gradle'}) =>
+          {
+            'pubspec.yaml': pubspec('^3.9.0'),
+            'android/settings.gradle': 'plugins {\n'
+                '    id "dev.flutter.flutter-plugin-loader" version "1.0.0"\n'
+                '    id "com.android.application" version "9.0.1" apply false\n'
+                '${kotlinDeclared ? '    id "org.jetbrains.kotlin.android" version "2.3.20" apply false\n' : ''}'
+                '}\ninclude ":app"\n',
+            'android/build.gradle': 'allprojects {}\n',
+            appPath: app,
+            'android/gradle.properties': properties,
+            'android/gradle/wrapper/gradle-wrapper.properties':
+                r'distributionUrl=https\://services.gradle.org/distributions/gradle-9.1.0-bin.zip'
+                    '\n',
+          };
+
+      const include = PlanOptions(
+          acceptAllReviews: true,
+          includedRecipes: {RecipeIds.androidAppKotlinPlugin});
+
+      const groovyApp = 'plugins {\n'
+          '    id "com.android.application"\n'
+          '    id "kotlin-android"\n'
+          '    id "dev.flutter.flutter-gradle-plugin"\n'
+          '}\n\n'
+          'android {\n'
+          '    namespace = "com.example.app"\n\n'
+          '    kotlinOptions {\n'
+          '        jvmTarget = JavaVersion.VERSION_1_8\n'
+          '    }\n'
+          '}\n\n'
+          'flutter {\n    source = "../.."\n}\n';
+
+      test('Groovy: the plugin is removed and jvmTarget moves', () {
+        final plan = planFor(agp9App(app: groovyApp), options: include);
+        final step = plan.steps.singleWhere(
+            (s) => s.recipe.id == RecipeIds.androidAppKotlinPlugin);
+        expect(step.status, StepStatus.review);
+        expect(step.proposal.necessity, Necessity.recommended);
+        expect(
+            fileAfter(plan, 'android/app/build.gradle'),
+            'plugins {\n'
+            '    id "com.android.application"\n'
+            '    id "dev.flutter.flutter-gradle-plugin"\n'
+            '}\n\n'
+            'android {\n'
+            '    namespace = "com.example.app"\n'
+            '}\n\n'
+            'kotlin {\n'
+            '    compilerOptions {\n'
+            '        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8\n'
+            '    }\n'
+            '}\n\n'
+            'flutter {\n    source = "../.."\n}\n');
+      });
+
+      test('Kotlin DSL template of Flutter 3.41', () {
+        const app = 'plugins {\n'
+            '    id("com.android.application")\n'
+            '    id("kotlin-android")\n'
+            '    id("dev.flutter.flutter-gradle-plugin")\n'
+            '}\n\n'
+            'android {\n'
+            '    namespace = "com.example.app"\n'
+            '    kotlinOptions {\n'
+            '        jvmTarget = JavaVersion.VERSION_17.toString()\n'
+            '    }\n'
+            '}\n';
+        final plan = planFor(
+            agp9App(app: app, appPath: 'android/app/build.gradle.kts'),
+            options: include);
+        final after = fileAfter(plan, 'android/app/build.gradle.kts');
+        expect(after, isNot(contains('kotlin-android')));
+        expect(after, isNot(contains('kotlinOptions')));
+        expect(
+            after,
+            endsWith(
+                '}\n\nkotlin {\n    compilerOptions {\n        jvmTarget = '
+                'org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17\n    }\n}\n'));
+      });
+
+      test('built-in Kotlin makes it required; unknowns make it manual', () {
+        final builtIn = planFor(agp9App(
+            app: groovyApp, properties: 'android.builtInKotlin=true\n'));
+        final required = builtIn.steps.singleWhere(
+            (s) => s.recipe.id == RecipeIds.androidAppKotlinPlugin);
+        expect(required.proposal.necessity, Necessity.required);
+        expect(builtIn.remainingFindings.map((f) => f.code),
+            isNot(contains('ANDROID_APP_APPLIES_KOTLIN_PLUGIN')),
+            reason: 'the accepted step resolves it');
+        final skipped = planFor(
+            agp9App(app: groovyApp, properties: 'android.builtInKotlin=true\n'),
+            options: const PlanOptions(
+                acceptAllReviews: true,
+                skippedRecipes: {RecipeIds.androidAppKotlinPlugin}));
+        final finding = skipped.remainingFindings
+            .singleWhere((f) => f.code == 'ANDROID_APP_APPLIES_KOTLIN_PLUGIN');
+        expect(finding.severity, Severity.error);
+        expect(skipped.isComplete, isFalse);
+
+        final custom = planFor(
+            options: include,
+            agp9App(
+                app: groovyApp.replaceFirst(
+                    'jvmTarget = JavaVersion.VERSION_1_8',
+                    'jvmTarget = JavaVersion.VERSION_1_8\n        freeCompilerArgs += ["-Xopt-in"]')));
+        expect(
+            custom.steps
+                .singleWhere(
+                    (s) => s.recipe.id == RecipeIds.androidAppKotlinPlugin)
+                .status,
+            StepStatus.manual);
+
+        final undeclared = planFor(
+            agp9App(app: groovyApp, kotlinDeclared: false),
+            options: include);
+        expect(
+            undeclared.steps
+                .singleWhere(
+                    (s) => s.recipe.id == RecipeIds.androidAppKotlinPlugin)
+                .proposal
+                .manualSteps
+                .first,
+            contains('not declared in settings'));
+      });
+
+      test('older targets and AGP 8 keep the plugin', () {
+        final agp8 = planFor({
+          ...agp9App(app: groovyApp),
+          'android/settings.gradle': 'plugins {\n'
+              '    id "dev.flutter.flutter-plugin-loader" version "1.0.0"\n'
+              '    id "com.android.application" version "8.11.1" apply false\n'
+              '    id "org.jetbrains.kotlin.android" version "2.3.20" apply false\n'
+              '}\n',
+        });
+        expect(skipReason(agp8, RecipeIds.androidAppKotlinPlugin),
+            contains('Android Gradle Plugin 9'));
+        final older = planFor(agp9App(app: groovyApp), target: '3.41.0');
+        expect(skipReason(older, RecipeIds.androidAppKotlinPlugin),
+            contains('does not apply the Kotlin Gradle plugin itself'));
+      });
+    });
+
     group('minSdk', () {
       String groovyApp(String minSdk) =>
           'plugins {\n    id "com.android.application"\n'

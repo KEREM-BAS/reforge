@@ -14,6 +14,7 @@ abstract final class RecipeIds {
   static const androidMinSdk = 'ANDROID_MIN_SDK';
   static const androidAgp9OptOuts = 'ANDROID_AGP9_OPT_OUTS';
   static const androidCleanTask = 'ANDROID_CLEAN_TASK';
+  static const androidAppKotlinPlugin = 'ANDROID_APP_KOTLIN_PLUGIN';
   static const iosDeploymentTarget = 'IOS_DEPLOYMENT_TARGET';
   static const dartSdkConstraint = 'DART_SDK_CONSTRAINT';
 }

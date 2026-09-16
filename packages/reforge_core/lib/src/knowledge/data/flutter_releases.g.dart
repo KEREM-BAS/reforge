@@ -29,6 +29,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -58,6 +60,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -87,6 +91,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -116,6 +122,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -145,6 +153,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -174,6 +184,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -203,6 +215,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -232,6 +246,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -261,6 +277,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -290,6 +308,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -319,6 +339,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -348,6 +370,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -377,6 +401,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -406,6 +432,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -435,6 +463,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -464,6 +494,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -493,6 +525,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -522,6 +556,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -551,6 +587,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -580,6 +618,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -609,6 +649,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -638,6 +680,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -667,6 +711,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -696,6 +742,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -725,6 +773,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -754,6 +804,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -783,6 +835,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -812,6 +866,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -841,6 +897,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -870,6 +928,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: false,
     androidMigrations: [],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -899,6 +959,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDeclarativePlugins: false,
     templateNamespace: true,
     androidMigrations: ['TopLevelGradleBuildFileMigration'],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -931,6 +993,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -963,6 +1027,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -995,6 +1061,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1027,6 +1095,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1059,6 +1129,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1091,6 +1163,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1123,6 +1197,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1155,6 +1231,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1187,6 +1265,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1219,6 +1299,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1251,6 +1333,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1283,6 +1367,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1315,6 +1401,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1347,6 +1435,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1379,6 +1469,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1411,6 +1503,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'TopLevelGradleBuildFileMigration',
       'AndroidStudioJavaGradleConflictMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx1536M',
       'android.useAndroidX': 'true',
@@ -1444,6 +1538,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1477,6 +1573,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1510,6 +1608,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1543,6 +1643,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1576,6 +1678,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1609,6 +1713,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1642,6 +1748,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1675,6 +1783,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1708,6 +1818,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1741,6 +1853,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1774,6 +1888,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1807,6 +1923,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1840,6 +1958,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1873,6 +1993,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1906,6 +2028,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1939,6 +2063,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -1972,6 +2098,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G',
       'android.useAndroidX': 'true',
@@ -2005,6 +2133,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
       'android.useAndroidX': 'true',
@@ -2038,6 +2168,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
       'android.useAndroidX': 'true',
@@ -2071,6 +2203,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
       'android.useAndroidX': 'true',
@@ -2104,6 +2238,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'AndroidStudioJavaGradleConflictMigration',
       'MinSdkVersionMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
       'android.useAndroidX': 'true',
@@ -2138,6 +2274,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MinSdkVersionMigration',
       'MultidexRemovalMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2173,6 +2311,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MinSdkVersionMigration',
       'MultidexRemovalMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2208,6 +2348,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MinSdkVersionMigration',
       'MultidexRemovalMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2243,6 +2385,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MinSdkVersionMigration',
       'MultidexRemovalMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2278,6 +2422,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MinSdkVersionMigration',
       'MultidexRemovalMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2313,6 +2459,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MinSdkVersionMigration',
       'MultidexRemovalMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2349,6 +2497,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2385,6 +2535,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2421,6 +2573,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2457,6 +2611,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2493,6 +2649,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
@@ -2529,6 +2687,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2565,6 +2725,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2601,6 +2763,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2637,6 +2801,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2673,6 +2839,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2709,6 +2877,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2745,6 +2915,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2781,6 +2953,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2817,6 +2991,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2853,6 +3029,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2889,6 +3067,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2925,6 +3105,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2961,6 +3143,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -2997,6 +3181,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3033,6 +3219,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3069,6 +3257,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3105,6 +3295,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3141,6 +3333,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3177,6 +3371,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3213,6 +3409,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3249,6 +3447,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3285,6 +3485,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3320,6 +3522,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3355,6 +3559,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3390,6 +3596,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3425,6 +3633,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3460,6 +3670,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3495,6 +3707,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3530,6 +3744,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3565,6 +3781,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3600,6 +3818,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3635,6 +3855,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3670,6 +3892,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3705,6 +3929,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3740,6 +3966,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3775,6 +4003,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3810,6 +4040,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3845,6 +4077,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3880,6 +4114,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3915,6 +4151,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3950,6 +4188,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -3985,6 +4225,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'MultidexRemovalMigration',
       'CmakeAndroid16kPagesMigration'
     ],
+    appliesKotlinPlugin: false,
+    templateAppKotlinPlugin: true,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4022,6 +4264,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4061,6 +4305,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4100,6 +4346,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4139,6 +4387,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4178,6 +4428,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4217,6 +4469,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4256,6 +4510,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4295,6 +4551,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4334,6 +4592,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4373,6 +4633,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4412,6 +4674,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4451,6 +4715,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4490,6 +4756,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4529,6 +4797,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
@@ -4568,6 +4838,8 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
       'DisableBuiltInKotlinMigration',
       'DisableNewDslMigration'
     ],
+    appliesKotlinPlugin: true,
+    templateAppKotlinPlugin: false,
     templateGradleProperties: {
       'org.gradle.jvmargs':
           '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',

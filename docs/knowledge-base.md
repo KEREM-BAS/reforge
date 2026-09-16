@@ -20,6 +20,7 @@ since 3.0.0.
 | Imperative Gradle apply support | `packages/flutter_tools/gradle/flutter.gradle` (deprecation and removal messages) |
 | Minimum iOS deployment target | `darwin.dart`, `ios_deployment_target_migration.dart` or `deployment_target_migration.dart` |
 | Android project migrations run before every Gradle build | The `<ProjectMigrator>[...]` list in `lib/src/android/gradle.dart` |
+| Whether Flutter applies the Kotlin Gradle plugin itself, and whether the app template applies it | `FlutterPluginUtils.kt`; app template build script |
 
 Refresh:
 
@@ -61,6 +62,8 @@ Recipes only select versions from these lists.
 | Why Flutter templates stopped enabling Jetifier | flutter/flutter#173430 |
 | AGP 9 defaults for `android.newDsl` and `android.builtInKotlin` | developer.android.com, "AGP 9.0.0 release notes" |
 | Android version of each API level | developer.android.com, "uses-sdk: API levels" |
+| Built-in Kotlin migration for apps | docs.flutter.dev, "Migrate to built-in Kotlin" |
+| `kotlinOptions` deprecation | kotlinlang.org, "Compiler options in the Kotlin Gradle plugin" |
 | Checking whether Jetifier is still needed | developer.android.com, "Build Analyzer" |
 
 ## Facts, observations, inferences

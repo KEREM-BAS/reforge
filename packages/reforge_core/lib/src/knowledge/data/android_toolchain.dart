@@ -216,3 +216,17 @@ const androidV1EmbeddingRemovalSource = KnowledgeSource(
   url: 'https://github.com/flutter/engine/pull/52022',
   retrieved: '2026-09-16',
 );
+
+const builtInKotlinGuideSource = KnowledgeSource(
+  title: 'Flutter breaking change: migrate to built-in Kotlin (app developers)',
+  url:
+      'https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers',
+  retrieved: '2026-09-16',
+);
+
+const kotlinCompilerOptionsSource = KnowledgeSource(
+  title: 'Kotlin: compiler options in the Kotlin Gradle plugin (kotlinOptions '
+      'deprecated since Kotlin 2.0.0)',
+  url: 'https://kotlinlang.org/docs/gradle-compiler-options.html',
+  retrieved: '2026-09-16',
+);

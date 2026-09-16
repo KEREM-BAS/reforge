@@ -32,6 +32,7 @@ Raise the iOS deployment target to 13.0.
 - DART_SDK_CONSTRAINT: environment.sdk ">=3.4.0 <4.0.0" allows Dart 3.9.0.
 - ANDROID_FLUTTER_GRADLE_PLUGIN_DSL: Flutter's Gradle plugins are already applied declaratively.
 - ANDROID_AGP9_OPT_OUTS: The Flutter 3.35.0 tool does not add Android Gradle Plugin 9 opt-outs to projects.
+- ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.35.0 does not apply the Kotlin Gradle plugin itself, so the app module keeps applying it.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
 - ANDROID_CLEAN_TASK: android/build.gradle has no clean task in the form the Flutter tool migrates.

@@ -79,6 +79,7 @@ final class TemplateToolchain {
     required this.declarativePlugins,
     required this.namespaceInBuildScript,
     required this.gradleProperties,
+    required this.appAppliesKotlinPlugin,
   });
 
   final ToolVersion gradle;
@@ -95,6 +96,10 @@ final class TemplateToolchain {
 
   /// The properties new projects get in `android/gradle.properties`.
   final Map<String, String> gradleProperties;
+
+  /// Whether the app module of new projects applies the Kotlin Gradle plugin
+  /// (`kotlin-android`) itself.
+  final bool appAppliesKotlinPlugin;
 }
 
 /// Defaults exposed by the Flutter Gradle plugin as `flutter.compileSdkVersion`
@@ -128,6 +133,7 @@ final class FlutterRelease {
     required this.imperativeGradleApply,
     required this.iosMinimumDeploymentTarget,
     required this.androidMigrations,
+    required this.appliesKotlinPlugin,
   });
 
   final Version version;
@@ -150,6 +156,15 @@ final class FlutterRelease {
   /// example `DisableNewDslMigration`. They change project files without
   /// asking.
   final List<String> androidMigrations;
+
+  /// Whether Flutter's Gradle plugin applies the Kotlin Gradle plugin to app
+  /// and plugin modules that do not apply it themselves, while built-in
+  /// Kotlin is disabled (Flutter 3.44+).
+  final bool appliesKotlinPlugin;
+
+  /// The source of [appliesKotlinPlugin].
+  KnowledgeSource get appliesKotlinPluginSource => sourceFor(
+      'packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt');
 
   /// Whether the Flutter tool of this release runs the Android project
   /// migration [name].
