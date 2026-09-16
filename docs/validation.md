@@ -230,6 +230,24 @@ minimal Groovy and Kotlin DSL scripts: `Could not find method jcenter() for
 arguments []` and `Unresolved reference 'jcenter'`; with `mavenCentral()`
 both configured (ffeb848).
 
+### Run 9: a plugin that declares jcenter() (Reforge 3766b29, then 3f21170)
+
+The Flutter 3.22 fixture with `speech_to_text: 7.0.0`, resolved offline from
+the pub cache. Its Android build script declares `jcenter()` and applies the
+Kotlin Gradle plugin.
+
+- `reforge plan --to 3.47.4 --include-recommended --accept-all` reported
+  `PLUGIN_GRADLE_JCENTER` as an error ("Gradle 9.1.0 fails to configure the
+  speech_to_text module") and the plan as incomplete; `reforge apply`
+  refused it (`PLAN_INCOMPLETE`).
+- Applied with `--allow-incomplete`, `flutter build apk --debug` failed as
+  predicted: `A problem occurred evaluating project ':speech_to_text'. > Could
+  not find method jcenter()`, at line 7 of the plugin's build script.
+- The explanation did not name the plugin and no failing module was shown,
+  because the failure happened before any task ran. With 3f21170,
+  `reforge diagnose` names `:speech_to_text` and confirms the failure with
+  `PLUGIN_GRADLE_JCENTER` at `speech_to_text 7.0.0/android/build.gradle:7`.
+
 ### Caveat
 
 The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The
