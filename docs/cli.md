@@ -84,8 +84,13 @@ reforge verify [--session <id>] [--check static|pub-get|analyze|android|ios]... 
 Default checks are those required by the applied steps of the latest session.
 Android and iOS builds run the project's Gradle and CocoaPods build logic.
 When checks run with a Flutter version other than the migration target, the
-results are marked as not being evidence for the target. Files modified by the
-tools while they run are reported and recorded.
+results are marked as not being evidence for the target.
+
+Tools change projects while they run: `flutter build` applies Flutter's own
+project migrations, `pod install` writes `Podfile.lock`, `pub get` updates
+`pubspec.lock`. Every file a check creates, modifies or deletes is reported.
+Within a migration session its previous content is backed up in the journal,
+and `reforge rollback` undoes the change too.
 
 Failed checks are explained when the output matches a known failure, for
 example `GRADLE_OUT_OF_MEMORY`, `JETIFIER_TRANSFORM_FAILED`,
@@ -95,8 +100,10 @@ matches nothing known is shown as is, never guessed at.
 
 ### `rollback [session]`
 
-Restores the most recent applied session (or the given one). Refuses when a
-file changed after the migration; `--force` restores the backups anyway.
+Restores the most recent applied session (or the given one): first the
+changes tools made during `verify`, newest first, then the migrated files.
+Refuses when a file changed after Reforge or a verified tool last wrote it, and
+names the tool when one did; `--force` restores the backups anyway.
 
 ### `history`
 

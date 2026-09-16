@@ -56,6 +56,19 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
         platformVersion != null &&
         platformVersion < minimum &&
         platform.versionContentRange != null;
+    // Flutter's IOSDeploymentTargetMigration rewrites the template's
+    // commented-out platform line too, so the line keeps documenting the
+    // minimum.
+    final commented = podfile?.commentedPlatform;
+    final commentedVersion = commented?.version == null
+        ? null
+        : ToolVersion.tryParse(commented!.version!);
+    final lowCommentedPlatform = platform == null &&
+        commented != null &&
+        commented.name == 'ios' &&
+        commentedVersion != null &&
+        commentedVersion < minimum &&
+        commented.versionContentRange != null;
     final plist = _minimumOsVersion(context.files, ios.directory);
     final plistVersion =
         plist == null ? null : ToolVersion.tryParse(plist.value);
@@ -63,7 +76,10 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
         (release.version >= _removesMinimumOsVersion ||
             (plistVersion != null && plistVersion < minimum));
 
-    if (lowSettings.isEmpty && !lowPlatform && !plistNeedsChange) {
+    if (lowSettings.isEmpty &&
+        !lowPlatform &&
+        !lowCommentedPlatform &&
+        !plistNeedsChange) {
       return NotApplicable('The iOS deployment target already meets the '
           'minimum of Flutter ${release.version} (iOS $minimumText).');
     }
@@ -89,6 +105,13 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
           TextEdit.replace(platform.versionContentRange!, minimumText));
       evidence.add(Evidence.file(
           "platform :ios, '${platform.version}'", platform.location));
+    }
+    if (lowCommentedPlatform) {
+      add(podfile!.path,
+          TextEdit.replace(commented.versionContentRange!, minimumText));
+      evidence.add(Evidence.file(
+          "# platform :ios, '${commented.version}' (commented out)",
+          commented.location));
     }
     if (plistNeedsChange) {
       final removal = release.version >= _removesMinimumOsVersion;
@@ -118,6 +141,9 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
       if (podfile != null && !podfile.isReliable)
         'The Podfile could not be parsed reliably; check its platform line '
             'manually.',
+      if (lowCommentedPlatform)
+        'The commented-out platform line in the Podfile is updated too, as '
+            "Flutter's build does.",
       if (plistNeedsChange && release.version >= _removesMinimumOsVersion)
         'MinimumOSVersion is removed from AppFrameworkInfo.plist, as Flutter '
             '${release.version} sets it when building App.framework.',

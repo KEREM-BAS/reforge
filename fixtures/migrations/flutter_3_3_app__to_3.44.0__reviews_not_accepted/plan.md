@@ -43,8 +43,9 @@ Register the clean task lazily in android/build.gradle.
 ## IOS_DEPLOYMENT_TARGET (auto, required, applied)
 
 Raise the iOS deployment target to 13.0.
+- note: The commented-out platform line in the Podfile is updated too, as Flutter's build does.
 - note: MinimumOSVersion is removed from AppFrameworkInfo.plist, as Flutter 3.44.0 sets it when building App.framework.
-- files: ios/Runner.xcodeproj/project.pbxproj, ios/Flutter/AppFrameworkInfo.plist
+- files: ios/Runner.xcodeproj/project.pbxproj, ios/Podfile, ios/Flutter/AppFrameworkInfo.plist
 
 ## Skipped
 

@@ -115,6 +115,82 @@ void main() {
     expect(edited.readAsStringSync(), isNot(contains('my change')));
   });
 
+  group('changes tools made during verification', () {
+    final settingsPath = p.join('android', 'settings.gradle');
+
+    /// Simulates `reforge verify` running a build that rewrites
+    /// settings.gradle (migrated) and Info.plist (not migrated) and creates
+    /// Podfile.lock.
+    Future<MigrationSession> applyAndBuild(MigrationApplier applier) async {
+      final session = applier.apply(planProject(project.path));
+      final verifier = Verifier(
+        projectRoot: project.path,
+        knowledge: KnowledgeBase.bundled,
+        planner: MigrationPlanner(
+            knowledge: KnowledgeBase.bundled,
+            recipes: builtInRecipes(),
+            reforgeVersion: reforgeVersion),
+        runner: _Runner(() {
+          for (final path in [settingsPath, 'ios/Runner/Info.plist']) {
+            final file = File(p.join(project.path, path));
+            file.writeAsStringSync(
+                file.readAsStringSync().replaceFirst('\n', '\n\n'));
+          }
+          File(p.join(project.path, 'ios', 'Podfile.lock'))
+              .writeAsStringSync('lock\n');
+        }),
+        operatingSystem: 'macos',
+      );
+      final journal = Journal(project.path);
+      final result = await verifier.runToolCheck(
+        VerificationCheck.iosBuild,
+        flutterExecutable: 'flutter',
+        logDirectory: journal.logsDirectory(session.id),
+        backupDirectory:
+            p.join(journal.sessionDirectory(session.id), 'verifications', '1'),
+      );
+      expect(result.toolChanges, hasLength(3));
+      session.verifications = [
+        VerificationRecord(
+          check: 'iosBuild',
+          status: 'passed',
+          summary: 'ok',
+          recordedAt: DateTime.utc(2026),
+          command: 'flutter build ios --debug --no-codesign',
+          toolChanges: result.toolChanges,
+        ),
+      ];
+      journal.save(session);
+      return session;
+    }
+
+    test('are undone by rollback, restoring the original project', () async {
+      final original = snapshot(project.path);
+      final applier = MigrationApplier(projectRoot: project.path);
+      await applyAndBuild(applier);
+      expect(snapshot(project.path), isNot(original));
+
+      final session = applier.rollback();
+      expect(session.status, SessionStatus.rolledBack);
+      expect(snapshot(project.path), original);
+    });
+
+    test('later edits are conflicts that name the tool', () async {
+      final applier = MigrationApplier(projectRoot: project.path);
+      await applyAndBuild(applier);
+      File(p.join(project.path, 'ios', 'Runner', 'Info.plist'))
+          .writeAsStringSync('<!-- edited -->\n', mode: FileMode.append);
+      expect(
+        applier.rollback,
+        throwsA(isA<JournalException>()
+            .having((e) => e.code, 'code', 'ROLLBACK_CONFLICT')
+            .having((e) => e.message, 'message', contains('Info.plist'))
+            .having((e) => e.hints.first, 'hint',
+                contains('modified by `flutter build ios'))),
+      );
+    });
+  });
+
   test('a concurrent run is locked out', () {
     final plan = planProject(project.path);
     final lock = File(p.join(project.path, '.reforge', 'lock'))
@@ -161,4 +237,22 @@ void main() {
     expect(await readGitWorkingTree(outside.path, const LocalProcessRunner()),
         isNull);
   });
+}
+
+final class _Runner implements ProcessRunner {
+  _Runner(this.effect);
+
+  final void Function() effect;
+
+  @override
+  Future<CommandResult> run(ExternalCommand command,
+      {void Function(String line)? onOutput}) async {
+    effect();
+    return CommandResult(
+        command: command,
+        exitCode: 0,
+        stdout: '',
+        stderr: '',
+        elapsed: Duration.zero);
+  }
 }

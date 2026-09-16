@@ -5,7 +5,8 @@ complete: true
 ## IOS_DEPLOYMENT_TARGET (auto, required, applied)
 
 Raise the iOS deployment target to 15.0.
-- files: ios/Runner.xcodeproj/project.pbxproj
+- note: The commented-out platform line in the Podfile is updated too, as Flutter's build does.
+- files: ios/Runner.xcodeproj/project.pbxproj, ios/Podfile
 
 ## Skipped
 

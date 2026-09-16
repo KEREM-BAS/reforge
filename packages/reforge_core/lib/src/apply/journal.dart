@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
 
 import '../common/errors.dart';
@@ -59,6 +60,53 @@ final class JournalFile {
       };
 }
 
+/// A file an external tool changed while a verification check ran, for
+/// example through Flutter's own project migrations during `flutter build`.
+final class ToolFileChange {
+  const ToolFileChange({
+    required this.path,
+    required this.beforeHash,
+    required this.afterHash,
+    this.backup,
+  });
+
+  factory ToolFileChange.fromJson(Map<String, Object?> json) => ToolFileChange(
+        path: json['path']! as String,
+        beforeHash: json['beforeHash'] as String?,
+        afterHash: json['afterHash'] as String?,
+        backup: json['backup'] as String?,
+      );
+
+  /// Project-relative path.
+  final String path;
+
+  /// SHA-256 of the content before the tool ran; `null` when the tool
+  /// created the file.
+  final String? beforeHash;
+
+  /// SHA-256 of the content the tool left; `null` when the tool deleted the
+  /// file.
+  final String? afterHash;
+
+  /// Project-relative path of the backup of the previous content, when the
+  /// file existed and a backup was kept.
+  final String? backup;
+
+  String get kind => beforeHash == null
+      ? 'created'
+      : afterHash == null
+          ? 'deleted'
+          : 'modified';
+
+  Map<String, Object?> toJson() => {
+        'path': path,
+        'change': kind,
+        'beforeHash': beforeHash,
+        'afterHash': afterHash,
+        if (backup != null) 'backup': backup,
+      };
+}
+
 /// The outcome of one verification check, recorded in the journal.
 final class VerificationRecord {
   const VerificationRecord({
@@ -72,7 +120,7 @@ final class VerificationRecord {
     this.logFile,
     this.flutterVersion,
     this.details = const [],
-    this.modifiedFiles = const [],
+    this.toolChanges = const [],
   });
 
   factory VerificationRecord.fromJson(Map<String, Object?> json) =>
@@ -92,9 +140,9 @@ final class VerificationRecord {
           for (final detail in (json['details'] as List?) ?? const [])
             detail as String,
         ],
-        modifiedFiles: [
-          for (final path in (json['modifiedFiles'] as List?) ?? const [])
-            path as String,
+        toolChanges: [
+          for (final change in (json['toolChanges'] as List?) ?? const [])
+            ToolFileChange.fromJson(change as Map<String, Object?>),
         ],
       );
 
@@ -117,9 +165,9 @@ final class VerificationRecord {
 
   final List<String> details;
 
-  /// Project configuration files the checked tool modified while running
-  /// (for example Flutter's own migrations during `flutter build`).
-  final List<String> modifiedFiles;
+  /// Project files the checked tool created, modified or deleted while
+  /// running (for example Flutter's own migrations during `flutter build`).
+  final List<ToolFileChange> toolChanges;
 
   Map<String, Object?> toJson() => {
         'check': check,
@@ -132,7 +180,8 @@ final class VerificationRecord {
         if (logFile != null) 'logFile': logFile,
         if (flutterVersion != null) 'flutterVersion': flutterVersion,
         if (details.isNotEmpty) 'details': details,
-        if (modifiedFiles.isNotEmpty) 'modifiedFiles': modifiedFiles,
+        if (toolChanges.isNotEmpty)
+          'toolChanges': [for (final change in toolChanges) change.toJson()],
       };
 }
 
@@ -326,9 +375,23 @@ void writeFileAtomically(String path, String content) {
   }
 }
 
-/// SHA-256 of a file's UTF-8 content, or `null` when it does not exist.
+/// Writes [bytes] to [path] atomically, like [writeFileAtomically].
+void writeBytesAtomically(String path, List<int> bytes) {
+  final target = File(path);
+  final temporary = File(p.join(target.parent.path,
+      '.${p.basename(path)}.reforge-$pid-${DateTime.now().microsecondsSinceEpoch}.tmp'));
+  try {
+    temporary.writeAsBytesSync(bytes, flush: true);
+    temporary.renameSync(path);
+  } finally {
+    if (temporary.existsSync()) temporary.deleteSync();
+  }
+}
+
+/// SHA-256 of a file's content, or `null` when it does not exist. For UTF-8
+/// text this equals [contentHash] of the decoded text.
 String? hashOfFile(String path) {
   final file = File(path);
   if (!file.existsSync()) return null;
-  return contentHash(file.readAsStringSync());
+  return sha256.convert(file.readAsBytesSync()).toString();
 }

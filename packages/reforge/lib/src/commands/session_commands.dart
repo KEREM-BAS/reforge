@@ -29,6 +29,11 @@ final class RollbackCommand extends ReforgeCommand {
       sessionId: rest.isEmpty ? null : rest.first,
       force: argResults!['force'] as bool,
     );
+    final toolChanges = [
+      for (final record in session.verifications)
+        for (final change in record.toolChanges)
+          (command: record.command ?? record.check, change: change),
+    ];
     if (format == OutputFormat.json) {
       writeJson({
         'session': session.id,
@@ -36,13 +41,40 @@ final class RollbackCommand extends ReforgeCommand {
         'restoredFiles': [
           for (final file in session.files.where((f) => f.written)) file.path,
         ],
+        'undoneToolChanges': [
+          for (final (:command, :change) in toolChanges)
+            {'path': change.path, 'change': change.kind, 'command': command},
+        ],
       });
     } else {
       final t = terminal;
       t.line('${t.green(t.ok)} Rolled back session ${t.bold(session.id)} '
           '(migration to Flutter ${session.targetFlutter}).');
-      for (final file in session.files.where((f) => f.written)) {
-        t.line('  ${t.dim('restored')} ${file.path}');
+      final migrated = {
+        for (final file in session.files.where((f) => f.written)) file.path,
+      };
+      final commandsByPath = <String, Set<String>>{};
+      for (final (:command, :change) in toolChanges) {
+        commandsByPath.putIfAbsent(change.path, () => {}).add(command);
+      }
+      String by(String path) =>
+          commandsByPath[path]!.map((c) => '`$c`').join(', ');
+      for (final path in migrated) {
+        final also = commandsByPath.containsKey(path)
+            ? t.dim(' (also changed by ${by(path)})')
+            : '';
+        t.line('  ${t.dim('restored')} $path$also');
+      }
+      final seen = <String>{};
+      for (final (command: _, :change) in toolChanges) {
+        if (migrated.contains(change.path) || !seen.add(change.path)) continue;
+        final created = toolChanges
+                .firstWhere((c) => c.change.path == change.path)
+                .change
+                .beforeHash ==
+            null;
+        t.line('  ${t.dim(created ? 'removed' : 'restored')} ${change.path}'
+            '${t.dim(' (${created ? 'created' : 'changed'} by ${by(change.path)})')}');
       }
     }
     return ExitCodes.success;

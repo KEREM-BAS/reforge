@@ -190,6 +190,13 @@ plan is reproducible and has a stable `planId`.
 - `rollback` restores backups only if each file still has the hash Reforge
   wrote; files changed afterwards are reported as conflicts instead of being
   overwritten.
+- Changes that tools make while `verify` runs them (Flutter's own project
+  migrations during `flutter build`, `pod install`, `pub get`) are part of the
+  session: before each toolchain check the project files are snapshotted, and
+  the previous content of every file the tool created, modified or deleted is
+  backed up with before/after hashes. `rollback` undoes those changes newest
+  first, with the same conflict rules, and then restores the migration's
+  backups, so the project returns to its exact state before the migration.
 - Git is used when present (never required). It is invoked with
   `core.fsmonitor` disabled so inspecting a hostile repository cannot execute
   configured commands.
@@ -210,6 +217,12 @@ A migration is successful only when verified.
 Results record the exact tool versions used. A verification that ran with a
 Flutter SDK other than the migration target is reported as not being evidence
 for the target.
+
+The snapshot covers `pubspec.yaml`, `pubspec.lock`, `.gitignore`, `.metadata`,
+`analysis_options.yaml` and every file below the platform directories, except
+build output, dependency caches (`Pods`, `.gradle`, `.symlinks`, ...) and files
+the Flutter tool regenerates on every build (`local.properties`,
+`Generated.xcconfig`, `GeneratedPluginRegistrant.*`, ...).
 
 ## 9. Future compatibility intelligence
 

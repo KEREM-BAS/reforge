@@ -142,10 +142,23 @@ Execution failed for task ':app:checkDebugDuplicateClasses'.
           operatingSystem: os,
         );
 
-    test('reports configuration files modified by the tool', () async {
+    test('records and backs up files the tool changes', () async {
+      final properties =
+          File(p.join(project.path, 'android', 'gradle.properties'));
+      final previous = properties.readAsStringSync();
+      final gitignore = File(p.join(project.path, '.gitignore'));
       final runner = ScriptedRunner((command) {
-        File(p.join(project.path, 'android', 'gradle.properties'))
-            .writeAsStringSync('# added by the tool\n', mode: FileMode.append);
+        properties.writeAsStringSync('# added by the tool\n',
+            mode: FileMode.append);
+        File(p.join(project.path, 'ios', 'Podfile.lock'))
+            .writeAsStringSync('PODFILE CHECKSUM: 1\n');
+        gitignore.deleteSync();
+        // Regenerated files and build output are not project changes.
+        File(p.join(project.path, 'android', 'local.properties'))
+            .writeAsStringSync('flutter.sdk=/sdk\n');
+        File(p.join(project.path, 'android', 'app', 'build', 'out.txt'))
+          ..createSync(recursive: true)
+          ..writeAsStringSync('output');
         return CommandResult(
             command: command,
             exitCode: 0,
@@ -153,13 +166,30 @@ Execution failed for task ':app:checkDebugDuplicateClasses'.
             stderr: '',
             elapsed: const Duration(seconds: 3));
       });
+      final gitignoreContent = gitignore.readAsStringSync();
       final result = await verifier(runner).runToolCheck(
         VerificationCheck.androidBuild,
         flutterExecutable: 'flutter',
         logDirectory: p.join(project.path, '.reforge', 'logs'),
+        backupDirectory: p.join(project.path, '.reforge', 'backup'),
       );
       expect(result.status, CheckStatus.passed);
-      expect(result.modifiedFiles, ['android/gradle.properties']);
+      expect({
+        for (final c in result.toolChanges) c.path: c.kind
+      }, {
+        '.gitignore': 'deleted',
+        'android/gradle.properties': 'modified',
+        'ios/Podfile.lock': 'created',
+      });
+      final modified = result.toolChanges
+          .singleWhere((c) => c.path == 'android/gradle.properties');
+      expect(modified.backup, '.reforge/backup/android/gradle.properties');
+      expect(File(p.join(project.path, modified.backup)).readAsStringSync(),
+          previous);
+      expect(
+          File(p.join(project.path, result.toolChanges.first.backup!))
+              .readAsStringSync(),
+          gitignoreContent);
       expect(File(result.logFile!).readAsStringSync(),
           contains('flutter build apk --debug'));
     });

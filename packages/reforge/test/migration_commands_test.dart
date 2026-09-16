@@ -103,7 +103,7 @@ void main() {
       '--yes', '--no-env',
     ]);
     expect(applied.exitCode, ExitCodes.success, reason: applied.stderr);
-    expect(applied.stdout, contains('Applied 10 file change(s)'));
+    expect(applied.stdout, contains(RegExp(r'Applied \d+ file change\(s\)')));
     expect(snapshot(project.path), isNot(original));
 
     final history =

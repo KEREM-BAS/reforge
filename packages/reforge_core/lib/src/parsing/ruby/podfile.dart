@@ -311,12 +311,17 @@ PodfilePlatform? _commentedPlatform(
   final pattern =
       RegExp(r'''^#\s*platform\s+:(\w+)\s*,\s*(['"])([^'"]+)\2\s*$''');
   for (final comment in comments) {
-    final match = pattern.firstMatch(comment.textOf(source).trimRight());
+    final text = comment.textOf(source).trimRight();
+    final match = pattern.firstMatch(text);
     if (match == null) continue;
+    final quote = match.group(2)!;
+    final version = match.group(3)!;
+    final versionStart = text.lastIndexOf('$quote$version$quote') + 1;
     return PodfilePlatform(
       name: match.group(1)!,
-      version: match.group(3),
-      versionContentRange: null,
+      version: version,
+      versionContentRange:
+          TextRange(comment.offset + versionStart, version.length),
       location: lines.refFor(path, comment.offset),
       commentedOut: true,
     );

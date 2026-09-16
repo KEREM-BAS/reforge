@@ -164,8 +164,13 @@ final class MigrationApplier {
 
   /// Restores the files of the most recent applied session, or of [sessionId].
   ///
-  /// Throws [JournalException] with code `ROLLBACK_CONFLICT` when a file was
-  /// modified after Reforge wrote it, unless [force] is set.
+  /// Changes that tools made during verification (recorded with backups) are
+  /// undone first, newest first; then the migration's backups are restored,
+  /// so the project returns to its state before the migration.
+  ///
+  /// Throws [JournalException] with code `ROLLBACK_CONFLICT` when a file
+  /// changed after Reforge or a verified tool last wrote it, unless [force] is
+  /// set.
   MigrationSession rollback({String? sessionId, bool force = false}) {
     return journal.withLock(() {
       final session = sessionId == null
@@ -182,24 +187,50 @@ final class MigrationApplier {
         throw JournalException('SESSION_NOT_APPLIED',
             'Session ${session.id} is ${session.status.name}; only applied sessions can be rolled back.');
       }
-      final conflicts = <String>[];
-      for (final file in session.files.where((f) => f.written)) {
-        final current = hashOfFile(_absolute(file.path));
-        if (current != file.afterHash && current != file.beforeHash) {
-          conflicts.add(file.path);
+
+      final written = session.files.where((f) => f.written).toList();
+      final toolChanges = [
+        for (final record in session.verifications)
+          for (final change in record.toolChanges) (record, change),
+      ];
+
+      // The content each file must have now, and the content it had before
+      // the migration. A tool change whose previous content is not what was
+      // last recorded means the file was edited in between.
+      final expected = <String, String?>{};
+      final original = <String, String?>{};
+      final conflicts = <String>{};
+      for (final file in written) {
+        expected[file.path] = file.afterHash;
+        original[file.path] = file.beforeHash;
+      }
+      for (final (_, change) in toolChanges) {
+        if (expected.containsKey(change.path)) {
+          if (expected[change.path] != change.beforeHash) {
+            conflicts.add(change.path);
+          }
+        } else {
+          original[change.path] = change.beforeHash;
+        }
+        expected[change.path] = change.afterHash;
+      }
+      for (final entry in expected.entries) {
+        final current = hashOfFile(_absolute(entry.key));
+        if (current != entry.value && current != original[entry.key]) {
+          conflicts.add(entry.key);
         }
       }
       if (conflicts.isNotEmpty && !force) {
         final causes = [
-          for (final record in session.verifications)
-            for (final path in record.modifiedFiles)
-              if (conflicts.contains(path))
-                '$path was modified by `${record.command ?? record.check}` '
-                    'during verification.',
+          for (final (record, change) in toolChanges)
+            if (conflicts.contains(change.path))
+              '${change.path} was ${change.kind} by '
+                  '`${record.command ?? record.check}` during verification.',
         ];
         throw JournalException(
           'ROLLBACK_CONFLICT',
-          'These files changed after the migration: ${conflicts.join(', ')}.',
+          'These files changed after the migration or its verification: '
+              '${(conflicts.toList()..sort()).join(', ')}.',
           hints: [
             ...causes.toSet(),
             'Rolling back would discard those changes. Review them, then use '
@@ -207,7 +238,36 @@ final class MigrationApplier {
           ],
         );
       }
-      for (final file in session.files.where((f) => f.written)) {
+      final missing = [
+        for (final (_, change) in toolChanges)
+          if (change.beforeHash != null &&
+              (change.backup == null ||
+                  !File(_absolute(change.backup!)).existsSync()))
+            change.path,
+      ];
+      if (missing.isNotEmpty) {
+        throw JournalException(
+          'BACKUP_MISSING',
+          'Backups of files changed during verification are missing: '
+              '${missing.join(', ')}.',
+          hints: const [
+            'Nothing was restored. Restore these files with your version '
+                'control instead.',
+          ],
+        );
+      }
+
+      for (final (_, change) in toolChanges.reversed) {
+        final target = File(_absolute(change.path));
+        if (change.beforeHash == null) {
+          if (target.existsSync()) target.deleteSync();
+        } else {
+          target.parent.createSync(recursive: true);
+          writeBytesAtomically(
+              target.path, File(_absolute(change.backup!)).readAsBytesSync());
+        }
+      }
+      for (final file in written) {
         final backup = File(journal.backupFile(session.id, file.path));
         writeFileAtomically(_absolute(file.path), backup.readAsStringSync());
       }

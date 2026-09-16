@@ -136,6 +136,13 @@ final class VerifyCommand extends ReforgeCommand {
           flutterExecutable: argResults!['flutter'] as String,
           logDirectory: logDirectory,
           target: target,
+          backupDirectory: session == null
+              ? null
+              : p.join(
+                  journal.sessionDirectory(session.id),
+                  'verifications',
+                  '${_stamp(context.clock())}-${check.name}',
+                ),
           onOutput:
               verbose && text ? (line) => t.line('      ${t.dim(line)}') : null,
         );
@@ -160,7 +167,7 @@ final class VerifyCommand extends ReforgeCommand {
                 ? null
                 : p.relative(result.logFile!, from: projectDirectory),
             flutterVersion: flutterVersion?.toString(),
-            modifiedFiles: result.modifiedFiles,
+            toolChanges: result.toolChanges,
             details: [
               ...result.details.take(20),
               for (final diagnosis in result.diagnoses) diagnosis.explanation,
@@ -207,12 +214,21 @@ final class VerifyCommand extends ReforgeCommand {
         ? ''
         : t.dim(' (${_formatDuration(result.duration!)})');
     t.line('$symbol ${result.summary}$duration');
-    if (result.modifiedFiles.isNotEmpty) {
+    if (result.toolChanges.isNotEmpty) {
+      final files = [
+        for (final change in result.toolChanges)
+          change.kind == 'modified'
+              ? change.path
+              : '${change.path} (${change.kind})',
+      ].join(', ');
+      final recorded = result.toolChanges
+          .every((c) => c.beforeHash == null || c.backup != null);
       t.paragraph(
-          t.yellow('${t.warn} The tool modified project files while running: '
-              '${result.modifiedFiles.join(', ')}. These changes are not part '
-              'of the Reforge migration; review them with your version '
-              'control.'),
+          t.yellow('${t.warn} The tool changed project files while running: '
+              '$files. ${recorded ? 'Reforge recorded the previous content; '
+                  '`reforge rollback` undoes these changes too.' : 'These '
+                  'changes are not part of a Reforge migration; review them '
+                  'with your version control.'}'),
           indent: 6,
           hanging: 2);
     }
@@ -239,6 +255,13 @@ final class VerifyCommand extends ReforgeCommand {
           '      ${t.dim('Log: ${p.relative(result.logFile!, from: projectDirectory)}')}');
     }
   }
+}
+
+String _stamp(DateTime time) {
+  String two(int value) => value.toString().padLeft(2, '0');
+  final utc = time.toUtc();
+  return '${utc.year}${two(utc.month)}${two(utc.day)}T'
+      '${two(utc.hour)}${two(utc.minute)}${two(utc.second)}Z';
 }
 
 Iterable<VerificationCheck> _planChecks(Map<String, Object?> plan) sync* {

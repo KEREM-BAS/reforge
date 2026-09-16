@@ -37,8 +37,9 @@ Upgrade the Kotlin Gradle plugin from 1.7.10 to 2.2.20.
 ## IOS_DEPLOYMENT_TARGET (auto, required, applied)
 
 Raise the iOS deployment target to 15.0.
+- note: The commented-out platform line in the Podfile is updated too, as Flutter's build does.
 - note: MinimumOSVersion is removed from AppFrameworkInfo.plist, as Flutter 3.47.4 sets it when building App.framework.
-- files: ios/Runner.xcodeproj/project.pbxproj, ios/Flutter/AppFrameworkInfo.plist
+- files: ios/Runner.xcodeproj/project.pbxproj, ios/Podfile, ios/Flutter/AppFrameworkInfo.plist
 
 ## Skipped
 
