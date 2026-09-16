@@ -1,39 +1,127 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Reforge
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+**Flutter upgrade infrastructure.** Reforge inspects a Flutter project, plans
+the migration to a target Flutter release, applies it safely and verifies the
+result, and explains every decision with evidence.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+```text
+$ reforge plan --to 3.47 --accept-all
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Migration plan to Flutter 3.47.4  (Dart 3.13.3)
+current Flutter: 3.3.0 (created with)
 
-## Features
+  ✓ ANDROID_FLUTTER_GRADLE_PLUGIN_DSL  auto
+    Apply Flutter's Gradle plugins with plugins {} blocks.
+  ✓ ANDROID_GRADLE_WRAPPER  auto
+    Upgrade the Gradle wrapper from 7.4 to 8.14.
+  ✓ ANDROID_AGP_VERSION  review, accepted
+    Upgrade the Android Gradle Plugin from 7.1.2 to 8.11.1.
+  ✓ ANDROID_KOTLIN_VERSION  review, accepted
+    Upgrade the Kotlin Gradle plugin from 1.6.10 to 2.2.20.
+  ✓ ANDROID_NAMESPACE  auto
+    Declare namespace "com.example.legacy_app" and remove the package
+    attribute from 3 manifest(s).
+  ✓ IOS_DEPLOYMENT_TARGET  auto
+    Raise the iOS deployment target to 15.0.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Files to change (9)
+  ...
+Summary
+  6 steps · 4 auto · 2 review · 9 files
+  ✓ Complete: applying this plan resolves every known blocker for Flutter 3.47.4.
+```
+
+> Status: early development. The engine, seven migration recipes and the CLI
+> work end to end on the fixture projects in this repository. Expect breaking
+> changes before 1.0.
+
+## Why
+
+Upgrading a real Flutter app is rarely `flutter upgrade`. A new Flutter release
+drags Dart, the Android Gradle Plugin, Gradle, Kotlin, the JDK, iOS deployment
+targets, CocoaPods and plugins along with it, and the failures show up one at
+a time. Reforge computes the whole chain up front, from facts:
+
+- **Knowledge with sources.** Requirements of every stable Flutter release
+  since 3.0 are extracted from Flutter's own sources at each release tag
+  (dependency version checker, templates, iOS migrations) and from the official
+  AGP, Gradle and Kotlin release data. Reforge never guesses a version that is
+  not in its knowledge base.
+- **Plans before changes.** `plan` never modifies files. Every step says what,
+  why, the impact, the evidence, and whether it is `auto`, `review`, `manual`
+  or `blocked`.
+- **Surgical, verified edits.** Build scripts, manifests, Xcode projects and
+  Podfiles are parsed with structure and source positions. Edited files must
+  parse again, and every applied step must be idempotent.
+- **Recoverable.** `apply` backs up files, writes a journal and replaces files
+  atomically. `rollback` restores them, and refuses to overwrite changes made
+  afterwards.
+- **Verified.** `verify` re-checks the project statically, then runs
+  `flutter pub get`, `flutter analyze` and real builds, explains known
+  failures, and reports files that tools modified while running.
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `reforge inspect` | Toolchain, platform and dependency model of the project, plus compatibility problems for the Flutter version it currently uses. Read-only. |
+| `reforge env` | The local toolchain: Flutter, the JDK Flutter will use, Xcode, CocoaPods, Git. |
+| `reforge plan --to <version>` | The migration plan. Never changes files. `--diff`, `--out plan.json`, `--fail-on incomplete`. |
+| `reforge apply --to <version>` | Applies the plan transactionally and verifies it statically. |
+| `reforge verify` | Static checks, `pub get`, `analyze`, Android and iOS builds, recorded in the journal. |
+| `reforge rollback [session]` | Restores the files of a migration session. |
+| `reforge history` | Migration sessions of the project. |
+
+All commands accept `--format json` (versioned envelope) and `--project <dir>`.
+Exit codes are documented in [docs/cli.md](docs/cli.md).
+
+## Recipes
+
+| Recipe | Purpose |
+| --- | --- |
+| [ANDROID_FLUTTER_GRADLE_PLUGIN_DSL](docs/recipes/ANDROID_FLUTTER_GRADLE_PLUGIN_DSL.md) | Imperative `apply from:` to declarative `plugins {}` |
+| [ANDROID_GRADLE_WRAPPER](docs/recipes/ANDROID_GRADLE_WRAPPER.md) | Gradle wrapper version and checksum |
+| [ANDROID_AGP_VERSION](docs/recipes/ANDROID_AGP_VERSION.md) | Android Gradle Plugin version |
+| [ANDROID_KOTLIN_VERSION](docs/recipes/ANDROID_KOTLIN_VERSION.md) | Kotlin Gradle plugin version |
+| [ANDROID_NAMESPACE](docs/recipes/ANDROID_NAMESPACE.md) | `android.namespace` instead of manifest `package` |
+| [IOS_DEPLOYMENT_TARGET](docs/recipes/IOS_DEPLOYMENT_TARGET.md) | Minimum iOS deployment target |
+| [DART_SDK_CONSTRAINT](docs/recipes/DART_SDK_CONSTRAINT.md) | `environment.sdk` accepts the target Dart |
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Reforge is a Dart workspace. With Dart 3.6 or newer:
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```bash
+git clone https://github.com/<owner>/reforge.git
+cd reforge
+dart pub get
+dart run packages/reforge/bin/reforge.dart --project path/to/flutter_app inspect
 ```
 
-## Additional information
+Build a native executable:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```bash
+dart compile exe packages/reforge/bin/reforge.dart -o reforge
+```
+
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| `packages/reforge_core` | The engine: parsers, project model, inspection, knowledge base, planner, recipes, apply/rollback, verification. |
+| `packages/reforge` | The CLI. |
+| `fixtures/projects` | Fixture Flutter projects from different template eras. |
+| `fixtures/migrations` | Golden migration cases: expected plans and resulting files. |
+| `docs/` | [Architecture](docs/architecture.md), [CLI](docs/cli.md), [knowledge base](docs/knowledge-base.md), [recipes](docs/recipes/). |
+
+## Development
+
+```bash
+dart analyze
+(cd packages/reforge_core && dart test)
+(cd packages/reforge && dart test)
+```
+
+Golden migration expectations are regenerated with
+`UPDATE_GOLDENS=1 dart test test/migration/golden_migration_test.dart`; review
+the resulting diff like any code change. See [CONTRIBUTING.md](CONTRIBUTING.md).

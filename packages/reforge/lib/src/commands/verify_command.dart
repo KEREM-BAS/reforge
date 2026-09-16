@@ -159,6 +159,7 @@ final class VerifyCommand extends ReforgeCommand {
                 ? null
                 : p.relative(result.logFile!, from: projectDirectory),
             flutterVersion: flutterVersion?.toString(),
+            modifiedFiles: result.modifiedFiles,
             details: [
               ...result.details.take(20),
               for (final diagnosis in result.diagnoses) diagnosis.explanation,
@@ -205,6 +206,15 @@ final class VerifyCommand extends ReforgeCommand {
         ? ''
         : t.dim(' (${_formatDuration(result.duration!)})');
     t.line('$symbol ${result.summary}$duration');
+    if (result.modifiedFiles.isNotEmpty) {
+      t.paragraph(
+          t.yellow('${t.warn} The tool modified project files while running: '
+              '${result.modifiedFiles.join(', ')}. These changes are not part '
+              'of the Reforge migration; review them with your version '
+              'control.'),
+          indent: 6,
+          hanging: 2);
+    }
     if (result.status != CheckStatus.failed) return;
     if (result.failingModule != null) {
       t.line('      Failing Gradle module: ${t.bold(result.failingModule!)}');

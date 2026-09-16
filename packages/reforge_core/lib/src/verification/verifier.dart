@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import '../apply/journal.dart';
+import '../common/errors.dart';
 import '../environment/process_runner.dart';
 import '../fs/project_file_system.dart';
+import '../inspection/project_inspector.dart';
 import '../knowledge/flutter_release.dart';
 import '../knowledge/knowledge_base.dart';
 import '../migration/edit_validation.dart';
@@ -27,6 +30,7 @@ final class CheckResult {
     this.details = const [],
     this.diagnoses = const [],
     this.failingModule,
+    this.modifiedFiles = const [],
   });
 
   final VerificationCheck check;
@@ -45,6 +49,9 @@ final class CheckResult {
   /// The Gradle module whose task failed, when identifiable.
   final String? failingModule;
 
+  /// Project configuration files the tool changed while it ran.
+  final List<String> modifiedFiles;
+
   Map<String, Object?> toJson() => {
         'check': check.name,
         'status': status.name,
@@ -57,6 +64,7 @@ final class CheckResult {
         if (diagnoses.isNotEmpty)
           'diagnoses': [for (final d in diagnoses) d.toJson()],
         if (failingModule != null) 'failingModule': failingModule,
+        if (modifiedFiles.isNotEmpty) 'modifiedFiles': modifiedFiles,
       };
 }
 
@@ -167,7 +175,13 @@ final class Verifier {
       environment: const {'FLUTTER_SUPPRESS_ANALYTICS': 'true'},
       timeout: const Duration(minutes: 45),
     );
+    final before = configurationSnapshot();
     final result = await runner.run(command, onOutput: onOutput);
+    final after = configurationSnapshot();
+    final modified = [
+      for (final path in {...before.keys, ...after.keys})
+        if (before[path] != after[path]) path,
+    ]..sort();
     Directory(logDirectory).createSync(recursive: true);
     final log = File(p.join(logDirectory, '${check.name}.log'));
     log.writeAsStringSync('\$ ${command.display}\n'
@@ -199,8 +213,47 @@ final class Verifier {
       logFile: log.path,
       diagnoses: passed ? const [] : diagnoseFailure(output),
       failingModule: passed ? null : failingGradleModule(output),
+      modifiedFiles: modified,
       details: passed ? const [] : _tail(output, 15),
     );
+  }
+
+  /// Hashes of the configuration files Reforge models (build scripts,
+  /// properties, manifests, Podfile, Xcode project, pubspec), so changes made
+  /// by external tools can be reported.
+  Map<String, String?> configurationSnapshot() {
+    final files = LocalProjectFileSystem(projectRoot);
+    final paths = <String>{};
+    try {
+      final workspace =
+          ProjectInspector(files, knowledge: knowledge).inspectWorkspace();
+      for (final project in workspace.projects) {
+        paths.add(project.pubspec.path);
+        final android = project.android;
+        if (android != null) {
+          paths.addAll(android.scripts.map((s) => s.path));
+          paths.add('${android.directory}/gradle.properties');
+          paths.add(
+              '${android.directory}/gradle/wrapper/gradle-wrapper.properties');
+          paths.addAll(android.manifests.map((m) => m.manifest.path));
+        }
+        final ios = project.ios;
+        if (ios != null) {
+          paths.addAll([
+            '${ios.directory}/Podfile',
+            '${ios.directory}/Runner.xcodeproj/project.pbxproj',
+            '${ios.directory}/Flutter/AppFrameworkInfo.plist',
+            '${ios.directory}/Runner/Info.plist',
+          ]);
+        }
+      }
+    } on ReforgeException {
+      return const {};
+    }
+    return {
+      for (final path in paths)
+        path: hashOfFile(p.join(projectRoot, p.joinAll(path.split('/')))),
+    };
   }
 
   static List<String> _tail(String output, int lines) {

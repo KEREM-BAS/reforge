@@ -190,10 +190,18 @@ final class MigrationApplier {
         }
       }
       if (conflicts.isNotEmpty && !force) {
+        final causes = [
+          for (final record in session.verifications)
+            for (final path in record.modifiedFiles)
+              if (conflicts.contains(path))
+                '$path was modified by `${record.command ?? record.check}` '
+                    'during verification.',
+        ];
         throw JournalException(
           'ROLLBACK_CONFLICT',
           'These files changed after the migration: ${conflicts.join(', ')}.',
-          hints: const [
+          hints: [
+            ...causes.toSet(),
             'Rolling back would discard those changes. Review them, then use '
                 '--force to restore the backups anyway.',
           ],

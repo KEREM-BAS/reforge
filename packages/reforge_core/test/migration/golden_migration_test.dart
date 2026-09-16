@@ -11,10 +11,6 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:reforge_core/reforge_core.dart';
-import 'package:reforge_core/src/migration/plan.dart';
-import 'package:reforge_core/src/migration/planner.dart';
-import 'package:reforge_core/src/migration/recipe.dart';
-import 'package:reforge_core/src/migration/recipes/built_in_recipes.dart';
 import 'package:test/test.dart';
 import 'package:yaml/yaml.dart';
 

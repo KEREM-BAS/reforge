@@ -198,11 +198,16 @@ final List<_Signature> _signatures = [
 
 final _failedTask = RegExp(r"Execution failed for task '(:[^']+)'");
 
+final _dartError = RegExp(r'^(\S+\.dart):(\d+):(\d+): Error: (.+)$');
+
 /// Explains known failures in [output], most specific first.
 List<FailureDiagnosis> diagnoseFailure(String output) {
   final results = <FailureDiagnosis>[];
   final seen = <String>{};
+  final dartErrors = <RegExpMatch>[];
   for (final line in output.split('\n')) {
+    final dartError = _dartError.firstMatch(line.trim());
+    if (dartError != null) dartErrors.add(dartError);
     for (final signature in _signatures) {
       final match = signature.pattern.firstMatch(line);
       if (match == null) continue;
@@ -211,6 +216,25 @@ List<FailureDiagnosis> diagnoseFailure(String output) {
         results.add(diagnosis);
       }
     }
+  }
+  if (dartErrors.isNotEmpty) {
+    final first = dartErrors.first;
+    final removedApi = dartErrors.any((m) =>
+        m.group(4)!.contains("isn't defined") ||
+        m.group(4)!.contains('Method not found') ||
+        m.group(4)!.contains('No named parameter'));
+    results.add(FailureDiagnosis(
+      id: 'DART_COMPILATION_ERROR',
+      explanation: 'The Dart code does not compile with this Flutter SDK '
+          '(${dartErrors.length} error(s)); the first is in '
+          '${first.group(1)}:${first.group(2)}: ${first.group(4)}',
+      suggestion: removedApi
+          ? 'The code uses APIs that are not available in this Flutter '
+              'release. Run `dart fix --apply` (Flutter ships automated fixes '
+              'for many removed APIs), then fix the remaining errors.'
+          : 'Fix the compilation errors reported by `flutter analyze`.',
+      evidence: first.group(0)!,
+    ));
   }
   return results;
 }

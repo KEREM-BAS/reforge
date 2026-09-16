@@ -41,7 +41,7 @@ void renderPlan(Terminal t, MigrationPlan plan,
     for (final skipped in plan.skipped) {
       t.line('  ${t.dim(t.info)} ${skipped.recipe.id}'
           '${skipped.project.isEmpty ? '' : t.dim(' (${skipped.project})')}');
-      t.paragraph(skipped.reason, indent: 4);
+      t.paragraph(skipped.reason);
     }
   }
 
@@ -152,11 +152,11 @@ void _renderStep(Terminal t, PlanStep step, {required bool verbose}) {
       ? t.dim(' recommended')
       : '';
   t.line('  $symbol ${t.bold(step.recipe.id)}  $label$necessity');
-  t.paragraph(step.proposal.summary, indent: 4);
+  t.paragraph(step.proposal.summary);
   if (verbose) {
-    t.paragraph(t.dim('Why: ${step.proposal.rationale}'), indent: 4);
+    t.paragraph(t.dim('Why: ${step.proposal.rationale}'));
     if (step.proposal.impact != null) {
-      t.paragraph(t.dim('Impact: ${step.proposal.impact}'), indent: 4);
+      t.paragraph(t.dim('Impact: ${step.proposal.impact}'));
     }
     for (final evidence in step.proposal.evidence) {
       final where = evidence.location?.display ?? evidence.source?.url;

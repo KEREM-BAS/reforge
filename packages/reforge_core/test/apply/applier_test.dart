@@ -2,13 +2,6 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:reforge_core/reforge_core.dart';
-import 'package:reforge_core/src/apply/applier.dart';
-import 'package:reforge_core/src/apply/journal.dart';
-import 'package:reforge_core/src/migration/plan.dart';
-import 'package:reforge_core/src/migration/planner.dart';
-import 'package:reforge_core/src/migration/recipe.dart';
-import 'package:reforge_core/src/migration/recipes/built_in_recipes.dart';
-import 'package:reforge_core/src/vcs/git.dart';
 import 'package:test/test.dart';
 
 import '../support/fixtures.dart';
@@ -112,7 +105,7 @@ void main() {
     edited.writeAsStringSync('${edited.readAsStringSync()}// my change\n');
 
     expect(
-      () => applier.rollback(),
+      applier.rollback,
       throwsA(isA<JournalException>()
           .having((e) => e.code, 'code', 'ROLLBACK_CONFLICT')
           .having((e) => e.message, 'message', contains('settings.gradle'))),

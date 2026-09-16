@@ -72,6 +72,7 @@ final class VerificationRecord {
     this.logFile,
     this.flutterVersion,
     this.details = const [],
+    this.modifiedFiles = const [],
   });
 
   factory VerificationRecord.fromJson(Map<String, Object?> json) =>
@@ -90,6 +91,10 @@ final class VerificationRecord {
         details: [
           for (final detail in (json['details'] as List?) ?? const [])
             detail as String,
+        ],
+        modifiedFiles: [
+          for (final path in (json['modifiedFiles'] as List?) ?? const [])
+            path as String,
         ],
       );
 
@@ -112,6 +117,10 @@ final class VerificationRecord {
 
   final List<String> details;
 
+  /// Project configuration files the checked tool modified while running
+  /// (for example Flutter's own migrations during `flutter build`).
+  final List<String> modifiedFiles;
+
   Map<String, Object?> toJson() => {
         'check': check,
         'status': status,
@@ -123,6 +132,7 @@ final class VerificationRecord {
         if (logFile != null) 'logFile': logFile,
         if (flutterVersion != null) 'flutterVersion': flutterVersion,
         if (details.isNotEmpty) 'details': details,
+        if (modifiedFiles.isNotEmpty) 'modifiedFiles': modifiedFiles,
       };
 }
 
