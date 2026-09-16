@@ -94,11 +94,12 @@ restored.
 ### `verify`
 
 ```text
-reforge verify [--session <id>] [--check static|pub-get|analyze|android|ios]... [--flutter <exe>]
+reforge verify [--session <id>] [--check static|pub-get|analyze|android|ios|macos]... [--flutter <exe>]
 ```
 
 Default checks are those required by the applied steps of the latest session.
-Android and iOS builds run the project's Gradle and CocoaPods build logic.
+Android, iOS and macOS builds run the project's Gradle and CocoaPods build
+logic; iOS and macOS builds run only on macOS.
 When checks run with a Flutter version other than the migration target, the
 results are marked as not being evidence for the target.
 
@@ -117,7 +118,7 @@ matches nothing known is shown as is, never guessed at.
 ### `diagnose`
 
 ```text
-reforge diagnose [--log <file>]... [--check pub-get|analyze|android|ios]...
+reforge diagnose [--log <file>]... [--check pub-get|analyze|android|ios|macos]...
                  [--to <version>] [--flutter <exe>] [--no-env]
 ```
 

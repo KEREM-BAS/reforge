@@ -132,6 +132,7 @@ final class FlutterRelease {
     required this.template,
     required this.imperativeGradleApply,
     required this.iosMinimumDeploymentTarget,
+    required this.macosMinimumDeploymentTarget,
     required this.androidMigrations,
     required this.appliesKotlinPlugin,
   });
@@ -150,6 +151,9 @@ final class FlutterRelease {
 
   /// The minimum iOS deployment target supported by the release.
   final ToolVersion iosMinimumDeploymentTarget;
+
+  /// The minimum macOS deployment target supported by the release.
+  final ToolVersion macosMinimumDeploymentTarget;
 
   /// Class names of the project migrations `flutter build` and `flutter run`
   /// apply to the Android host project before every Gradle build, for
@@ -204,6 +208,13 @@ final class FlutterRelease {
   KnowledgeSource get iosMinimumSource => sourceFor(version >= Version(3, 7, 0)
       ? 'packages/flutter_tools/lib/src/ios/migrations/ios_deployment_target_migration.dart'
       : 'packages/flutter_tools/lib/src/ios/migrations/deployment_target_migration.dart');
+
+  /// The source of [macosMinimumDeploymentTarget]: Flutter's macOS
+  /// deployment target migration (3.7+), before that the app template.
+  KnowledgeSource get macosMinimumSource => sourceFor(version >=
+          Version(3, 7, 0)
+      ? 'packages/flutter_tools/lib/src/macos/migrations/macos_deployment_target_migration.dart'
+      : 'packages/flutter_tools/templates/app_shared/macos.tmpl/Runner.xcodeproj/project.pbxproj.tmpl');
 
   /// The source of [imperativeGradleApply].
   KnowledgeSource get gradleApplySource =>

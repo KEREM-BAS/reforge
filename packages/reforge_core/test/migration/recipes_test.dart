@@ -2,6 +2,8 @@ import 'package:reforge_core/reforge_core.dart';
 import 'package:reforge_core/src/migration/recipes/dart/sdk_constraint_recipe.dart';
 import 'package:test/test.dart';
 
+import '../support/fixtures.dart';
+
 final knowledge = KnowledgeBase.bundled;
 
 MigrationPlan planFor(Map<String, String> files,
@@ -726,6 +728,102 @@ void main() {
       final dsl = step(plan, RecipeIds.androidFlutterGradlePluginDsl);
       expect(dsl.status, StepStatus.manual);
       expect(dsl.proposal.rationale, contains('Kotlin DSL'));
+    });
+  });
+
+  group('Darwin deployment targets', () {
+    Map<String, String> macosApp(String podfile) => {
+          'pubspec.yaml': pubspec('^3.9.0'),
+          // Flutter 3.3 template: MACOSX_DEPLOYMENT_TARGET = 10.11 in the
+          // project's Debug, Release and Profile configurations.
+          'macos/Runner.xcodeproj/project.pbxproj': readFixture(
+              'flutter_3_3_app', 'macos/Runner.xcodeproj/project.pbxproj'),
+          'macos/Podfile': podfile,
+        };
+
+    test('raises the macOS build settings and the Podfile platform', () {
+      final plan = planFor(
+          macosApp("platform :osx, '10.14'\n\ntarget 'Runner' do\nend\n"),
+          target: '3.35.0');
+      final macos = step(plan, RecipeIds.macosDeploymentTarget);
+      expect(macos.status, StepStatus.auto);
+      expect(macos.proposal.necessity, Necessity.required);
+      expect(macos.proposal.summary,
+          'Raise the macOS deployment target to 10.15.');
+      expect(
+          macos.proposal.rationale,
+          'Flutter 3.35.0 supports macOS 10.15 and later; the project targets '
+          '10.11, 10.14.');
+      expect(
+          macos.proposal.verification, contains(VerificationCheck.macosBuild));
+      expect(macos.proposal.evidence.first.source!.url,
+          endsWith('macos_deployment_target_migration.dart'));
+      expect(
+          'MACOSX_DEPLOYMENT_TARGET = 10.15;'.allMatches(
+              fileAfter(plan, 'macos/Runner.xcodeproj/project.pbxproj')),
+          hasLength(3));
+      expect(fileAfter(plan, 'macos/Podfile'),
+          "platform :osx, '10.15'\n\ntarget 'Runner' do\nend\n");
+      expect(skipReason(plan, RecipeIds.iosDeploymentTarget),
+          'The project has no iOS host.');
+    });
+
+    test('commented platform lines and pod overrides', () {
+      final plan = planFor(macosApp("# platform :osx, '10.14'\n\n"
+          'post_install do |installer|\n'
+          '  installer.pods_project.targets.each do |target|\n'
+          '    target.build_configurations.each do |config|\n'
+          "      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = "
+          "'10.13'\n"
+          '    end\n'
+          '  end\n'
+          'end\n'));
+      final macos = step(plan, RecipeIds.macosDeploymentTarget);
+      expect(fileAfter(plan, 'macos/Podfile'),
+          startsWith("# platform :osx, '12.0'\n"));
+      expect(fileAfter(plan, 'macos/Podfile'), contains("= '10.13'"));
+      expect(
+          macos.proposal.notes,
+          containsAll([
+            contains('forces pods to macOS 10.13'),
+            contains('commented-out platform line'),
+          ]));
+    });
+
+    test('an iOS platform in the macOS Podfile is left alone', () {
+      final plan = planFor(macosApp("platform :ios, '11.0'\n"));
+      expect(plan.fileChanges.map((c) => c.path),
+          isNot(contains('macos/Podfile')));
+    });
+
+    test('nothing to do when the minimum is met', () {
+      final plan =
+          planFor(macosApp("platform :osx, '10.11'\n"), target: '3.3.0');
+      expect(
+          skipReason(plan, RecipeIds.macosDeploymentTarget),
+          'The macOS deployment target already meets the minimum of Flutter '
+          '3.3.0 (macOS 10.11).');
+    });
+
+    test('analysis reports macOS deployment targets below the minimum', () {
+      final project = ProjectInspector(
+              MemoryProjectFileSystem(macosApp("platform :osx, '10.11'\n")),
+              knowledge: knowledge)
+          .inspectProject('');
+      List<Finding> findings(String target) => CompatibilityAnalyzer(knowledge)
+          .analyze(project, release: knowledge.resolveFlutterVersion(target))
+          .where(
+              (f) => f.code == 'MACOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM')
+          .toList();
+      final finding = findings('3.47.4').single;
+      expect(finding.relatedRecipes, [RecipeIds.macosDeploymentTarget]);
+      expect(
+          finding.message,
+          'The app targets macOS 10.11, but Flutter 3.47.4 supports macOS 12.0 '
+          'and later.');
+      expect(finding.evidence.first.description,
+          'project Debug: MACOSX_DEPLOYMENT_TARGET = 10.11');
+      expect(findings('3.3.0'), isEmpty);
     });
   });
 

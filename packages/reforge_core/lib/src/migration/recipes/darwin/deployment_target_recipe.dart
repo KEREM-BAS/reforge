@@ -3,6 +3,7 @@ import 'package:xml/xml_events.dart';
 
 import '../../../common/source.dart';
 import '../../../fs/project_file_system.dart';
+import '../../../model/darwin_project.dart';
 import '../../../model/finding.dart';
 import '../../../text/text_edit.dart';
 import '../../../version/tool_version.dart';
@@ -14,62 +15,96 @@ import '../../recipe_ids.dart';
 /// (flutter/flutter#178253). Earlier releases set it to the minimum.
 final _removesMinimumOsVersion = Version(3, 41, 0);
 
-/// Raises the iOS deployment target to the minimum supported by the target
-/// Flutter release.
-final class IosDeploymentTargetRecipe extends MigrationRecipe {
-  const IosDeploymentTargetRecipe();
+/// Raises the deployment target of the iOS or macOS host project to the
+/// minimum supported by the target Flutter release.
+///
+/// The Xcode build setting of the project and its application targets and
+/// the Podfile platform are raised, as Flutter's deployment target migrations
+/// do. On iOS, `MinimumOSVersion` in `AppFrameworkInfo.plist` follows too.
+final class DeploymentTargetRecipe extends MigrationRecipe {
+  const DeploymentTargetRecipe.ios() : platform = DarwinPlatform.ios;
+
+  const DeploymentTargetRecipe.macos() : platform = DarwinPlatform.macos;
+
+  final DarwinPlatform platform;
 
   @override
-  RecipeDescriptor get descriptor => const RecipeDescriptor(
-        id: RecipeIds.iosDeploymentTarget,
-        title: 'Raise the iOS deployment target',
-        summary: 'Raises IPHONEOS_DEPLOYMENT_TARGET of the project and '
-            'application targets, the Podfile platform and '
-            'AppFrameworkInfo.plist to the minimum iOS version of the target '
-            'Flutter release.',
-        category: RecipeCategory.ios,
-      );
+  RecipeDescriptor get descriptor => switch (platform) {
+        DarwinPlatform.ios => const RecipeDescriptor(
+            id: RecipeIds.iosDeploymentTarget,
+            title: 'Raise the iOS deployment target',
+            summary: 'Raises IPHONEOS_DEPLOYMENT_TARGET of the project and '
+                'application targets, the Podfile platform and '
+                'AppFrameworkInfo.plist to the minimum iOS version of the '
+                'target Flutter release.',
+            category: RecipeCategory.ios,
+          ),
+        DarwinPlatform.macos => const RecipeDescriptor(
+            id: RecipeIds.macosDeploymentTarget,
+            title: 'Raise the macOS deployment target',
+            summary: 'Raises MACOSX_DEPLOYMENT_TARGET of the project and '
+                'application targets and the Podfile platform to the minimum '
+                'macOS version of the target Flutter release.',
+            category: RecipeCategory.macos,
+          ),
+      };
 
   @override
   RecipeResult evaluate(RecipeContext context) {
-    final ios = context.project.ios;
-    if (ios == null) return const NotApplicable('The project has no iOS host.');
+    final name = platform.displayName;
+    final setting = platform.deploymentTargetSetting;
+    final host = switch (platform) {
+      DarwinPlatform.ios => context.project.ios,
+      DarwinPlatform.macos => context.project.macos,
+    };
+    if (host == null) return NotApplicable('The project has no $name host.');
     final release = context.target;
-    final minimum = release.iosMinimumDeploymentTarget;
+    final (minimum, minimumSource) = switch (platform) {
+      DarwinPlatform.ios => (
+          release.iosMinimumDeploymentTarget,
+          release.iosMinimumSource
+        ),
+      DarwinPlatform.macos => (
+          release.macosMinimumDeploymentTarget,
+          release.macosMinimumSource
+        ),
+    };
     final minimumText = '$minimum';
 
-    final lowSettings = ios.deploymentTargets
+    final lowSettings = host.deploymentTargets
         .where((s) =>
             s.isApplicationTarget && s.version != null && s.version! < minimum)
         .toList();
-    final otherLow = ios.deploymentTargets
+    final otherLow = host.deploymentTargets
         .where((s) =>
             !s.isApplicationTarget && s.version != null && s.version! < minimum)
         .toList();
-    final podfile = ios.podfile;
-    final platform = podfile?.platform;
-    final platformVersion = platform?.version == null
+    final podfile = host.podfile;
+    final declared = podfile?.platform;
+    final declaredVersion = declared?.version == null
         ? null
-        : ToolVersion.tryParse(platform!.version!);
-    final lowPlatform = platform != null &&
-        platform.name == 'ios' &&
-        platformVersion != null &&
-        platformVersion < minimum &&
-        platform.versionContentRange != null;
-    // Flutter's IOSDeploymentTargetMigration rewrites the template's
+        : ToolVersion.tryParse(declared!.version!);
+    final lowPlatform = declared != null &&
+        declared.name == platform.podfilePlatform &&
+        declaredVersion != null &&
+        declaredVersion < minimum &&
+        declared.versionContentRange != null;
+    // Flutter's deployment target migrations rewrite the template's
     // commented-out platform line too, so the line keeps documenting the
     // minimum.
     final commented = podfile?.commentedPlatform;
     final commentedVersion = commented?.version == null
         ? null
         : ToolVersion.tryParse(commented!.version!);
-    final lowCommentedPlatform = platform == null &&
+    final lowCommentedPlatform = declared == null &&
         commented != null &&
-        commented.name == 'ios' &&
+        commented.name == platform.podfilePlatform &&
         commentedVersion != null &&
         commentedVersion < minimum &&
         commented.versionContentRange != null;
-    final plist = _minimumOsVersion(context.files, ios.directory);
+    final plist = platform == DarwinPlatform.ios
+        ? _minimumOsVersion(context.files, host.directory)
+        : null;
     final plistVersion =
         plist == null ? null : ToolVersion.tryParse(plist.value);
     final plistNeedsChange = plist != null &&
@@ -80,8 +115,8 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
         !lowPlatform &&
         !lowCommentedPlatform &&
         !plistNeedsChange) {
-      return NotApplicable('The iOS deployment target already meets the '
-          'minimum of Flutter ${release.version} (iOS $minimumText).');
+      return NotApplicable('The $name deployment target already meets the '
+          'minimum of Flutter ${release.version} ($name $minimumText).');
     }
 
     final edits = <String, List<TextEdit>>{};
@@ -89,28 +124,28 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
         edits.putIfAbsent(path, () => []).add(edit);
     final evidence = <Evidence>[
       Evidence.knowledge(
-          'Flutter ${release.version} supports iOS $minimumText and later',
-          release.iosMinimumSource),
+          'Flutter ${release.version} supports $name $minimumText and later',
+          minimumSource),
     ];
-    for (final setting in lowSettings) {
-      add(setting.editable.path,
-          TextEdit.replace(setting.editable.range, minimumText));
+    for (final low in lowSettings) {
+      add(low.editable.path, TextEdit.replace(low.editable.range, minimumText));
       evidence.add(Evidence.file(
-          '${setting.owner} ${setting.configuration}: '
-          'IPHONEOS_DEPLOYMENT_TARGET = ${setting.value}',
-          setting.location));
+          '${low.owner} ${low.configuration}: $setting = ${low.value}',
+          low.location));
     }
     if (lowPlatform) {
       add(podfile!.path,
-          TextEdit.replace(platform.versionContentRange!, minimumText));
+          TextEdit.replace(declared.versionContentRange!, minimumText));
       evidence.add(Evidence.file(
-          "platform :ios, '${platform.version}'", platform.location));
+          "platform :${declared.name}, '${declared.version}'",
+          declared.location));
     }
     if (lowCommentedPlatform) {
       add(podfile!.path,
           TextEdit.replace(commented.versionContentRange!, minimumText));
       evidence.add(Evidence.file(
-          "# platform :ios, '${commented.version}' (commented out)",
+          "# platform :${commented.name}, '${commented.version}' "
+          '(commented out)',
           commented.location));
     }
     if (plistNeedsChange) {
@@ -125,16 +160,16 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
     }
 
     final notes = <String>[
-      for (final setting in otherLow)
-        'Target "${setting.owner}" (${setting.configuration}) sets '
-            'IPHONEOS_DEPLOYMENT_TARGET = ${setting.value}; it is not an app '
-            'target and was left unchanged.',
+      for (final low in otherLow)
+        'Target "${low.owner}" (${low.configuration}) sets '
+            '$setting = ${low.value}; it is not an app target and was left '
+            'unchanged.',
       if (podfile != null)
         for (final assignment in podfile.buildSettingAssignments)
-          if (assignment.setting == 'IPHONEOS_DEPLOYMENT_TARGET' &&
+          if (assignment.setting == setting &&
               assignment.value != null &&
               (ToolVersion.tryParse(assignment.value!) ?? minimum) < minimum)
-            'The Podfile post_install hook forces pods to iOS '
+            'The Podfile post_install hook forces pods to $name '
                 '${assignment.value} (${assignment.location.display}). Pods '
                 'may target a lower version than the app; review whether the '
                 'override is still needed.',
@@ -154,23 +189,26 @@ final class IosDeploymentTargetRecipe extends MigrationRecipe {
           ? StepStatus.review
           : StepStatus.auto,
       necessity: Necessity.required,
-      summary: 'Raise the iOS deployment target to $minimumText.',
-      rationale: 'Flutter ${release.version} supports iOS $minimumText and '
+      summary: 'Raise the $name deployment target to $minimumText.',
+      rationale: 'Flutter ${release.version} supports $name $minimumText and '
           'later; the project targets '
           '${{
         ...lowSettings.map((s) => s.value),
-        if (lowPlatform) platform.version
+        if (lowPlatform) declared.version
       }.join(', ')}.',
-      impact: 'Plugins that require iOS $minimumText fail to resolve, and '
+      impact: 'Plugins that require $name $minimumText fail to resolve, and '
           'builds warn about or rewrite the deployment target.',
       evidence: evidence,
       edits: [
         for (final entry in edits.entries) FileEdit(entry.key, entry.value),
       ],
       notes: notes,
-      verification: const [
+      verification: [
         VerificationCheck.staticAnalysis,
-        VerificationCheck.iosBuild,
+        switch (platform) {
+          DarwinPlatform.ios => VerificationCheck.iosBuild,
+          DarwinPlatform.macos => VerificationCheck.macosBuild,
+        },
       ],
       details: {'to': minimumText},
     );

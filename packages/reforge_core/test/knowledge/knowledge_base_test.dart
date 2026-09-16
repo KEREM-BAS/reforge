@@ -91,6 +91,21 @@ void main() {
       expect(release('3.3.0').iosMinimumDeploymentTarget, v('11.0'));
     });
 
+    test('macOS minimum deployment targets', () {
+      expect(release('3.3.10').macosMinimumDeploymentTarget, v('10.11'));
+      expect(release('3.7.0').macosMinimumDeploymentTarget, v('10.14'));
+      expect(release('3.32.8').macosMinimumDeploymentTarget, v('10.14'));
+      expect(release('3.35.0').macosMinimumDeploymentTarget, v('10.15'));
+      expect(release('3.44.0').macosMinimumDeploymentTarget, v('10.15'));
+      expect(release('3.47.4').macosMinimumDeploymentTarget, v('12.0'));
+      // Before Flutter had a macOS deployment target migration, the app
+      // template is the source.
+      expect(release('3.3.0').macosMinimumSource.url,
+          endsWith('macos.tmpl/Runner.xcodeproj/project.pbxproj.tmpl'));
+      expect(release('3.47.4').macosMinimumSource.url,
+          endsWith('macos/migrations/macos_deployment_target_migration.dart'));
+    });
+
     test('template gradle.properties history', () {
       String? property(String version, String key) =>
           release(version).template.gradleProperties[key];

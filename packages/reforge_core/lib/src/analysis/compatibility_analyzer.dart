@@ -49,42 +49,9 @@ final class CompatibilityAnalyzer {
         findings.addAll(_androidEnvironment(android, environment, release));
       }
     }
-    final ios = project.ios;
-    if (ios != null && release != null) {
-      final minimum = release.iosMinimumDeploymentTarget;
-      final below = ios.deploymentTargets
-          .where((s) =>
-              s.isApplicationTarget &&
-              s.version != null &&
-              s.version! < minimum)
-          .toList();
-      if (below.isNotEmpty) {
-        findings.add(Finding(
-          code: 'IOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM',
-          severity: Severity.warning,
-          title: 'iOS deployment target is below the minimum of Flutter '
-              '${release.version}',
-          message: 'The app targets iOS ${below.first.value}, but Flutter '
-              '${release.version} supports iOS $minimum and later.',
-          why: 'The Flutter engine for this release is built for iOS $minimum '
-              'and later.',
-          impact: 'Builds print warnings or rewrite the setting, and plugins '
-              'that require a newer iOS version fail to resolve with '
-              'CocoaPods or Swift Package Manager.',
-          suggestedAction: 'Raise IPHONEOS_DEPLOYMENT_TARGET (and the Podfile '
-              'platform, if set) to $minimum.',
-          evidence: [
-            for (final setting in below)
-              Evidence.file(
-                  '${setting.owner} ${setting.configuration}: '
-                  'IPHONEOS_DEPLOYMENT_TARGET = ${setting.value}',
-                  setting.location),
-            Evidence.knowledge(
-                'Flutter ${release.version} minimum iOS deployment target is $minimum',
-                release.iosMinimumSource),
-          ],
-          relatedRecipes: const [RecipeIds.iosDeploymentTarget],
-        ));
+    if (release != null) {
+      for (final host in [project.ios, project.macos].nonNulls) {
+        findings.addAll(_deploymentTarget(host, release));
       }
     }
     if (environment?.flutter?.version != null &&
@@ -110,6 +77,59 @@ final class CompatibilityAnalyzer {
       ));
     }
     return [for (final finding in findings) finding.forProject(project.path)];
+  }
+
+  Iterable<Finding> _deploymentTarget(
+      DarwinProject host, FlutterRelease release) sync* {
+    final platform = host.platform;
+    final name = platform.displayName;
+    final setting = platform.deploymentTargetSetting;
+    // Finding codes are spelled out so that they can be searched for.
+    final (code, minimum, source, recipe) = switch (platform) {
+      DarwinPlatform.ios => (
+          'IOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM',
+          release.iosMinimumDeploymentTarget,
+          release.iosMinimumSource,
+          RecipeIds.iosDeploymentTarget,
+        ),
+      DarwinPlatform.macos => (
+          'MACOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM',
+          release.macosMinimumDeploymentTarget,
+          release.macosMinimumSource,
+          RecipeIds.macosDeploymentTarget,
+        ),
+    };
+    final below = host.deploymentTargets
+        .where((s) =>
+            s.isApplicationTarget && s.version != null && s.version! < minimum)
+        .toList();
+    if (below.isEmpty) return;
+    yield Finding(
+      code: code,
+      severity: Severity.warning,
+      title: '$name deployment target is below the minimum of Flutter '
+          '${release.version}',
+      message: 'The app targets $name ${below.first.value}, but Flutter '
+          '${release.version} supports $name $minimum and later.',
+      why: 'The Flutter engine for this release is built for $name $minimum '
+          'and later.',
+      impact: 'Builds print warnings or rewrite the setting, and plugins that '
+          'require a newer $name version fail to resolve with CocoaPods or '
+          'Swift Package Manager.',
+      suggestedAction: 'Raise $setting (and the Podfile platform, if set) to '
+          '$minimum.',
+      evidence: [
+        for (final low in below)
+          Evidence.file(
+              '${low.owner} ${low.configuration}: $setting = ${low.value}',
+              low.location),
+        Evidence.knowledge(
+            'Flutter ${release.version} minimum $name deployment target is '
+            '$minimum',
+            source),
+      ],
+      relatedRecipes: [recipe],
+    );
   }
 
   Iterable<Finding> _problems(FlutterProject project) sync* {

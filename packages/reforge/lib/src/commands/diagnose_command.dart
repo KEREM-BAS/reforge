@@ -11,6 +11,7 @@ const _checkNames = {
   'analyze': VerificationCheck.analyze,
   'android': VerificationCheck.androidBuild,
   'ios': VerificationCheck.iosBuild,
+  'macos': VerificationCheck.macosBuild,
 };
 
 /// Build output to explain: a log file or a check that was run.
@@ -273,4 +274,5 @@ String _label(VerificationCheck check) => switch (check) {
       VerificationCheck.analyze => 'flutter analyze',
       VerificationCheck.androidBuild => 'the Android build',
       VerificationCheck.iosBuild => 'the iOS build',
+      VerificationCheck.macosBuild => 'the macOS build',
     };

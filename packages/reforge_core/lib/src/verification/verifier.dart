@@ -180,6 +180,21 @@ final class Verifier {
               summary: 'The project has no iOS host.');
         }
         arguments = const ['build', 'ios', '--debug', '--no-codesign'];
+      case VerificationCheck.macosBuild:
+        if (operatingSystem != 'macos') {
+          return CheckResult(
+              check: check,
+              status: CheckStatus.skipped,
+              summary:
+                  'macOS builds require macOS (this is $operatingSystem).');
+        }
+        if (!Directory(p.join(projectRoot, 'macos')).existsSync()) {
+          return CheckResult(
+              check: check,
+              status: CheckStatus.skipped,
+              summary: 'The project has no macOS host.');
+        }
+        arguments = const ['build', 'macos', '--debug'];
     }
 
     final command = ExternalCommand(

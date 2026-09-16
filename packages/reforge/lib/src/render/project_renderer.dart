@@ -50,8 +50,9 @@ void renderProject(Terminal t, ProjectReport report, KnowledgeBase knowledge,
 
   final android = project.android;
   if (android != null) _renderAndroid(t, android, current?.release);
-  final ios = project.ios;
-  if (ios != null) _renderIos(t, ios);
+  for (final host in [project.ios, project.macos].nonNulls) {
+    _renderDarwin(t, host);
+  }
   if (project.otherPlatforms.isNotEmpty) {
     t.line();
     t.line(
@@ -153,16 +154,16 @@ void _renderAndroid(
   }
 }
 
-void _renderIos(Terminal t, DarwinProject ios) {
-  final manager = switch (ios.dependencyManager) {
+void _renderDarwin(Terminal t, DarwinProject host) {
+  final manager = switch (host.dependencyManager) {
     DarwinDependencyManager.cocoapods => 'CocoaPods',
     DarwinDependencyManager.swiftPackageManager => 'Swift Package Manager',
     DarwinDependencyManager.both => 'CocoaPods and Swift Package Manager',
     DarwinDependencyManager.none => 'no dependency manager configured',
   };
   t.line();
-  t.line('  ${t.bold('iOS')}  ${t.dim(manager)}');
-  final targets = ios.deploymentTargets;
+  t.line('  ${t.bold(host.platform.displayName)}  ${t.dim(manager)}');
+  final targets = host.deploymentTargets;
   if (targets.isEmpty) {
     t.field('Deployment', t.dim('unknown'));
   } else {
@@ -178,7 +179,7 @@ void _renderIos(Terminal t, DarwinProject ios) {
               '${entry.value.map((s) => s.configuration).toSet().join('/')}')}');
     }
   }
-  final podfile = ios.podfile;
+  final podfile = host.podfile;
   if (podfile != null) {
     final platform = podfile.platform;
     t.field(
@@ -195,9 +196,9 @@ void _renderIos(Terminal t, DarwinProject ios) {
               '${custom.map((a) => a.setting).toSet().join(', ')}'));
     }
   }
-  if (ios.appDelegateLanguage != null) {
+  if (host.appDelegateLanguage != null) {
     t.field('AppDelegate',
-        ios.appDelegateLanguage == 'swift' ? 'Swift' : 'Objective-C');
+        host.appDelegateLanguage == 'swift' ? 'Swift' : 'Objective-C');
   }
 }
 
@@ -242,6 +243,10 @@ void _renderDependencies(
   } else {
     final android = project.pluginsFor('android').length;
     final ios = project.pluginsFor('ios').length;
-    t.field('Plugins', '$android Android ${t.dot} $ios iOS');
+    final macos = project.pluginsFor('macos').length;
+    t.field(
+        'Plugins',
+        '$android Android ${t.dot} $ios iOS'
+            '${project.macos == null ? '' : ' ${t.dot} $macos macOS'}');
   }
 }

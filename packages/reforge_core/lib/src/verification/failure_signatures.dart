@@ -515,17 +515,36 @@ final List<_Signature> _signatures = [
       final pod = RegExp(r'Specs satisfying the `([^\s`]+)').firstMatch(line) ??
           RegExp(r'compatible versions for pod "([^"]+)"')
               .firstMatch(context.output);
+      // Flutter names the platform in its own message; macOS apps resolve
+      // plugin pods from Flutter/ephemeral/.symlinks.
+      final macos =
+          context.output.contains('minimum macOS deployment version') ||
+              context.output.contains('Flutter/ephemeral/.symlinks/');
+      final name = macos ? 'macOS' : 'iOS';
+      final minimum = RegExp(r"increase your application's deployment target "
+              r'to at least (\d+(?:\.\d+)*)')
+          .firstMatch(context.output);
       return FailureDiagnosis(
         id: 'COCOAPODS_DEPLOYMENT_TARGET',
         explanation: '${pod == null ? 'A pod' : 'Pod ${pod.group(1)}'} '
-            'requires a newer iOS deployment target than the platform '
-            'CocoaPods resolves for.',
-        suggestion: 'Raise the iOS deployment target and the Podfile '
+            'requires a newer $name deployment target than the platform '
+            'CocoaPods resolves for'
+            '${minimum == null ? '' : ' ($name ${minimum.group(1)})'}.',
+        suggestion: 'Raise the $name deployment target and the Podfile '
             'platform, or use a version of the pod that supports the '
             "app's deployment target.",
         evidence: line,
-        relatedRecipes: const [RecipeIds.iosDeploymentTarget],
-        details: {if (pod != null) 'pod': pod.group(1)!},
+        relatedRecipes: [
+          if (macos)
+            RecipeIds.macosDeploymentTarget
+          else
+            RecipeIds.iosDeploymentTarget,
+        ],
+        details: {
+          'platform': macos ? 'macos' : 'ios',
+          if (pod != null) 'pod': pod.group(1)!,
+          if (minimum != null) 'minimum': minimum.group(1)!,
+        },
       );
     },
   ),

@@ -28,6 +28,8 @@ current Flutter: 3.3.0 (created with)
     Register the clean task lazily in android/build.gradle.
   ✓ IOS_DEPLOYMENT_TARGET  auto
     Raise the iOS deployment target to 15.0.
+  ✓ MACOS_DEPLOYMENT_TARGET  auto
+    Raise the macOS deployment target to 12.0.
 
 Recommended, not planned
   • ANDROID_GRADLE_JVM_ARGS
@@ -36,14 +38,14 @@ Recommended, not planned
     Remove android.enableJetifier=true from android/gradle.properties.
   Plan them with --include ANDROID_GRADLE_JVM_ARGS,ANDROID_JETIFIER
 
-Files to change (10)
+Files to change (13)
   ...
 Summary
-  8 steps · 6 auto · 2 review · 10 files
+  9 steps · 7 auto · 2 review · 13 files
   ✓ Complete: applying this plan resolves every known blocker for Flutter 3.47.4.
 ```
 
-> Status: early development. The engine, fourteen migration recipes and the CLI
+> Status: early development. The engine, fifteen migration recipes and the CLI
 > work end to end on the fixture projects in this repository. Expect breaking
 > changes before 1.0.
 
@@ -106,6 +108,7 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 | [ANDROID_GRADLE_JVM_ARGS](docs/recipes/ANDROID_GRADLE_JVM_ARGS.md) | Gradle memory settings of an older template (recommended) |
 | [ANDROID_JETIFIER](docs/recipes/ANDROID_JETIFIER.md) | Stop running Jetifier (recommended) |
 | [IOS_DEPLOYMENT_TARGET](docs/recipes/IOS_DEPLOYMENT_TARGET.md) | Minimum iOS deployment target |
+| [MACOS_DEPLOYMENT_TARGET](docs/recipes/MACOS_DEPLOYMENT_TARGET.md) | Minimum macOS deployment target |
 | [DART_SDK_CONSTRAINT](docs/recipes/DART_SDK_CONSTRAINT.md) | `environment.sdk` accepts the target Dart |
 
 ## Getting started

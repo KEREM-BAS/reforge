@@ -106,7 +106,7 @@ Knowledge is data, not code paths, and every entry cites a source.
   style and `gradle.properties`; `flutter.*SdkVersion` defaults; the Android
   project migrations the tool runs before builds; whether Flutter applies the
   Kotlin Gradle plugin itself; imperative Gradle apply support; and the minimum
-  iOS deployment target.
+  iOS and macOS deployment targets.
 - Toolchain release lists (Gradle with checksums, AGP, Kotlin) are generated
   from their official metadata by `tool/generate_toolchain_releases.dart`.
 - Android tables and facts that are not in Flutter's sources (AGP to minimum
@@ -245,8 +245,9 @@ A migration is successful only when verified.
    confirm every edited file parses, and re-evaluate every applied recipe; each
    must now be `NotApplicable`.
 2. **Toolchain verification** (explicit): `flutter pub get`, `flutter analyze`,
-   `flutter build apk --debug`, `flutter build ios --debug --no-codesign`
-   (macOS only; skipped with a reason elsewhere). Checks are selected from the
+   `flutter build apk --debug`, `flutter build ios --debug --no-codesign` and
+   `flutter build macos --debug` (the last two on macOS only; skipped with a
+   reason elsewhere). Checks are selected from the
    verification requirements of applied recipes. Commands that execute project
    build logic (Gradle, CocoaPods) are labelled as such.
 

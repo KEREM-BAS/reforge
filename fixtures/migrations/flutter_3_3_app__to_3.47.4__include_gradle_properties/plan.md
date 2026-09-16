@@ -64,6 +64,11 @@ Raise the iOS deployment target to 15.0.
 - note: MinimumOSVersion is removed from AppFrameworkInfo.plist, as Flutter 3.47.4 sets it when building App.framework.
 - files: ios/Runner.xcodeproj/project.pbxproj, ios/Podfile, ios/Flutter/AppFrameworkInfo.plist
 
+## MACOS_DEPLOYMENT_TARGET (auto, required, applied)
+
+Raise the macOS deployment target to 12.0.
+- files: macos/Runner.xcodeproj/project.pbxproj, macos/Podfile
+
 ## Skipped
 
 - DART_SDK_CONSTRAINT: environment.sdk ">=2.18.0 <3.0.0" allows Dart 3.13.3 (pub reads the <3.0.0 upper bound as <4.0.0).

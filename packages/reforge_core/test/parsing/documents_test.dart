@@ -243,6 +243,17 @@ dependencies:
       expect(podfile.postInstallStatementCount, 2);
     });
 
+    test('macOS template Podfile', () {
+      final podfile = Podfile.parse(
+          'macos/Podfile', readFixture('flutter_3_3_app', 'macos/Podfile'));
+      expect(podfile.isReliable, isTrue, reason: '${podfile.diagnostics}');
+      expect(podfile.platform!.name, 'osx');
+      expect(podfile.platform!.version, '10.11');
+      expect(podfile.installsFlutterPods, isTrue);
+      expect(podfile.callsFlutterPodfileSetup, isTrue);
+      expect(podfile.callsFlutterAdditionalBuildSettings, isTrue);
+    });
+
     test('customized Podfile with platform and deployment target override', () {
       final source = readFixture('firebase_flavors_app', 'ios/Podfile');
       final podfile = Podfile.parse('ios/Podfile', source);

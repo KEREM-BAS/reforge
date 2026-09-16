@@ -181,7 +181,7 @@ final class ProjectInspector {
       ios: ios,
       macos: macos,
       otherPlatforms: [
-        for (final platform in const ['macos', 'web', 'linux', 'windows'])
+        for (final platform in const ['web', 'linux', 'windows'])
           if (files.directoryExists(_join(projectPath, platform))) platform,
       ],
       problems: problems,
@@ -205,8 +205,8 @@ final class ProjectInspector {
     if (!pubspec.dependsOnFlutter && !pubspec.hasFlutterSection) {
       return FlutterProjectKind.dartPackage;
     }
-    final hasHost = files.directoryExists(_join(projectPath, 'android')) ||
-        files.directoryExists(_join(projectPath, 'ios'));
+    final hasHost = const ['android', 'ios', 'macos']
+        .any((host) => files.directoryExists(_join(projectPath, host)));
     return hasHost ? FlutterProjectKind.app : FlutterProjectKind.package;
   }
 

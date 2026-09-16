@@ -222,6 +222,31 @@ Execution failed for task ':app:checkDebugDuplicateClasses'.
       );
       expect(skipped.status, CheckStatus.skipped);
       expect(skipped.summary, contains('require macOS'));
+
+      final noHost = await verifier(runner).runToolCheck(
+        VerificationCheck.macosBuild,
+        flutterExecutable: 'flutter',
+        logDirectory: p.join(project.path, '.reforge', 'logs'),
+      );
+      expect(noHost.status, CheckStatus.skipped);
+      expect(noHost.summary, 'The project has no macOS host.');
+    });
+
+    test('builds macOS hosts', () async {
+      Directory(p.join(project.path, 'macos')).createSync();
+      final runner = ScriptedRunner((command) => CommandResult(
+          command: command,
+          exitCode: 0,
+          stdout: '** BUILD SUCCEEDED **',
+          stderr: '',
+          elapsed: const Duration(seconds: 5)));
+      final result = await verifier(runner).runToolCheck(
+        VerificationCheck.macosBuild,
+        flutterExecutable: 'flutter',
+        logDirectory: p.join(project.path, '.reforge', 'logs'),
+      );
+      expect(result.status, CheckStatus.passed);
+      expect(result.command, 'flutter build macos --debug');
     });
   });
 }

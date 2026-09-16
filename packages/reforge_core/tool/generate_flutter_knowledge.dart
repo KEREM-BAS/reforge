@@ -4,8 +4,8 @@
 //  * the Flutter release manifest (versions, revisions, Dart versions, dates)
 //  * flutter/flutter sources at each stable release tag (Gradle/AGP/Kotlin/
 //    Java/minSdk floors, template toolchain and gradle.properties, Android
-//    defaults, Android build migrations, iOS minimum, imperative Gradle
-//    apply behaviour)
+//    defaults, Android build migrations, iOS and macOS minimums, imperative
+//    Gradle apply behaviour)
 //
 // Usage:
 //   curl -o /tmp/releases_macos.json \
@@ -208,37 +208,74 @@ Future<void> main(List<String> arguments) async {
       imperativeApply = 'supported';
     }
 
-    String iosMinimum() {
-      return _iosFromDarwin ??
-          _iosFromMigration ??
-          (throw StateError('$tag: iOS minimum not found.'));
-    }
-
+    // Minimum deployment targets. darwin.dart (3.44+) declares them; the
+    // deployment target migrations rewrite older values to them; before
+    // Flutter had a macOS migration (3.7), the app template's value applies.
     final darwin = await git.read(
         tag, 'packages/flutter_tools/lib/src/darwin/darwin.dart');
-    _iosFromDarwin = null;
-    if (darwin != null) {
-      final match =
-          RegExp(r'ios\s*=>\s*Version\((\d+),\s*(\d+)').firstMatch(darwin);
-      if (match != null) _iosFromDarwin = '${match.group(1)}.${match.group(2)}';
+    String? fromDarwin(String platform) {
+      final match = darwin == null
+          ? null
+          : RegExp('\\b$platform\\s*=>\\s*Version\\((\\d+),\\s*(\\d+)')
+              .firstMatch(darwin);
+      return match == null ? null : '${match.group(1)}.${match.group(2)}';
     }
-    final migration = await git.firstOf(tag, const [
-      'packages/flutter_tools/lib/src/ios/migrations/ios_deployment_target_migration.dart',
-      'packages/flutter_tools/lib/src/ios/migrations/deployment_target_migration.dart',
-    ]);
-    _iosFromMigration = null;
-    if (migration != null) {
-      final match = RegExp(
-              r"deploymentTargetReplacement\s*=\s*'IPHONEOS_DEPLOYMENT_TARGET = ([\d.]+);'")
-          .firstMatch(migration);
-      if (match != null) _iosFromMigration = match.group(1);
+
+    Future<String?> fromMigration(List<String> paths, String setting) async {
+      final migration = await git.firstOf(tag, paths);
+      if (migration == null) return null;
+      return RegExp(
+              "deploymentTargetReplacement\\s*=\\s*'$setting = ([\\d.]+);'")
+          .firstMatch(migration)
+          ?.group(1);
     }
-    if (_iosFromDarwin != null &&
-        _iosFromMigration != null &&
-        _iosFromDarwin != _iosFromMigration) {
-      warnings.add(
-          '$tag: darwin.dart says iOS $_iosFromDarwin, migration says $_iosFromMigration.');
+
+    Future<String?> fromTemplate(List<String> paths, String setting) async {
+      final template = await git.firstOf(tag, paths);
+      if (template == null) return null;
+      final values = {
+        for (final match
+            in RegExp('$setting = ([\\d.]+);').allMatches(template))
+          match.group(1)!,
+      };
+      if (values.length > 1) {
+        warnings.add('$tag: the template sets $setting to $values.');
+      }
+      return values.length == 1 ? values.single : null;
     }
+
+    String minimum(String platform, Map<String, String?> candidates) {
+      final found = {
+        for (final entry in candidates.entries)
+          if (entry.value != null) entry.key: entry.value!,
+      };
+      if (found.isEmpty) {
+        throw StateError('$tag: $platform minimum not found.');
+      }
+      if (found.values.toSet().length > 1) {
+        warnings.add('$tag: $platform minimum differs between sources: '
+            '$found.');
+      }
+      return found.values.first;
+    }
+
+    final iosMinimum = minimum('iOS', {
+      'darwin.dart': fromDarwin('ios'),
+      'migration': await fromMigration(const [
+        'packages/flutter_tools/lib/src/ios/migrations/ios_deployment_target_migration.dart',
+        'packages/flutter_tools/lib/src/ios/migrations/deployment_target_migration.dart',
+      ], 'IPHONEOS_DEPLOYMENT_TARGET'),
+    });
+    final macosMinimum = minimum('macOS', {
+      'darwin.dart': fromDarwin('macos'),
+      'migration': await fromMigration(const [
+        'packages/flutter_tools/lib/src/macos/migrations/macos_deployment_target_migration.dart',
+      ], 'MACOSX_DEPLOYMENT_TARGET'),
+      'template': await fromTemplate(const [
+        'packages/flutter_tools/templates/app/macos.tmpl/Runner.xcodeproj/project.pbxproj.tmpl',
+        'packages/flutter_tools/templates/app_shared/macos.tmpl/Runner.xcodeproj/project.pbxproj.tmpl',
+      ], 'MACOSX_DEPLOYMENT_TARGET'),
+    });
 
     final dart = (release['dart_sdk_version']! as String).split(' ').first;
     final date = (release['release_date']! as String).substring(0, 10);
@@ -271,7 +308,8 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     minSdk: ${sdkDefault('minSdkVersion')},
     ndk: '${ndkMatch.group(1)}',
     imperativeApply: '$imperativeApply',
-    iosMinimum: '${iosMinimum()}',
+    iosMinimum: '$iosMinimum',
+    macosMinimum: '$macosMinimum',
   ),''');
   }
   await git.close();
@@ -322,9 +360,6 @@ String _dartString(String value) {
       .replaceAll(r'$', r'\$');
   return "'$escaped'";
 }
-
-String? _iosFromDarwin;
-String? _iosFromMigration;
 
 /// Reads blobs through a single `git cat-file --batch` process.
 final class _GitObjectReader {

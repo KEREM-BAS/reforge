@@ -63,6 +63,7 @@ Raise the iOS deployment target to 15.0.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
 - ANDROID_CLEAN_TASK: android/build.gradle has no clean task in the form the Flutter tool migrates.
+- MACOS_DEPLOYMENT_TARGET: The project has no macOS host.
 
 ## Remaining findings
 

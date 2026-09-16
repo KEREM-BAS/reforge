@@ -86,6 +86,24 @@ void main() {
         expect(editableText('flutter_3_3_app', setting.editable), '11.0');
       }
     });
+
+    test('macOS project', () {
+      final macos = project.macos!;
+      expect(macos.platform, DarwinPlatform.macos);
+      expect(macos.directory, 'macos');
+      expect(macos.dependencyManager, DarwinDependencyManager.cocoapods);
+      expect(macos.effectiveDeploymentTarget, ToolVersion.parse('10.11'));
+      expect(macos.deploymentTargets.map((d) => d.configuration),
+          unorderedEquals(['Debug', 'Release', 'Profile']));
+      expect(macos.podfile!.platform!.name, 'osx');
+      expect(macos.podfile!.platform!.version, '10.11');
+      expect(macos.appFrameworkMinimumOsVersion, isNull);
+      expect(macos.appDelegateLanguage, 'swift');
+      for (final setting in macos.deploymentTargets) {
+        expect(editableText('flutter_3_3_app', setting.editable), '10.11');
+      }
+      expect(project.otherPlatforms, isEmpty);
+    });
   });
 
   test('Flutter 3.13 transitional template mixes both styles', () {

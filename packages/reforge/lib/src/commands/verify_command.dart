@@ -10,6 +10,7 @@ const _checkNames = {
   'analyze': VerificationCheck.analyze,
   'android': VerificationCheck.androidBuild,
   'ios': VerificationCheck.iosBuild,
+  'macos': VerificationCheck.macosBuild,
 };
 
 final class VerifyCommand extends ReforgeCommand {
@@ -22,8 +23,8 @@ final class VerifyCommand extends ReforgeCommand {
       ..addMultiOption('check',
           allowed: _checkNames.keys,
           help: 'Checks to run. Default: the checks required by the applied '
-              "migration steps. Android and iOS builds run the project's Gradle "
-              'and CocoaPods build logic.')
+              'migration steps. Android, iOS and macOS builds run the '
+              "project's Gradle and CocoaPods build logic.")
       ..addOption('flutter',
           valueHelp: 'executable',
           defaultsTo: 'flutter',
@@ -285,6 +286,7 @@ String _label(VerificationCheck check) => switch (check) {
       VerificationCheck.analyze => 'analyze',
       VerificationCheck.androidBuild => 'android build',
       VerificationCheck.iosBuild => 'ios build',
+      VerificationCheck.macosBuild => 'macos build',
     };
 
 String _formatDuration(Duration duration) {

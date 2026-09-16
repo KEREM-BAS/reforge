@@ -134,7 +134,7 @@ final class FlutterProject {
           'overrides': pubspec.dependencyOverrides.length,
           'locked': lockfile?.packages.length,
           'nativePlugins': {
-            for (final platform in const ['android', 'ios'])
+            for (final platform in const ['android', 'ios', 'macos'])
               platform: pluginRegistry == null
                   ? null
                   : [for (final p in pluginsFor(platform)) p.name],

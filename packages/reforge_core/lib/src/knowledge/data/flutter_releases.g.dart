@@ -42,6 +42,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '9.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.0.1',
@@ -73,6 +74,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '9.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.0.2',
@@ -104,6 +106,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '9.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.0.3',
@@ -135,6 +138,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '9.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.0.4',
@@ -166,6 +170,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '9.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.0.5',
@@ -197,6 +202,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '9.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.0',
@@ -228,6 +234,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.1',
@@ -259,6 +266,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.2',
@@ -290,6 +298,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.3',
@@ -321,6 +330,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.4',
@@ -352,6 +362,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.5',
@@ -383,6 +394,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.6',
@@ -414,6 +426,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.7',
@@ -445,6 +458,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.8',
@@ -476,6 +490,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.9',
@@ -507,6 +522,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.3.10',
@@ -538,6 +554,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '21.1.6352462',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.11',
   ),
   FlutterReleaseRecord(
     version: '3.7.0',
@@ -569,6 +586,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.1',
@@ -600,6 +618,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.2',
@@ -631,6 +650,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.3',
@@ -662,6 +682,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.4',
@@ -693,6 +714,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.5',
@@ -724,6 +746,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.6',
@@ -755,6 +778,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.7',
@@ -786,6 +810,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.8',
@@ -817,6 +842,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.9',
@@ -848,6 +874,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.10',
@@ -879,6 +906,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.11',
@@ -910,6 +938,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.7.12',
@@ -941,6 +970,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.0',
@@ -972,6 +1002,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.1',
@@ -1006,6 +1037,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.2',
@@ -1040,6 +1072,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.3',
@@ -1074,6 +1107,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.4',
@@ -1108,6 +1142,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.5',
@@ -1142,6 +1177,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.10.6',
@@ -1176,6 +1212,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.0',
@@ -1210,6 +1247,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.1',
@@ -1244,6 +1282,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.2',
@@ -1278,6 +1317,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.3',
@@ -1312,6 +1352,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.4',
@@ -1346,6 +1387,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.5',
@@ -1380,6 +1422,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.6',
@@ -1414,6 +1457,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.7',
@@ -1448,6 +1492,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.8',
@@ -1482,6 +1527,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.13.9',
@@ -1516,6 +1562,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supported',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.0',
@@ -1551,6 +1598,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.1',
@@ -1586,6 +1634,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.2',
@@ -1621,6 +1670,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.3',
@@ -1656,6 +1706,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.4',
@@ -1691,6 +1742,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.5',
@@ -1726,6 +1778,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '11.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.6',
@@ -1761,6 +1814,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.7',
@@ -1796,6 +1850,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.8',
@@ -1831,6 +1886,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.16.9',
@@ -1866,6 +1922,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'supportedAlongsideDeclarative',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.0',
@@ -1901,6 +1958,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.1',
@@ -1936,6 +1994,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.2',
@@ -1971,6 +2030,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.3',
@@ -2006,6 +2066,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.4',
@@ -2041,6 +2102,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.5',
@@ -2076,6 +2138,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.19.6',
@@ -2111,6 +2174,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.22.0',
@@ -2146,6 +2210,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.22.1',
@@ -2181,6 +2246,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.22.2',
@@ -2216,6 +2282,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.22.3',
@@ -2251,6 +2318,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.24.0',
@@ -2288,6 +2356,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.24.1',
@@ -2325,6 +2394,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.24.2',
@@ -2362,6 +2432,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.24.3',
@@ -2399,6 +2470,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.24.4',
@@ -2436,6 +2508,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.24.5',
@@ -2473,6 +2546,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '23.1.7779620',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.27.0',
@@ -2511,6 +2585,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.1.10909125',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.27.1',
@@ -2549,6 +2624,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.1.10909125',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.27.2',
@@ -2587,6 +2663,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.1.10909125',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.27.3',
@@ -2625,6 +2702,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.1.10909125',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.27.4',
@@ -2663,6 +2741,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.1.10909125',
     imperativeApply: 'deprecated',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.29.0',
@@ -2701,6 +2780,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.29.1',
@@ -2739,6 +2819,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.29.2',
@@ -2777,6 +2858,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.29.3',
@@ -2815,6 +2897,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.0',
@@ -2853,6 +2936,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.1',
@@ -2891,6 +2975,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.2',
@@ -2929,6 +3014,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.3',
@@ -2967,6 +3053,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.4',
@@ -3005,6 +3092,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.5',
@@ -3043,6 +3131,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.6',
@@ -3081,6 +3170,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.7',
@@ -3119,6 +3209,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.32.8',
@@ -3157,6 +3248,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '26.3.11579264',
     imperativeApply: 'removed',
     iosMinimum: '12.0',
+    macosMinimum: '10.14',
   ),
   FlutterReleaseRecord(
     version: '3.35.0',
@@ -3195,6 +3287,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.1',
@@ -3233,6 +3326,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.2',
@@ -3271,6 +3365,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.3',
@@ -3309,6 +3404,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.4',
@@ -3347,6 +3443,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.5',
@@ -3385,6 +3482,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.6',
@@ -3423,6 +3521,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.35.7',
@@ -3461,6 +3560,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '27.0.12077973',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.0',
@@ -3498,6 +3598,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.1',
@@ -3535,6 +3636,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.2',
@@ -3572,6 +3674,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.3',
@@ -3609,6 +3712,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.4',
@@ -3646,6 +3750,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.5',
@@ -3683,6 +3788,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.6',
@@ -3720,6 +3826,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.7',
@@ -3757,6 +3864,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.8',
@@ -3794,6 +3902,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.9',
@@ -3831,6 +3940,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.38.10',
@@ -3868,6 +3978,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.0',
@@ -3905,6 +4016,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.1',
@@ -3942,6 +4054,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.2',
@@ -3979,6 +4092,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.3',
@@ -4016,6 +4130,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.4',
@@ -4053,6 +4168,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.5',
@@ -4090,6 +4206,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.6',
@@ -4127,6 +4244,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.7',
@@ -4164,6 +4282,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.8',
@@ -4201,6 +4320,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.41.9',
@@ -4238,6 +4358,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.0',
@@ -4279,6 +4400,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.1',
@@ -4320,6 +4442,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.2',
@@ -4361,6 +4484,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.3',
@@ -4402,6 +4526,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.4',
@@ -4443,6 +4568,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.5',
@@ -4484,6 +4610,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.6',
@@ -4525,6 +4652,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.7',
@@ -4566,6 +4694,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.8',
@@ -4607,6 +4736,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.44.9',
@@ -4648,6 +4778,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '13.0',
+    macosMinimum: '10.15',
   ),
   FlutterReleaseRecord(
     version: '3.47.0',
@@ -4689,6 +4820,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '15.0',
+    macosMinimum: '12.0',
   ),
   FlutterReleaseRecord(
     version: '3.47.1',
@@ -4730,6 +4862,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '15.0',
+    macosMinimum: '12.0',
   ),
   FlutterReleaseRecord(
     version: '3.47.2',
@@ -4771,6 +4904,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '15.0',
+    macosMinimum: '12.0',
   ),
   FlutterReleaseRecord(
     version: '3.47.3',
@@ -4812,6 +4946,7 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '15.0',
+    macosMinimum: '12.0',
   ),
   FlutterReleaseRecord(
     version: '3.47.4',
@@ -4853,5 +4988,6 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     ndk: '28.2.13676358',
     imperativeApply: 'removed',
     iosMinimum: '15.0',
+    macosMinimum: '12.0',
   ),
 ];

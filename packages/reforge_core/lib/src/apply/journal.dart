@@ -146,7 +146,8 @@ final class VerificationRecord {
         ],
       );
 
-  /// `static`, `pubGet`, `analyze`, `androidBuild`, `iosBuild`.
+  /// `static`, `pubGet`, `analyze`, `androidBuild`, `iosBuild`,
+  /// `macosBuild`.
   final String check;
 
   /// `passed`, `failed` or `skipped`.

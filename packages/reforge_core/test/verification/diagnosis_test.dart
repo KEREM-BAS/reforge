@@ -35,6 +35,35 @@ void main() {
           contains('Android SDK Platform 35'));
     });
 
+    test('CocoaPods deployment targets name the platform', () {
+      const specs = 'Specs satisfying the `url_launcher_macos (from '
+          '`Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)` '
+          'dependency were found, but they required a higher minimum '
+          'deployment target.';
+      final macos = single('$specs\n'
+          'Error: The plugin "url_launcher_macos" requires a higher minimum '
+          'macOS deployment version than your application is targeting.\n'
+          "To build, increase your application's deployment target to at "
+          'least 10.15 as described at https://flutter.dev/to/macos-deploy');
+      expect(macos.id, 'COCOAPODS_DEPLOYMENT_TARGET');
+      expect(
+          macos.explanation,
+          'Pod url_launcher_macos requires a newer macOS deployment target '
+          'than the platform CocoaPods resolves for (macOS 10.15).');
+      expect(macos.relatedRecipes, [RecipeIds.macosDeploymentTarget]);
+      expect(macos.details, {
+        'platform': 'macos',
+        'pod': 'url_launcher_macos',
+        'minimum': '10.15',
+      });
+
+      final ios = single('Specs satisfying the `camera_avfoundation (from '
+          '`.symlinks/plugins/camera_avfoundation/ios`)` dependency were '
+          'found, but they required a higher minimum deployment target.');
+      expect(ios.relatedRecipes, [RecipeIds.iosDeploymentTarget]);
+      expect(ios.details['platform'], 'ios');
+    });
+
     test('toolchain bugs and AGP 9 defaults', () {
       expect(
           single('ERROR:/tmp/classes.jar: R8: com.android.tools.r8.internal.'

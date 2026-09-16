@@ -7,7 +7,8 @@ Flutter release.
 
 - `IPHONEOS_DEPLOYMENT_TARGET` of the Xcode project and of application targets
   below the minimum;
-- an active Podfile `platform :ios, '…'` below the minimum;
+- a Podfile `platform :ios, '…'` below the minimum, or the template's
+  commented-out platform line when no platform is set;
 - `MinimumOSVersion` in `ios/Flutter/AppFrameworkInfo.plist`.
 
 ## Why
@@ -28,7 +29,8 @@ present) at each release tag. Since Flutter 3.41 the tool removes
 
 - Each low `IPHONEOS_DEPLOYMENT_TARGET` value in `project.pbxproj` (edited in
   place through an OpenStep property list parser).
-- The Podfile platform version, when the line is active.
+- The Podfile platform version; the commented-out platform line is updated
+  when no platform is set, as Flutter's migration does.
 - `AppFrameworkInfo.plist`: removes `MinimumOSVersion` for targets 3.41 and
   later, otherwise sets it to the minimum.
 

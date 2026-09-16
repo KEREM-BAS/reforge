@@ -138,11 +138,13 @@ final class Podfile {
             usesFrameworks = true;
           case 'use_modular_headers!':
             usesModularHeaders = true;
-          case 'flutter_install_all_ios_pods':
+          case 'flutter_install_all_ios_pods' ||
+                'flutter_install_all_macos_pods':
             installsFlutterPods = true;
-          case 'flutter_ios_podfile_setup':
+          case 'flutter_ios_podfile_setup' || 'flutter_macos_podfile_setup':
             callsSetup = true;
-          case 'flutter_additional_ios_build_settings':
+          case 'flutter_additional_ios_build_settings' ||
+                'flutter_additional_macos_build_settings':
             callsAdditionalSettings = true;
           case 'pod':
             if (tokens.length >= 2 && tokens[1].stringValue != null) {

@@ -9,7 +9,7 @@ import 'android/min_sdk_recipe.dart';
 import 'android/namespace_recipe.dart';
 import 'android/plugin_version_recipes.dart';
 import 'dart/sdk_constraint_recipe.dart';
-import 'ios/deployment_target_recipe.dart';
+import 'darwin/deployment_target_recipe.dart';
 
 /// The recipes shipped with Reforge, in their default evaluation order.
 List<MigrationRecipe> builtInRecipes() => const [
@@ -26,5 +26,6 @@ List<MigrationRecipe> builtInRecipes() => const [
       LazyCleanTaskRecipe(),
       GradleJvmArgsRecipe(),
       JetifierRecipe(),
-      IosDeploymentTargetRecipe(),
+      DeploymentTargetRecipe.ios(),
+      DeploymentTargetRecipe.macos(),
     ];

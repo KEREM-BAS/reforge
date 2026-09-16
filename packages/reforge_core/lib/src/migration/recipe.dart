@@ -42,7 +42,7 @@ enum Necessity {
   recommended,
 }
 
-enum RecipeCategory { flutter, dart, android, ios }
+enum RecipeCategory { flutter, dart, android, ios, macos }
 
 /// Checks that prove a step worked. Static checks run offline; the others run
 /// external tools during `reforge verify`.
@@ -61,6 +61,9 @@ enum VerificationCheck {
 
   /// `flutter build ios --debug --no-codesign` succeeds (macOS only).
   iosBuild,
+
+  /// `flutter build macos --debug` succeeds (macOS only).
+  macosBuild,
 }
 
 /// Static description of a recipe.

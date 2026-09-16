@@ -8,10 +8,10 @@
 //   dart run tool/render_flutter_app_template.dart \
 //     --flutter ~/flutter --tag 3.3.0 --sdk-bounds "'>=2.18.0 <3.0.0'" \
 //     --out ../../fixtures/projects/flutter_3_3_app [--name my_app] \
-//     [--org com.example] [--podfile]
+//     [--org com.example] [--platforms android,ios,macos] [--podfile]
 //
-// Only Android (Kotlin) and iOS (Swift) files plus pubspec/lib are rendered;
-// binary images and IDE files are skipped.
+// Only Android (Kotlin), iOS (Swift) and macOS files plus pubspec/lib are
+// rendered; binary images and IDE files are skipped.
 
 import 'dart:io';
 
@@ -30,7 +30,12 @@ Future<void> main(List<String> arguments) async {
     ..addOption('out', help: 'Output directory.', mandatory: true)
     ..addOption('name', defaultsTo: 'my_app')
     ..addOption('org', defaultsTo: 'com.example')
-    ..addFlag('podfile', help: 'Also render the CocoaPods Podfile.');
+    ..addMultiOption('platforms',
+        allowed: const ['android', 'ios', 'macos'],
+        defaultsTo: const ['android', 'ios'],
+        help: 'Host platforms to render.')
+    ..addFlag('podfile',
+        help: 'Also render the CocoaPods Podfiles of iOS and macOS.');
   final args = parser.parse(arguments);
 
   final checkout = args['flutter'] as String;
@@ -38,6 +43,7 @@ Future<void> main(List<String> arguments) async {
   final out = Directory(args['out'] as String);
   final name = args['name'] as String;
   final org = args['org'] as String;
+  final platforms = (args['platforms'] as List<String>).toSet();
 
   String git(List<String> command) {
     final result = Process.runSync('git', ['-C', checkout, ...command]);
@@ -48,6 +54,10 @@ Future<void> main(List<String> arguments) async {
   }
 
   final revision = git(['rev-parse', '$tag^{commit}']).trim();
+  // `flutter create` writes the current year into copyright notices; use the
+  // year of the release so that fixtures are reproducible.
+  final year =
+      git(['log', '-1', '--format=%cd', '--date=format:%Y', revision]).trim();
   final gradleUtils = git([
     'show',
     '$tag:packages/flutter_tools/lib/src/android/gradle_utils.dart'
@@ -76,6 +86,8 @@ Future<void> main(List<String> arguments) async {
     'organization': org,
     'androidIdentifier': '$org.$name',
     'iosIdentifier': '$org.$camelName',
+    'macosIdentifier': '$org.$camelName',
+    'year': year,
     'dartSdk': r'$FLUTTER_ROOT/bin/cache/dart-sdk',
     'dartSdkVersionBounds': args['sdk-bounds'] as String,
     'agpVersion': constant('templateAndroidGradlePluginVersion'),
@@ -92,11 +104,11 @@ Future<void> main(List<String> arguments) async {
     'hasIosDevelopmentTeam': false,
     'iosDevelopmentTeam': '',
     'implementationTests': false,
-    'android': true,
-    'ios': true,
+    'android': platforms.contains('android'),
+    'ios': platforms.contains('ios'),
     'web': false,
     'linux': false,
-    'macos': false,
+    'macos': platforms.contains('macos'),
     'windows': false,
   };
 
@@ -104,11 +116,16 @@ Future<void> main(List<String> arguments) async {
     'packages/flutter_tools/templates/app_shared',
     'packages/flutter_tools/templates/app',
   ];
-  const platformDirs = {
-    'android.tmpl': 'android',
-    'android-kotlin.tmpl': 'android',
-    'ios.tmpl': 'ios',
-    'ios-swift.tmpl': 'ios',
+  final platformDirs = {
+    if (platforms.contains('android')) ...{
+      'android.tmpl': 'android',
+      'android-kotlin.tmpl': 'android',
+    },
+    if (platforms.contains('ios')) ...{
+      'ios.tmpl': 'ios',
+      'ios-swift.tmpl': 'ios',
+    },
+    if (platforms.contains('macos')) 'macos.tmpl': 'macos',
   };
 
   final files = git(['ls-tree', '-r', '--name-only', tag, '--', ...roots])
@@ -160,16 +177,22 @@ Future<void> main(List<String> arguments) async {
   }
 
   if (args['podfile'] as bool) {
-    final candidates = ['Podfile-ios-swift', 'Podfile-ios'];
-    for (final candidate in candidates) {
-      final path = 'packages/flutter_tools/templates/cocoapods/$candidate';
-      final result =
-          Process.runSync('git', ['-C', checkout, 'show', '$tag:$path']);
-      if (result.exitCode == 0) {
-        File(p.join(out.path, 'ios', 'Podfile'))
-            .writeAsStringSync(result.stdout as String);
-        written++;
-        break;
+    const podfiles = {
+      'ios': ['Podfile-ios-swift', 'Podfile-ios'],
+      'macos': ['Podfile-macos'],
+    };
+    for (final MapEntry(key: platform, value: candidates) in podfiles.entries) {
+      if (!platforms.contains(platform)) continue;
+      for (final candidate in candidates) {
+        final path = 'packages/flutter_tools/templates/cocoapods/$candidate';
+        final result =
+            Process.runSync('git', ['-C', checkout, 'show', '$tag:$path']);
+        if (result.exitCode == 0) {
+          File(p.join(out.path, platform, 'Podfile'))
+              .writeAsStringSync(result.stdout as String);
+          written++;
+          break;
+        }
       }
     }
   }

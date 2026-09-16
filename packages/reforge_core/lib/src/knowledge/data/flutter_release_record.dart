@@ -30,6 +30,7 @@ final class FlutterReleaseRecord {
     required this.ndk,
     required this.imperativeApply,
     required this.iosMinimum,
+    required this.macosMinimum,
   });
 
   final String version;
@@ -57,4 +58,5 @@ final class FlutterReleaseRecord {
   final String ndk;
   final String imperativeApply;
   final String iosMinimum;
+  final String macosMinimum;
 }

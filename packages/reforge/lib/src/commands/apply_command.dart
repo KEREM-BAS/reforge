@@ -225,4 +225,5 @@ String _checkLabel(VerificationCheck check) => switch (check) {
       VerificationCheck.analyze => 'flutter analyze',
       VerificationCheck.androidBuild => 'an Android debug build',
       VerificationCheck.iosBuild => 'an iOS build',
+      VerificationCheck.macosBuild => 'a macOS build',
     };
