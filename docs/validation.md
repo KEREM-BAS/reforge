@@ -198,6 +198,11 @@ a text search:
   `flutter_local_notifications` and `flutter_image_compress_common`. Fixed
   (f02cd57); 185 of 186 podspecs now yield their iOS minimum, and the
   remaining one declares none;
+- macOS: of the 188 plugin versions that declare macOS, 141 have a macOS or
+  shared `darwin/` podspec; Reforge read the macOS minimum of all 141
+  (`s.osx.deployment_target`, `s.platform = :osx`, ...), matching a text
+  search. The others are app-facing packages, Dart-only implementations or
+  Swift Package Manager-only releases without a podspec (2cf4735);
 - v1 embedding: the five flagged plugin versions (`awesome_notifications`
   0.9.3+1, `device_info` 2.0.3, `flutter_inappwebview` 5.8.0,
   `flutter_native_image` 0.0.6+1, `uni_links` 0.5.1) all really use
