@@ -95,8 +95,7 @@ String applyTextEdits(String source, Iterable<TextEdit> edits) {
 TextEdit? minimalEdit(String before, String after) {
   if (before == after) return null;
   var prefix = 0;
-  final maxPrefix =
-      before.length < after.length ? before.length : after.length;
+  final maxPrefix = before.length < after.length ? before.length : after.length;
   while (prefix < maxPrefix &&
       before.codeUnitAt(prefix) == after.codeUnitAt(prefix)) {
     prefix++;

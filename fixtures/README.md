@@ -1,0 +1,34 @@
+# Reforge fixtures
+
+Fixture repositories are part of Reforge's test suite. They must look like real
+Flutter projects from specific eras, including their quirks.
+
+## `projects/`
+
+| Fixture | Origin | What it exercises |
+| --- | --- | --- |
+| `flutter_3_3_app` | `flutter create` templates of Flutter **3.3.0**, rendered with `tool/render_flutter_app_template.dart` | Imperative Gradle plugin apply, `package=` in manifests (no `namespace`), AGP 7.1.2 / Gradle 7.4 / Kotlin 1.6.10, `sdk: '>=2.18.0 <3.0.0'`, iOS 11.0 |
+| `flutter_3_13_app` | Flutter **3.13.0** templates | Imperative apply with `namespace`, AGP 7.3.0 / Gradle 7.5 / Kotlin 1.7.10, iOS 11.0 |
+| `flutter_3_22_app` | Flutter **3.22.0** templates | Declarative `plugins {}` (Groovy), AGP 7.3.0 / Gradle 7.6.3 / Kotlin 1.7.10, iOS 12.0 |
+| `flutter_3_44_app` | A real `flutter create` with Flutter **3.44.0** plus `shared_preferences` and `url_launcher` | Kotlin DSL, AGP 9.0.1 / Gradle 9.1.0 / Kotlin 2.3.20, generated `pubspec.lock`, `.flutter-plugins-dependencies`, `package_config.json` |
+| `firebase_flavors_app` | 3.13 base, customized | Firebase Gradle plugins in `buildscript`, plugins applied at the end of the file, flavors, release signing, hard-coded SDK levels, wrapper checksum, customized Podfile with a deployment target override |
+| `custom_gradle_app` | 3.3 base, customized | `ext {}` version variables, an unmapped classpath plugin (Huawei AGConnect), conditional plugin apply, extra `settings.gradle` modules, other uses of `$kotlin_version` |
+| `broken_gradle_app` | 3.22 base, damaged | An `android/app/build.gradle` with an unbalanced brace |
+| `melos_workspace` | Hand-written | A pub workspace with two apps from different template eras and a shared package |
+
+Generated files that contained machine-specific absolute paths were sanitized
+(`/home/developer/...`, `/opt/flutter`).
+
+Fixture projects carry their own `.gitignore` files. Some intentionally
+committed files are ignored by those rules (for example
+`.flutter-plugins-dependencies`); add such files with `git add -f`.
+
+## Regenerating template fixtures
+
+```bash
+cd packages/reforge_core
+dart run tool/render_flutter_app_template.dart \
+  --flutter <flutter git checkout> --tag 3.3.0 \
+  --sdk-bounds "'>=2.18.0 <3.0.0'" \
+  --out ../../fixtures/projects/flutter_3_3_app --name legacy_app --podfile
+```

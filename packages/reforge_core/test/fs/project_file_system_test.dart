@@ -36,8 +36,8 @@ void main() {
       expect(overlay.observedInputs.keys,
           containsAll(['pubspec.yaml', 'missing.txt']));
       expect(overlay.observedInputs['missing.txt'], isNull);
-      expect(overlay.observedInputs['pubspec.yaml'],
-          contentHash('name: app\n'));
+      expect(
+          overlay.observedInputs['pubspec.yaml'], contentHash('name: app\n'));
     });
 
     test('exposes writes without touching the base', () {
@@ -96,8 +96,8 @@ void main() {
       Link(p.join(temp.path, 'leak.txt'))
           .createSync(p.join(outside.path, 'secret.txt'));
       final fs = LocalProjectFileSystem(temp.path);
-      expect(() => fs.readString('leak.txt'),
-          throwsA(isA<FileReadException>()));
+      expect(
+          () => fs.readString('leak.txt'), throwsA(isA<FileReadException>()));
     });
 
     test('follows symbolic links inside the project', () {
@@ -111,8 +111,7 @@ void main() {
     test('rejects invalid UTF-8', () {
       File(p.join(temp.path, 'bin.dat')).writeAsBytesSync([0xff, 0xfe, 0x00]);
       final fs = LocalProjectFileSystem(temp.path);
-      expect(() => fs.readString('bin.dat'),
-          throwsA(isA<FileReadException>()));
+      expect(() => fs.readString('bin.dat'), throwsA(isA<FileReadException>()));
     });
   });
 }

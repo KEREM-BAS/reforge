@@ -94,8 +94,7 @@ final class LocalProjectFileSystem implements ProjectFileSystem {
 
   bool _isInsideRoot(String resolved) {
     final normalized = p.normalize(resolved);
-    return normalized == _resolvedRoot ||
-        p.isWithin(_resolvedRoot, normalized);
+    return normalized == _resolvedRoot || p.isWithin(_resolvedRoot, normalized);
   }
 
   @override
@@ -248,7 +247,8 @@ final class OverlayFileSystem implements ProjectFileSystem {
 /// An in-memory project, used by tests and by tooling that analyzes content
 /// not stored on disk.
 final class MemoryProjectFileSystem implements ProjectFileSystem {
-  MemoryProjectFileSystem(Map<String, String> files, {this.rootPath = '/memory'})
+  MemoryProjectFileSystem(Map<String, String> files,
+      {this.rootPath = '/memory'})
       : _files = {
           for (final entry in files.entries)
             normalizeProjectPath(entry.key): entry.value,

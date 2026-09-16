@@ -72,14 +72,12 @@ final class ToolVersion implements Comparable<ToolVersion> {
 
   /// Splits a qualifier into lowercase alphabetic and normalized numeric
   /// tokens, so `RC-01` and `rc1` compare (and hash) equally.
-  static List<String> _qualifierTokens(String qualifier) => _qualifierToken
-      .allMatches(qualifier.toLowerCase())
-      .map((m) {
+  static List<String> _qualifierTokens(String qualifier) =>
+      _qualifierToken.allMatches(qualifier.toLowerCase()).map((m) {
         final token = m.group(0)!;
         final number = int.tryParse(token);
         return number == null ? token : number.toString();
-      })
-      .toList();
+      }).toList();
 
   static int _compareQualifiers(String a, String b) {
     final listA = _qualifierTokens(a);

@@ -1,0 +1,12 @@
+name: ui_kit
+description: Shared widgets for Acme apps.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter

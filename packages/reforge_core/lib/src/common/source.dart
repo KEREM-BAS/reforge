@@ -18,8 +18,7 @@ final class TextRange {
 
   bool contains(int position) => position >= offset && position < end;
 
-  bool intersects(TextRange other) =>
-      offset < other.end && other.offset < end;
+  bool intersects(TextRange other) => offset < other.end && other.offset < end;
 
   String textOf(String source) => source.substring(offset, end);
 

@@ -1,0 +1,17 @@
+name: acme_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - apps/customer_app
+  - apps/driver_app
+  - packages/ui_kit
+
+dev_dependencies:
+  melos: ^7.0.0
+
+melos:
+  scripts:
+    analyze: melos exec -- flutter analyze
