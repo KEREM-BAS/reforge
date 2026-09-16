@@ -85,6 +85,7 @@ final class Finding {
     this.evidence = const [],
     this.relatedRecipes = const [],
     this.project,
+    this.subject,
   });
 
   final String code;
@@ -101,6 +102,10 @@ final class Finding {
   /// Workspace-relative path of the project the finding belongs to.
   final String? project;
 
+  /// What the finding is about when it is not the project itself, for
+  /// example the name of a dependency.
+  final String? subject;
+
   Finding forProject(String projectPath) => Finding(
         code: code,
         severity: severity,
@@ -113,6 +118,7 @@ final class Finding {
         evidence: evidence,
         relatedRecipes: relatedRecipes,
         project: projectPath,
+        subject: subject,
       );
 
   Map<String, Object?> toJson() => {
@@ -127,5 +133,6 @@ final class Finding {
         'evidence': [for (final e in evidence) e.toJson()],
         if (relatedRecipes.isNotEmpty) 'relatedRecipes': relatedRecipes,
         if (project != null) 'project': project,
+        if (subject != null) 'subject': subject,
       };
 }

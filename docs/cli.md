@@ -107,6 +107,38 @@ example `GRADLE_OUT_OF_MEMORY`, `JETIFIER_TRANSFORM_FAILED`,
 `DART_COMPILATION_ERROR`, with the recipes that address them. Output that
 matches nothing known is shown as is, never guessed at.
 
+### `diagnose`
+
+```text
+reforge diagnose [--log <file>]... [--check pub-get|analyze|android|ios]...
+                 [--to <version>] [--flutter <exe>] [--no-env]
+```
+
+Explains why a build fails. With `--log`, reads existing build output (for
+example saved from CI); otherwise runs the checks (default: the Android debug
+build, which executes the project's Gradle build logic).
+
+Each recognized failure is then confirmed, or not, by inspecting the workspace,
+its resolved packages and the environment against the project's Flutter release
+(or `--to`):
+
+- `Namespace not specified` in the `:camera_android` module is confirmed by
+  `PLUGIN_ANDROID_NAMESPACE_MISSING` for that plugin, with the build script it
+  was read from;
+- `cannot find symbol ... class Registrar` names the plugins from the compiler
+  errors and is confirmed by `PLUGIN_ANDROID_V1_EMBEDDING` with the source line;
+- a pub SDK failure names the package and is confirmed by
+  `DEPENDENCY_DART_SDK_INCOMPATIBLE`;
+- toolchain rejections are confirmed by the corresponding version or JDK
+  findings.
+
+Confirmed diagnoses show the finding's specific action and recipes. Failures
+Reforge does not recognize are reported as such, with the end of the output.
+Many signatures follow the error handlers of the Flutter tool itself
+(`gradle_errors.dart`); `--verbose` names the source.
+
+Exit code 1 when a check it ran failed; 0 otherwise.
+
 ### `rollback [session]`
 
 Restores the most recent applied session (or the given one): first the

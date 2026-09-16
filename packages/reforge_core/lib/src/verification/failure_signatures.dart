@@ -1,6 +1,7 @@
 import 'package:path/path.dart' as p;
 
 import '../knowledge/flutter_release.dart';
+import '../knowledge/knowledge_source.dart';
 import '../migration/recipe_ids.dart';
 
 /// A recognized failure in tool output, with an explanation.
@@ -11,9 +12,11 @@ final class FailureDiagnosis {
     required this.suggestion,
     required this.evidence,
     this.relatedRecipes = const [],
+    this.details = const {},
+    this.source,
   });
 
-  /// Stable identifier of the signature, e.g. `GRADLE_JDK_INCOMPATIBLE`.
+  /// Stable identifier of the signature, e.g. `GRADLE_JDK_TOO_NEW`.
   final String id;
   final String explanation;
   final String suggestion;
@@ -23,25 +26,39 @@ final class FailureDiagnosis {
 
   final List<String> relatedRecipes;
 
+  /// Values read from the output, e.g. `{"plugin": "camera_android"}`.
+  final Map<String, String> details;
+
+  /// Where the knowledge that recognizes this failure comes from, when it is
+  /// documented elsewhere (for example the Flutter tool's own handler).
+  final KnowledgeSource? source;
+
   Map<String, Object?> toJson() => {
         'id': id,
         'explanation': explanation,
         'suggestion': suggestion,
         'evidence': evidence,
         if (relatedRecipes.isNotEmpty) 'relatedRecipes': relatedRecipes,
+        if (details.isNotEmpty) 'details': details,
+        if (source != null) 'source': source!.toJson(),
       };
 }
 
 final class _Signature {
-  const _Signature(this.id, this.pattern, this.describe);
+  const _Signature(this.id, this.pattern, this.describe,
+      {this.secondary = false});
 
   final String id;
   final RegExp pattern;
 
-  /// Explains a matching [line]; `null` when the whole [output] shows that
-  /// the line means something else.
+  /// Explains a matching [line]; `null` when the whole output shows that the
+  /// line means something else.
   final FailureDiagnosis? Function(
       RegExpMatch match, String line, _FailureContext context) describe;
+
+  /// Reported only when no other signature matches, because its message also
+  /// appears as a consequence of other failures.
+  final bool secondary;
 }
 
 final class _FailureContext {
@@ -53,7 +70,18 @@ final class _FailureContext {
   final FlutterRelease? target;
 }
 
+/// The Flutter tool recognizes many Gradle failures itself; these signatures
+/// follow its handlers in `gradle_errors.dart`.
+KnowledgeSource _flutterHandler(String handler) => KnowledgeSource(
+      title: 'Flutter tool Gradle error handler $handler (Flutter 3.47.4)',
+      url: 'https://github.com/flutter/flutter/blob/3.47.4/packages/'
+          'flutter_tools/lib/src/android/gradle_errors.dart',
+    );
+
 const _jetifierFailure = 'Jetifier failed to transform';
+
+final _pubCachePlugin = RegExp(
+    r'(?:pub\.dev|pub\.dartlang\.org)[/\\]([a-z][a-z0-9_]*)-(\d[^/\\]*)[/\\]android[/\\]');
 
 /// Known failure messages of Flutter, Gradle, the Android Gradle Plugin, pub
 /// and CocoaPods.
@@ -62,8 +90,22 @@ const _jetifierFailure = 'Jetifier failed to transform';
 /// matches no signature is reported as unexplained rather than guessed.
 final List<_Signature> _signatures = [
   _Signature(
+    'ANDROID_SDK_LICENSES_NOT_ACCEPTED',
+    RegExp('You have not accepted the license agreements of the following SDK '
+        r'components:\s*\[?([^\]]*)'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'ANDROID_SDK_LICENSES_NOT_ACCEPTED',
+      explanation: 'The build needs Android SDK components whose licenses '
+          'have not been accepted'
+          '${match.group(1)!.trim().isEmpty ? '' : ': ${match.group(1)!.trim()}'}.',
+      suggestion: 'Run `flutter doctor --android-licenses`.',
+      evidence: line,
+      source: _flutterHandler('licenseNotAcceptedHandler'),
+    ),
+  ),
+  _Signature(
     'GRADLE_JDK_TOO_NEW',
-    RegExp(r'Unsupported class file major version (\d+)'),
+    RegExp(r'Unsupported class file major version\s+(\d+)'),
     (match, line, context) {
       // Jetifier reports class files it cannot read with the same message.
       if (context.output.contains(_jetifierFailure)) return null;
@@ -76,6 +118,8 @@ final List<_Signature> _signatures = [
             '`flutter config --jdk-dir=<path>`.',
         evidence: line,
         relatedRecipes: const [RecipeIds.androidGradleWrapper],
+        details: {'java': '$java'},
+        source: _flutterHandler('incompatibleJavaAndGradleVersionsHandler'),
       );
     },
   ),
@@ -129,13 +173,67 @@ final List<_Signature> _signatures = [
           RecipeIds.androidGradleJvmArgs,
           if (jetifier) RecipeIds.androidJetifier,
         ],
+        source: _flutterHandler('javaHeapSpaceHandler'),
       );
     },
   ),
   _Signature(
+    'R8_BUG_AGP_7_3',
+    RegExp(r'com\.android\.tools\.r8\.internal.*: Unused argument with users'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'R8_BUG_AGP_7_3',
+      explanation: 'Android Gradle Plugin 7.3 ships a version of R8 with a bug '
+          'that fails dexing (issuetracker.google.com/issues/242308990).',
+      suggestion: 'Upgrade the Android Gradle Plugin to 7.4.0 or newer.',
+      evidence: line,
+      relatedRecipes: const [RecipeIds.androidAgpVersion],
+      details: const {'minimumAgp': '7.4.0'},
+      source: _flutterHandler('r8DexingBugInAgp73Handler'),
+    ),
+  ),
+  _Signature(
+    'PLUGIN_MIN_SDK_HIGHER',
+    RegExp(r'uses-sdk:minSdkVersion (\d+) cannot be smaller than version '
+        r'(\d+) declared in library \[:?([^\]]+)\]'),
+    (match, line, context) {
+      final library = match.group(3)!;
+      return FailureDiagnosis(
+        id: 'PLUGIN_MIN_SDK_HIGHER',
+        explanation: '$library requires Android API level ${match.group(2)}, '
+            'but the app declares minSdk ${match.group(1)}.',
+        suggestion: 'Raise minSdk to ${match.group(2)} in the app module '
+            '(devices below API level ${match.group(2)} can then no longer '
+            'install the app), or use a version of $library that supports '
+            'API level ${match.group(1)}.',
+        evidence: line,
+        details: {
+          'library': library,
+          'declared': match.group(1)!,
+          'required': match.group(2)!,
+        },
+        source: _flutterHandler('minSdkVersionHandler'),
+      );
+    },
+  ),
+  _Signature(
+    'COMPILE_SDK_BELOW_DEPENDENCY_MINIMUM',
+    RegExp(r'The minCompileSdk \((\d+)\) specified in a'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'COMPILE_SDK_BELOW_DEPENDENCY_MINIMUM',
+      explanation: 'A dependency requires compileSdk ${match.group(1)} or '
+          'higher.',
+      suggestion: 'Raise compileSdk to ${match.group(1)}. Projects using '
+          'flutter.compileSdkVersion get newer values from newer Flutter '
+          'releases.',
+      evidence: line,
+      details: {'required': match.group(1)!},
+      source: _flutterHandler('minCompileSdkVersionHandler'),
+    ),
+  ),
+  _Signature(
     'AGP_JDK_TOO_OLD',
-    RegExp(
-        r'Android Gradle plugin requires Java (\d+) to run\. You are currently using Java (\d+)'),
+    RegExp(r'Android Gradle plugin requires Java (\d+)(?:\.\d+)? to run\. '
+        r'You are currently using Java (\d+)'),
     (match, line, context) => FailureDiagnosis(
       id: 'AGP_JDK_TOO_OLD',
       explanation: 'The Android Gradle Plugin requires Java ${match.group(1)}, '
@@ -143,6 +241,26 @@ final List<_Signature> _signatures = [
       suggestion: 'Install JDK ${match.group(1)} and select it with '
           '`flutter config --jdk-dir=<path>`.',
       evidence: line,
+      details: {'required': match.group(1)!, 'used': match.group(2)!},
+      source: _flutterHandler('incompatibleJavaAndAgpVersionsHandler'),
+    ),
+  ),
+  _Signature(
+    'GRADLE_TOO_OLD_FOR_KOTLIN_PLUGIN',
+    RegExp(r'The current Gradle version (\S+) is not compatible with the '
+        'Kotlin Gradle plugin'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'GRADLE_TOO_OLD_FOR_KOTLIN_PLUGIN',
+      explanation: 'Gradle ${match.group(1)} is too old for the Kotlin Gradle '
+          'plugin the project uses.',
+      suggestion: 'Upgrade the Gradle wrapper (and the Android Gradle Plugin '
+          'it requires).',
+      evidence: line,
+      relatedRecipes: const [
+        RecipeIds.androidGradleWrapper,
+        RecipeIds.androidAgpVersion,
+      ],
+      source: _flutterHandler('outdatedGradleHandler'),
     ),
   ),
   _Signature(
@@ -167,6 +285,11 @@ final List<_Signature> _signatures = [
         suggestion: 'Upgrade $name to ${match.group(3)} or newer.',
         evidence: line,
         relatedRecipes: [if (recipe != null) recipe],
+        details: {
+          'dependency': name,
+          'version': match.group(2)!,
+          'minimum': match.group(3)!,
+        },
       );
     },
   ),
@@ -181,6 +304,36 @@ final List<_Signature> _signatures = [
       suggestion: 'Upgrade the Gradle wrapper to ${match.group(1)} or newer.',
       evidence: line,
       relatedRecipes: const [RecipeIds.androidGradleWrapper],
+      details: {'minimum': match.group(1)!, 'current': match.group(2)!},
+    ),
+  ),
+  _Signature(
+    'COMPILE_SDK_REQUIRES_NEWER_AGP',
+    RegExp('RES_TABLE_TYPE_TYPE entry offsets overlap actual entry data'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'COMPILE_SDK_REQUIRES_NEWER_AGP',
+      explanation: 'Resource processing failed because the Android Gradle '
+          'Plugin is too old for the compile SDK (the Flutter tool reports '
+          'this for compileSdk 35 with Android Gradle Plugin below 8.1.0).',
+      suggestion: 'Upgrade the Android Gradle Plugin.',
+      evidence: line,
+      relatedRecipes: const [RecipeIds.androidAgpVersion],
+      source: _flutterHandler('incompatibleCompileSdk35AndAgpVersionHandler'),
+    ),
+  ),
+  _Signature(
+    'AGP_JLINK_JAVA21',
+    RegExp(r'> Error while executing process .*jlink'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'AGP_JLINK_JAVA21',
+      explanation: 'Android Gradle Plugin versions below 8.2.1 fail running '
+          'jlink with Java 21 or newer when a module sets sourceCompatibility '
+          '(issuetracker.google.com/issues/294137077).',
+      suggestion: 'Upgrade the Android Gradle Plugin to 8.2.1 or newer.',
+      evidence: line,
+      relatedRecipes: const [RecipeIds.androidAgpVersion],
+      details: const {'minimumAgp': '8.2.1'},
+      source: _flutterHandler('jlinkErrorWithJava21AndSourceCompatibility'),
     ),
   ),
   _Signature(
@@ -223,6 +376,71 @@ final List<_Signature> _signatures = [
     ),
   ),
   _Signature(
+    'PLUGIN_V1_EMBEDDING',
+    RegExp(r'PluginRegistry\.Registrar registrar|symbol:\s+class Registrar'),
+    (match, line, context) {
+      final plugins = {
+        for (final errorLine in context.output.split('\n'))
+          if (errorLine.contains('error:'))
+            if (_pubCachePlugin.firstMatch(errorLine) case final plugin?)
+              plugin.group(1)!: plugin.group(2)!,
+      };
+      return FailureDiagnosis(
+        id: 'PLUGIN_V1_EMBEDDING',
+        explanation:
+            '${plugins.isEmpty ? 'A plugin' : plugins.keys.join(', ')} '
+            'still uses PluginRegistry.Registrar from the Android v1 '
+            'embedding, which Flutter 3.29 removed.',
+        suggestion: 'Upgrade '
+            '${plugins.isEmpty ? 'the plugins that fail to compile' : plugins.keys.join(', ')} '
+            '(`flutter pub outdated` lists newer versions).',
+        evidence: line,
+        details: {
+          if (plugins.isNotEmpty) 'plugins': plugins.keys.join(','),
+        },
+        source: _flutterHandler('usageOfV1EmbeddingReferencesHandler'),
+      );
+    },
+  ),
+  _Signature(
+    'KOTLIN_ANDROID_PLUGIN_WITH_BUILT_IN_KOTLIN',
+    RegExp(r"The 'org\.jetbrains\.kotlin\.android' plugin is no longer "
+        'required for Kotlin support since AGP 9.0'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'KOTLIN_ANDROID_PLUGIN_WITH_BUILT_IN_KOTLIN',
+      explanation: 'Android Gradle Plugin 9 enables built-in Kotlin, and a '
+          'module still applies the Kotlin Android plugin.',
+      suggestion:
+          'Set android.builtInKotlin=false in android/gradle.properties '
+          'as Flutter does for existing projects, or migrate to built-in Kotlin '
+          '(https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin).',
+      evidence: line,
+      relatedRecipes: const [RecipeIds.androidAgp9OptOuts],
+      source: _flutterHandler('applyingKotlinAndroidPluginErrorHandler'),
+    ),
+  ),
+  _Signature(
+    'AGP9_NEW_DSL',
+    RegExp(r"> Failed to apply plugin 'dev\.flutter\.flutter-gradle-plugin'"),
+    (match, line, context) {
+      if (!context.output
+          .contains('> java.lang.NullPointerException (no error message)')) {
+        return null;
+      }
+      return FailureDiagnosis(
+        id: 'AGP9_NEW_DSL',
+        explanation: "Flutter's Gradle plugin failed to apply: with Android "
+            'Gradle Plugin 9 only the new DSL is read, which this Flutter '
+            'Gradle plugin does not support.',
+        suggestion: 'Set android.newDsl=false in android/gradle.properties, as '
+            'Flutter does for existing projects, or upgrade Flutter.',
+        evidence: line,
+        relatedRecipes: const [RecipeIds.androidAgp9OptOuts],
+        source: _flutterHandler('useNewAgpDslErrorHandler'),
+      );
+    },
+  ),
+  _Signature(
     'JVM_TARGET_MISMATCH',
     RegExp(
         r"Inconsistent JVM-target compatibility detected for tasks '([^']+)' \(([^)]+)\) and '([^']+)' \(([^)]+)\)"),
@@ -237,15 +455,31 @@ final List<_Signature> _signatures = [
   ),
   _Signature(
     'DART_SDK_CONSTRAINT',
-    RegExp(r'The current Dart SDK version is ([\w.\-]+)'),
-    (match, line, context) => FailureDiagnosis(
-      id: 'DART_SDK_CONSTRAINT',
-      explanation: 'A package does not allow Dart ${match.group(1)}.',
-      suggestion: 'Upgrade the package, or fix environment.sdk if it is this '
-          'project.',
-      evidence: line,
-      relatedRecipes: const [RecipeIds.dartSdkConstraint],
-    ),
+    RegExp(r'The current Dart SDK version is (\d+\.\d+\.\d+(?:-[\w.]*\w)?)'),
+    (match, line, context) {
+      final requirement = RegExp(
+              r'\b([a-z][a-z0-9_]*) (?:[<>=^]*\d\S*\s+)*(?:which\s+)?requires SDK version ([^,]+),')
+          .firstMatch(context.output);
+      final package = requirement?.group(1);
+      return FailureDiagnosis(
+        id: 'DART_SDK_CONSTRAINT',
+        explanation: package == null
+            ? 'A package does not allow Dart ${match.group(1)}.'
+            : '$package requires Dart ${requirement!.group(2)!.trim()}, which '
+                'excludes Dart ${match.group(1)}.',
+        suggestion: package == null
+            ? 'Upgrade the package, or fix environment.sdk if it is this '
+                'project.'
+            : 'Upgrade $package (or the packages that depend on it), or fix '
+                'environment.sdk if $package is this project.',
+        evidence: line,
+        relatedRecipes: const [RecipeIds.dartSdkConstraint],
+        details: {
+          'dart': match.group(1)!,
+          if (package != null) 'package': package,
+        },
+      );
+    },
   ),
   _Signature(
     'COCOAPODS_DEPLOYMENT_TARGET',
@@ -268,7 +502,37 @@ final List<_Signature> _signatures = [
       suggestion: 'Run `pod repo update` and check the pod deployment target '
           'and version constraints.',
       evidence: line,
+      details: {'pod': match.group(1)!},
     ),
+  ),
+  _Signature(
+    'GRADLE_NETWORK_ERROR',
+    RegExp(r"> Could not get resource 'http|"
+        r'java\.net\.ConnectException: Connection timed out|'
+        r'java\.net\.SocketException: Connection reset|'
+        r'java\.io\.IOException: Unable to tunnel through proxy|'
+        r'java\.io\.IOException: Server returned HTTP response code: 502'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'GRADLE_NETWORK_ERROR',
+      explanation: 'Gradle could not download artifacts from the network.',
+      suggestion: 'Check the network and proxy settings, then retry the build.',
+      evidence: line,
+      source: _flutterHandler('networkErrorHandler'),
+    ),
+  ),
+  _Signature(
+    'KOTLIN_METADATA_INCOMPATIBLE',
+    RegExp('was compiled with an incompatible version of Kotlin'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'KOTLIN_METADATA_INCOMPATIBLE',
+      explanation: 'A dependency was compiled with a newer Kotlin version than '
+          "the project's Kotlin Gradle plugin can read.",
+      suggestion: 'Upgrade the Kotlin Gradle plugin.',
+      evidence: line,
+      relatedRecipes: const [RecipeIds.androidKotlinVersion],
+      source: _flutterHandler('incompatibleKotlinVersionHandler'),
+    ),
+    secondary: true,
   ),
 ];
 
@@ -283,7 +547,8 @@ final _dartError = RegExp(r'^(\S+\.dart):(\d+):(\d+): Error: (.+)$');
 List<FailureDiagnosis> diagnoseFailure(String output,
     {FlutterRelease? target}) {
   final context = _FailureContext(output, target);
-  final results = <FailureDiagnosis>[];
+  final primary = <FailureDiagnosis>[];
+  final secondary = <FailureDiagnosis>[];
   final seen = <String>{};
   final dartErrors = <RegExpMatch>[];
   for (final line in output.split('\n')) {
@@ -296,7 +561,7 @@ List<FailureDiagnosis> diagnoseFailure(String output,
       // The same failure is often repeated in several lines of Gradle output.
       if (diagnosis != null &&
           seen.add('${diagnosis.id}:${diagnosis.explanation}')) {
-        results.add(diagnosis);
+        (signature.secondary ? secondary : primary).add(diagnosis);
       }
     }
   }
@@ -306,7 +571,7 @@ List<FailureDiagnosis> diagnoseFailure(String output,
         m.group(4)!.contains("isn't defined") ||
         m.group(4)!.contains('Method not found') ||
         m.group(4)!.contains('No named parameter'));
-    results.add(FailureDiagnosis(
+    primary.add(FailureDiagnosis(
       id: 'DART_COMPILATION_ERROR',
       explanation: 'The Dart code does not compile with this Flutter SDK '
           '(${dartErrors.length} error(s)); the first is in '
@@ -317,9 +582,10 @@ List<FailureDiagnosis> diagnoseFailure(String output,
               'for many removed APIs), then fix the remaining errors.'
           : 'Fix the compilation errors reported by `flutter analyze`.',
       evidence: first.group(0)!,
+      details: {'file': first.group(1)!, 'line': first.group(2)!},
     ));
   }
-  return results;
+  return primary.isEmpty ? secondary : primary;
 }
 
 /// The Gradle project path of the first failing task, e.g. `:app` or

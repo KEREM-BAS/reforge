@@ -76,7 +76,9 @@ final class CliRun {
 }
 
 Future<CliRun> runCli(List<String> arguments,
-    {Environment? environment, String? workingDirectory}) async {
+    {Environment? environment,
+    String? workingDirectory,
+    ProcessRunner? processRunner}) async {
   final out = StringBuffer();
   final err = StringBuffer();
   final code = await runReforge(
@@ -87,6 +89,7 @@ Future<CliRun> runCli(List<String> arguments,
       workingDirectory: workingDirectory ?? repositoryRoot(),
       color: false,
       probeEnvironment: () async => environment ?? fakeEnvironment(),
+      processRunner: processRunner,
     ),
   );
   return CliRun(code, out.toString(), err.toString());

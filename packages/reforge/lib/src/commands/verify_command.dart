@@ -104,6 +104,7 @@ final class VerifyCommand extends ReforgeCommand {
       runner: context.processRunner,
       operatingSystem: environment.operatingSystem,
     );
+    journal.ensureCreated();
     final logDirectory = session == null
         ? p.join(journal.directory, 'logs')
         : journal.logsDirectory(session.id);

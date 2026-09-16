@@ -287,6 +287,10 @@ final class Journal {
   String logsDirectory(String sessionId) =>
       p.join(sessionDirectory(sessionId), 'logs');
 
+  /// Creates `.reforge/` with its `.gitignore`, so that files written there
+  /// (logs, backups) are never committed by accident.
+  void ensureCreated() => _ensureDirectory();
+
   void _ensureDirectory() {
     Directory(_sessionsDirectory).createSync(recursive: true);
     final ignore = File(p.join(directory, '.gitignore'));

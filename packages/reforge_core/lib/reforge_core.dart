@@ -33,6 +33,7 @@ export 'src/model/finding.dart';
 export 'src/model/flutter_project.dart';
 export 'src/model/ios_project.dart';
 export 'src/vcs/git.dart';
+export 'src/verification/diagnosis.dart';
 export 'src/verification/failure_signatures.dart';
 export 'src/verification/verifier.dart';
 export 'src/version/tool_version.dart';

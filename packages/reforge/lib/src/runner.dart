@@ -6,6 +6,7 @@ import 'package:reforge_core/reforge_core.dart';
 
 import 'cli_context.dart';
 import 'commands/apply_command.dart';
+import 'commands/diagnose_command.dart';
 import 'commands/env_command.dart';
 import 'commands/inspect_command.dart';
 import 'commands/plan_command.dart';
@@ -45,6 +46,7 @@ Future<int> runReforge(List<String> arguments, {CliContext? context}) async {
     ..addCommand(PlanCommand(ctx))
     ..addCommand(ApplyCommand(ctx))
     ..addCommand(VerifyCommand(ctx))
+    ..addCommand(DiagnoseCommand(ctx))
     ..addCommand(RollbackCommand(ctx))
     ..addCommand(HistoryCommand(ctx))
     ..addCommand(EnvCommand(ctx));

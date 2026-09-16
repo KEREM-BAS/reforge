@@ -453,6 +453,7 @@ final class CompatibilityAnalyzer {
               FlutterRelease.releaseManifestSource),
         ],
         project: project.path,
+        subject: package.name,
       );
     }
 
@@ -489,6 +490,7 @@ final class CompatibilityAnalyzer {
                 KnowledgeBase.agp8NamespaceSource),
           ],
           project: project.path,
+          subject: package.name,
         );
       }
       if (android.v1EmbeddingReferences.isNotEmpty) {
@@ -518,6 +520,7 @@ final class CompatibilityAnalyzer {
                 v1Removal.source),
           ],
           project: project.path,
+          subject: package.name,
         );
       }
     }
