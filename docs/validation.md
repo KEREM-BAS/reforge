@@ -217,8 +217,15 @@ Kotlin 1.3.50, `compileSdkVersion 30`, `minSdkVersion 16`, no
    `reforge rollback` restored them and the 11 migrated files, leaving only
    `lib/main.dart` (`dart fix`) and `pubspec.lock`.
 
-`jcenter()` stayed in `android/build.gradle` (a recommended step with Gradle
-8.14). Its Gradle 9 errors were checked separately with Gradle 9.1.0 on
+4. With every recommended step (Reforge 7634a67, `--include-recommended`): 15
+   steps, adding Gradle 9.1.0, AGP 9.0.1, Kotlin 2.3.20, `jcenter()` to
+   `mavenCentral()` (now required, as the plan uses Gradle 9), the Kotlin
+   plugin removed from the app module, JVM arguments and Jetifier removal.
+   `flutter build apk --debug` succeeded in 16 s; the only warnings were
+   javac's "source value 8 is obsolete" for the app's Java 8 target.
+
+With the required steps only, `jcenter()` stayed in `android/build.gradle` (a
+recommended step with Gradle 8.14). Its Gradle 9 errors were checked separately with Gradle 9.1.0 on
 minimal Groovy and Kotlin DSL scripts: `Could not find method jcenter() for
 arguments []` and `Unresolved reference 'jcenter'`; with `mavenCentral()`
 both configured (ffeb848).
