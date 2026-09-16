@@ -248,6 +248,28 @@ Kotlin Gradle plugin.
   `reforge diagnose` names `:speech_to_text` and confirms the failure with
   `PLUGIN_GRADLE_JCENTER` at `speech_to_text 7.0.0/android/build.gradle:7`.
 
+### Run 10: older real plugins with Android Gradle Plugin 8 and 9 (Reforge eb61df8, then bf5ca69)
+
+The Flutter 3.22 fixture with `fluttertoast` 8.2.14 (compileSdk 33),
+`flutter_keyboard_visibility` 6.0.0 (31), `in_app_review` 2.0.10 (33) and
+`device_info_plus` 9.1.2 (33), resolved offline from the pub cache:
+
+- Required steps only (AGP 8.11.1, Gradle 8.14, Kotlin 2.2.20): the plan was
+  complete and `flutter build apk --debug` succeeded in 41 s.
+- Every recommended step (AGP 9.0.1, Gradle 9.1.0, Kotlin 2.3.20): the plan
+  was complete, but the build failed in `:device_info_plus:checkDebugAarMetadata`
+  (15 issues, starting with `androidx.fragment:fragment:1.7.1` requiring
+  compileSdk 34; the module compiles against android-33). Without
+  `device_info_plus`, `:flutter_keyboard_visibility:checkDebugAarMetadata`
+  failed the same way (android-31). The AndroidX libraries are those of
+  Flutter's Android embedding; AGP 8.11.1 did not check them in plugin modules.
+- With bf5ca69, `PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM` reports each such plugin:
+  an error when the plan uses AGP 9, and a warning while the target recommends
+  AGP 9, so the recommended upgrade is no longer reported as complete. The
+  AGP 9.0.0 release notes describe a related behavior change ("requires
+  consumers of a library to use the same or higher compile SDK version") but
+  not this check; the rule rests on this observation.
+
 ### Caveat
 
 The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The
