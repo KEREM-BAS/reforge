@@ -60,11 +60,16 @@ List<Diagnosis> correlateFailures(
           'PLUGIN_V1_EMBEDDING' => withCode('PLUGIN_ANDROID_V1_EMBEDDING',
               subjects: failure.details['plugins']?.split(',').toSet()),
           'COCOAPODS_DEPLOYMENT_TARGET' => [
-              ...withCode('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP',
+              ...withCode(
+                  failure.details['platform'] == 'macos'
+                      ? 'PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP'
+                      : 'PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP',
                   subjects: failure.details['pod'] == null
                       ? null
                       : {failure.details['pod']!}),
-              ...withCode('IOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM'),
+              ...withCode(failure.details['platform'] == 'macos'
+                  ? 'MACOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM'
+                  : 'IOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM'),
             ],
           'DART_SDK_CONSTRAINT' => withCode('DEPENDENCY_DART_SDK_INCOMPATIBLE',
               subjects: failure.details['package'] == null

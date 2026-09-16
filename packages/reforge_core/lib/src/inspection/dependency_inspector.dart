@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 
 import '../common/source.dart';
 import '../fs/project_file_system.dart';
+import '../model/darwin_project.dart';
 import '../model/declarations.dart';
 import '../model/dependencies.dart';
 import '../model/flutter_project.dart';
@@ -165,36 +166,53 @@ final class DependencyInspector {
         );
       }
     }
-    IosPluginFacts? ios;
-    if (pubspec?.plugin != null) {
-      final podspecPath = _podspecPath(files, name);
-      final podspecSource = podspecPath == null ? null : read(podspecPath);
-      if (podspecPath != null && podspecSource != null) {
-        final podspec =
-            Podspec.parse(package.displayPath(podspecPath), podspecSource);
-        final platform = podspec.platforms['ios'];
-        ios = IosPluginFacts(
-          podspec:
-              platform?.location ?? SourceRef(package.displayPath(podspecPath)),
-          minimumIos: platform?.version,
-        );
+    final podspecs = <String, Podspec>{};
+    DarwinPluginFacts? darwin(DarwinPlatform platform) {
+      final platforms = pubspec?.plugin?.platforms;
+      // Plugins in the format before `platforms` supported Android and iOS.
+      final supported = platforms != null &&
+          (platforms.contains(platform.name) ||
+              (platforms.isEmpty && platform == DarwinPlatform.ios));
+      final path = supported ? _podspecPath(files, name, platform) : null;
+      if (path == null) return null;
+      final Podspec podspec;
+      if (podspecs[path] case final parsed?) {
+        podspec = parsed;
+      } else {
+        final source = read(path);
+        if (source == null) return null;
+        podspec =
+            podspecs[path] = Podspec.parse(package.displayPath(path), source);
       }
+      // CocoaPods accepts `macos` as another name for `osx`.
+      final declaration = switch (platform) {
+        DarwinPlatform.ios => podspec.platforms['ios'],
+        DarwinPlatform.macos =>
+          podspec.platforms['osx'] ?? podspec.platforms['macos'],
+      };
+      return DarwinPluginFacts(
+        podspec: declaration?.location ?? SourceRef(package.displayPath(path)),
+        minimumVersion: declaration?.version,
+      );
     }
+
     return ResolvedPackage(
       name: name,
       rootPath: rootPath,
       locked: locked,
       pubspec: pubspec,
       android: android,
-      ios: ios,
+      ios: darwin(DarwinPlatform.ios),
+      macos: darwin(DarwinPlatform.macos),
     );
   }
 
-  /// The podspec of a plugin: `ios/<name>.podspec`, `darwin/<name>.podspec`
-  /// (shared iOS and macOS sources), or the only podspec in those
-  /// directories.
-  static String? _podspecPath(ProjectFileSystem files, String name) {
-    for (final directory in const ['ios', 'darwin']) {
+  /// The podspec of a plugin for [platform]: `ios/<name>.podspec` or
+  /// `macos/<name>.podspec`, `darwin/<name>.podspec` (shared iOS and macOS
+  /// sources), or the only podspec in those directories.
+  static String? _podspecPath(
+      ProjectFileSystem files, String name, DarwinPlatform platform) {
+    for (final directory in [platform.directory, 'darwin']) {
       final named = '$directory/$name.podspec';
       if (files.fileExists(named)) return named;
       final podspecs = files

@@ -4,6 +4,7 @@ import '../common/source.dart';
 import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
+import 'darwin_project.dart';
 
 export '../parsing/gradle/gradle_semantics.dart' show KotlinPluginApplication;
 
@@ -52,7 +53,16 @@ final class DependencyReport {
               {
                 'name': package.name,
                 if (package.version != null) 'version': package.version,
-                'minimumIos': ios.minimumIos,
+                'minimumIos': ios.minimumVersion,
+              },
+        ],
+        'macosPlugins': [
+          for (final package in packages)
+            if (package.macos case final macos?)
+              {
+                'name': package.name,
+                if (package.version != null) 'version': package.version,
+                'minimumMacos': macos.minimumVersion,
               },
         ],
         'androidPlugins': [
@@ -85,6 +95,7 @@ final class ResolvedPackage {
     this.pubspec,
     this.android,
     this.ios,
+    this.macos,
   });
 
   final String name;
@@ -104,7 +115,17 @@ final class ResolvedPackage {
 
   /// Facts about the package's iOS (CocoaPods) implementation, when it has
   /// one.
-  final IosPluginFacts? ios;
+  final DarwinPluginFacts? ios;
+
+  /// Facts about the package's macOS (CocoaPods) implementation, when it has
+  /// one.
+  final DarwinPluginFacts? macos;
+
+  /// [ios] or [macos].
+  DarwinPluginFacts? darwin(DarwinPlatform platform) => switch (platform) {
+        DarwinPlatform.ios => ios,
+        DarwinPlatform.macos => macos,
+      };
 
   String? get version => locked?.version ?? pubspec?.version;
 
@@ -145,16 +166,18 @@ final class AndroidPluginFacts {
   final List<SourceRef> v1EmbeddingReferences;
 }
 
-/// What Reforge read from a plugin's podspec (`ios/` or `darwin/`).
+/// What Reforge read from a plugin's podspec for one Apple platform (`ios/`,
+/// `macos/` or the shared `darwin/`).
 @immutable
-final class IosPluginFacts {
-  const IosPluginFacts({required this.podspec, required this.minimumIos});
+final class DarwinPluginFacts {
+  const DarwinPluginFacts(
+      {required this.podspec, required this.minimumVersion});
 
-  /// Where the podspec is, as a display path, with the line of the iOS
-  /// platform declaration when there is one.
+  /// Where the podspec is, as a display path, with the line of the platform
+  /// declaration when there is one.
   final SourceRef podspec;
 
-  /// The minimum iOS version the pod declares, as written, or `null` when it
-  /// declares none or it could not be read.
-  final String? minimumIos;
+  /// The minimum version of the platform the pod declares, as written, or
+  /// `null` when it declares none or it could not be read.
+  final String? minimumVersion;
 }

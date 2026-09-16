@@ -18,3 +18,5 @@ flutter:
         pluginClass: ModernSharePlugin
       ios:
         pluginClass: ModernSharePlugin
+      macos:
+        pluginClass: ModernSharePlugin

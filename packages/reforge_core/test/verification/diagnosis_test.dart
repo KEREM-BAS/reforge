@@ -154,6 +154,8 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
       finding('ENV_JAVA_CANNOT_RUN_GRADLE'),
       finding('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP', subject: 'share_ios'),
+      finding('PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP',
+          subject: 'share_macos'),
       finding('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP', subject: 'other_pod'),
     ];
 
@@ -195,6 +197,12 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
               '`.symlinks/plugins/share_ios/ios`)` dependency were found, but '
               'they required a higher minimum deployment target.'),
           ['share_ios']);
+      expect(
+          confirmed('Specs satisfying the `share_macos (from '
+              '`Flutter/ephemeral/.symlinks/plugins/share_macos/darwin`)` '
+              'dependency were found, but they required a higher minimum '
+              'deployment target.'),
+          ['share_macos']);
     });
   });
 }

@@ -110,10 +110,14 @@ void main() {
       expect(modern.android!.kotlinPlugin, KotlinPluginApplication.always);
       expect(legacy.android!.kotlinPlugin, KotlinPluginApplication.none);
 
-      expect(legacy.ios!.minimumIos, '9.0');
-      expect(modern.ios!.minimumIos, '17.0');
+      expect(legacy.ios!.minimumVersion, '9.0');
+      expect(modern.ios!.minimumVersion, '17.0');
       expect(modern.ios!.podspec.display,
           'modern_share_plugin 2.1.0/ios/modern_share_plugin.podspec:11');
+      expect(modern.macos!.minimumVersion, '10.15');
+      expect(modern.macos!.podspec.display,
+          'modern_share_plugin 2.1.0/macos/modern_share_plugin.podspec:12');
+      expect(legacy.macos, isNull, reason: 'no macOS implementation');
       expect(report.package('string_tools')!.ios, isNull);
       expect(report.package('string_tools')!.android, isNull);
       expect(report.dependentsOf('string_tools').map((p) => p.name),
@@ -279,11 +283,11 @@ void main() {
               ResolvedPackage(
                 name: 'share_ios',
                 rootPath: '/cache/share_ios-1.0.0',
-                ios: IosPluginFacts(
+                ios: DarwinPluginFacts(
                   podspec: const SourceRef(
                       'share_ios 1.0.0/ios/share_ios.podspec',
                       line: 3),
-                  minimumIos: minimumIos,
+                  minimumVersion: minimumIos,
                 ),
               ),
             ],
@@ -316,6 +320,62 @@ void main() {
       expect(fromPodfile, isEmpty, reason: 'the Podfile platform wins');
       expect(analyze('16.0', podfile: "platform :ios, '14.0'\n").single.message,
           contains('the Podfile platform'));
+    });
+
+    test('pods that need a newer macOS than CocoaPods resolves for', () {
+      DependencyReport report(String minimumMacos) => DependencyReport(
+            configPath: '.dart_tool/package_config.json',
+            packages: [
+              ResolvedPackage(
+                name: 'share_macos',
+                rootPath: '/cache/share_macos-1.0.0',
+                macos: DarwinPluginFacts(
+                  podspec: const SourceRef(
+                      'share_macos 1.0.0/darwin/share_macos.podspec',
+                      line: 4),
+                  minimumVersion: minimumMacos,
+                ),
+              ),
+            ],
+          );
+      List<Finding> analyze(String minimumMacos, {String? podfile}) {
+        final files = MemoryProjectFileSystem({
+          'pubspec.yaml': 'name: app\nenvironment:\n  sdk: ^3.4.0\n',
+          // MACOSX_DEPLOYMENT_TARGET = 10.11 (Flutter 3.3 template).
+          'macos/Runner.xcodeproj/project.pbxproj': readFixture(
+              'flutter_3_3_app', 'macos/Runner.xcodeproj/project.pbxproj'),
+          if (podfile != null) 'macos/Podfile': podfile,
+        });
+        return CompatibilityAnalyzer(knowledge)
+            .analyze(_inspect(files),
+                release: knowledge.resolveFlutterVersion('3.3.0'),
+                dependencies: report(minimumMacos))
+            .where((f) =>
+                f.code.startsWith('PLUGIN_') &&
+                f.code.endsWith('_DEPLOYMENT_TARGET_ABOVE_APP'))
+            .toList();
+      }
+
+      final fromTarget = analyze('10.14').single;
+      expect(fromTarget.code, 'PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP');
+      expect(
+          fromTarget.message,
+          'Its podspec declares macOS 10.14, but CocoaPods resolves pods for '
+          'macOS 10.11 (the app deployment target).');
+      expect(
+          fromTarget.evidence.last.description,
+          'project Debug: MACOSX_DEPLOYMENT_TARGET = 10.11 (CocoaPods uses it '
+          'when the Podfile sets no platform)');
+      expect(fromTarget.suggestedAction,
+          contains('Macs below macOS 10.14 can then no longer run the app'));
+
+      expect(analyze('10.14', podfile: "platform :osx, '10.14'\n"), isEmpty);
+      final fromPodfile =
+          analyze('11.0', podfile: "platform :osx, '10.14'\n").single;
+      expect(
+          fromPodfile.message, contains('macOS 10.14 (the Podfile platform)'));
+      expect(fromPodfile.evidence.last.description,
+          "Podfile platform :osx, '10.14'");
     });
 
     test('unresolved projects are reported, not guessed', () {

@@ -79,6 +79,82 @@ final class CompatibilityAnalyzer {
     return [for (final finding in findings) finding.forProject(project.path)];
   }
 
+  Iterable<Finding> _podsAboveApp(FlutterProject project, DarwinProject host,
+      DependencyReport report) sync* {
+    if (host.dependencyManager == DarwinDependencyManager.swiftPackageManager) {
+      return;
+    }
+    final platform = host.platform;
+    final name = platform.displayName;
+    final code = switch (platform) {
+      DarwinPlatform.ios => 'PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP',
+      DarwinPlatform.macos => 'PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP',
+    };
+    final declared = host.podfile?.platform;
+    final declaredVersion = declared != null &&
+            declared.name == platform.podfilePlatform &&
+            declared.version != null
+        ? ToolVersion.tryParse(declared.version!)
+        : null;
+    final appTarget = declaredVersion ?? host.effectiveDeploymentTarget;
+    final Evidence? appEvidence;
+    if (declaredVersion != null) {
+      appEvidence = Evidence.file(
+          "Podfile platform :${declared!.name}, '${declared.version}'",
+          declared.location);
+    } else {
+      final setting = host.deploymentTargets
+          .where((s) => s.isApplicationTarget && s.version == appTarget)
+          .firstOrNull;
+      appEvidence = setting == null
+          ? null
+          : Evidence.file(
+              '${setting.owner} ${setting.configuration}: '
+              '${platform.deploymentTargetSetting} = ${setting.value} '
+              '(CocoaPods uses it when the Podfile sets no platform)',
+              setting.location);
+    }
+    for (final package in report.packages) {
+      final facts = package.darwin(platform);
+      final minimum = facts?.minimumVersion == null
+          ? null
+          : ToolVersion.tryParse(facts!.minimumVersion!);
+      if (appTarget == null || minimum == null || minimum <= appTarget) {
+        continue;
+      }
+      final label =
+          '${package.name}${package.version == null ? '' : ' ${package.version}'}';
+      final consequence = switch (platform) {
+        DarwinPlatform.ios => 'devices below iOS $minimum can then no longer '
+            'install the app',
+        DarwinPlatform.macos => 'Macs below macOS $minimum can then no longer '
+            'run the app',
+      };
+      yield Finding(
+        code: code,
+        severity: Severity.error,
+        title: 'Plugin $label requires $name $minimum',
+        message: 'Its podspec declares $name $minimum, but CocoaPods resolves '
+            'pods for $name $appTarget '
+            '(${declaredVersion != null ? 'the Podfile platform' : 'the app deployment target'}).',
+        impact: '`pod install` fails: the pod requires a higher minimum '
+            'deployment target.',
+        suggestedAction: 'Raise the $name deployment target'
+            '${declaredVersion != null ? ' and the Podfile platform' : ''} '
+            'to $minimum ($consequence), or use a version of ${package.name} '
+            'that supports $name $appTarget.',
+        evidence: [
+          Evidence(EvidenceKind.dependencyFile,
+              'The podspec declares $name ${facts!.minimumVersion}',
+              location: facts.podspec),
+          if (appEvidence != null) appEvidence,
+        ],
+        project: project.path,
+        subject: package.name,
+      );
+    }
+  }
+
   Iterable<Finding> _deploymentTarget(
       DarwinProject host, FlutterRelease release) sync* {
     final platform = host.platform;
@@ -635,65 +711,10 @@ final class CompatibilityAnalyzer {
       }
     }
 
-    // Pods that need a newer iOS than the platform CocoaPods resolves for.
-    final ios = project.ios;
-    if (ios != null &&
-        ios.dependencyManager != DarwinDependencyManager.swiftPackageManager) {
-      final platform = ios.podfile?.platform;
-      final platformVersion =
-          platform != null && platform.name == 'ios' && platform.version != null
-              ? ToolVersion.tryParse(platform.version!)
-              : null;
-      final appTarget = platformVersion ?? ios.effectiveDeploymentTarget;
-      final Evidence? appEvidence;
-      if (platformVersion != null) {
-        appEvidence = Evidence.file(
-            "Podfile platform :ios, '${platform!.version}'", platform.location);
-      } else {
-        final setting = ios.deploymentTargets
-            .where((s) => s.isApplicationTarget && s.version == appTarget)
-            .firstOrNull;
-        appEvidence = setting == null
-            ? null
-            : Evidence.file(
-                '${setting.owner} ${setting.configuration}: '
-                'IPHONEOS_DEPLOYMENT_TARGET = ${setting.value} (CocoaPods '
-                'uses it when the Podfile sets no platform)',
-                setting.location);
-      }
-      for (final package in report.packages) {
-        final minimum = package.ios?.minimumIos == null
-            ? null
-            : ToolVersion.tryParse(package.ios!.minimumIos!);
-        if (appTarget == null || minimum == null || minimum <= appTarget) {
-          continue;
-        }
-        final label =
-            '${package.name}${package.version == null ? '' : ' ${package.version}'}';
-        yield Finding(
-          code: 'PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP',
-          severity: Severity.error,
-          title: 'Plugin $label requires iOS $minimum',
-          message: 'Its podspec declares iOS $minimum, but CocoaPods resolves '
-              'pods for iOS $appTarget '
-              '(${platformVersion != null ? 'the Podfile platform' : 'the app deployment target'}).',
-          impact: '`pod install` fails: the pod requires a higher minimum '
-              'deployment target.',
-          suggestedAction: 'Raise the iOS deployment target'
-              '${platformVersion != null ? ' and the Podfile platform' : ''} '
-              'to $minimum (devices below iOS $minimum can then no longer '
-              'install the app), or use a version of ${package.name} that '
-              'supports iOS $appTarget.',
-          evidence: [
-            Evidence(EvidenceKind.dependencyFile,
-                'The podspec declares iOS ${package.ios!.minimumIos}',
-                location: package.ios!.podspec),
-            if (appEvidence != null) appEvidence,
-          ],
-          project: project.path,
-          subject: package.name,
-        );
-      }
+    // Pods that need a newer OS version than the platform CocoaPods resolves
+    // for.
+    for (final host in [project.ios, project.macos].nonNulls) {
+      yield* _podsAboveApp(project, host, report);
     }
 
     final kotlinPlugins = [

@@ -30,11 +30,12 @@ without a `namespace` under Android Gradle Plugin 8
 removed in Flutter 3.29 (`PLUGIN_ANDROID_V1_EMBEDDING`), plugins that still
 apply the Kotlin Gradle plugin under Android Gradle Plugin 9
 (`PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN`), plugins that compile against a higher
-Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`), pods whose podspec requires a newer iOS
-than the platform CocoaPods resolves for (`PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP`:
-the Podfile platform, or the app's deployment target when the Podfile sets
-none), and locked versions whose Dart SDK constraint excludes the target
-(`DEPENDENCY_DART_SDK_INCOMPATIBLE`).
+Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`), pods whose podspec
+requires a newer iOS or macOS than the platform CocoaPods resolves for
+(`PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP`,
+`PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP`: the Podfile platform, or the app's
+deployment target when the Podfile sets none), and locked versions whose Dart
+SDK constraint excludes the target (`DEPENDENCY_DART_SDK_INCOMPATIBLE`).
 `plan` runs the same checks against the target release and the planned Android
 Gradle Plugin; errors among them make a plan incomplete.
 
