@@ -669,6 +669,79 @@ void main() {
       });
     });
 
+    group('jcenter()', () {
+      const rootBuild = 'buildscript {\n'
+          '    repositories {\n        google()\n        jcenter()\n    }\n'
+          '}\n\n'
+          'allprojects {\n    repositories {\n        google()\n'
+          '        mavenCentral()\n        jcenter()\n    }\n}\n';
+      Map<String, String> app(String gradle) => {
+            ...declarativeApp(
+                agp: '8.11.1',
+                gradleUrl: 'https\\://services.gradle.org/distributions/'
+                    'gradle-$gradle-bin.zip'),
+            'android/build.gradle': rootBuild,
+          };
+
+      test('is recommended before Gradle 9', () {
+        final plan = planFor(app('8.14'));
+        expect(plan.recommendationsNotIncluded.map((s) => s.recipe.id),
+            contains(RecipeIds.androidJcenter));
+        final finding = plan.remainingFindings
+            .singleWhere((f) => f.code == 'ANDROID_JCENTER_REPOSITORY');
+        expect(finding.severity, Severity.warning);
+        expect(
+            finding.message,
+            'android/build.gradle:4, android/build.gradle:12 declare '
+            'jcenter(), which Gradle 9 removed.');
+
+        final included = planFor(app('8.14'),
+            options: const PlanOptions(
+                includedRecipes: {RecipeIds.androidJcenter},
+                skippedRecipes: {RecipeIds.androidAgp9OptOuts}));
+        final jcenter = step(included, RecipeIds.androidJcenter);
+        expect(jcenter.status, StepStatus.auto);
+        expect(jcenter.proposal.necessity, Necessity.recommended);
+        expect(jcenter.proposal.summary,
+            'Replace jcenter() with mavenCentral() in android/build.gradle.');
+        expect(
+            fileAfter(included, 'android/build.gradle'),
+            'buildscript {\n'
+            '    repositories {\n        google()\n        mavenCentral()\n'
+            '    }\n}\n\n'
+            'allprojects {\n    repositories {\n        google()\n'
+            '        mavenCentral()\n    }\n}\n');
+        expect(included.remainingFindings.map((f) => f.code),
+            isNot(contains('ANDROID_JCENTER_REPOSITORY')));
+      });
+
+      test('is required with Gradle 9', () {
+        final plan = planFor(app('9.1.0'));
+        final jcenter = step(plan, RecipeIds.androidJcenter);
+        expect(jcenter.proposal.necessity, Necessity.required);
+        expect(jcenter.applied, isTrue);
+        expect(
+            jcenter.proposal.impact,
+            'Gradle 9.1.0 fails to configure the Android build: jcenter() no '
+            'longer exists.');
+        expect(jcenter.proposal.notes.first,
+            contains('already declares mavenCentral()'));
+      });
+
+      test('a jcenter() sharing its line is renamed, not removed', () {
+        final plan = planFor({
+          ...app('9.1.0'),
+          'android/build.gradle': 'allprojects {\n'
+              '    repositories { google(); mavenCentral(); jcenter() }\n}\n',
+        });
+        expect(
+            fileAfter(plan, 'android/build.gradle'),
+            'allprojects {\n'
+            '    repositories { google(); mavenCentral(); mavenCentral() }\n'
+            '}\n');
+      });
+    });
+
     group('gradle.properties', () {
       const legacyProperties = 'org.gradle.jvmargs=-Xmx1536M\n'
           'android.useAndroidX=true\n'

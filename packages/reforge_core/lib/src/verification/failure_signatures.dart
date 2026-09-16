@@ -559,6 +559,20 @@ final List<_Signature> _signatures = [
     },
   ),
   _Signature(
+    'GRADLE_JCENTER_REMOVED',
+    RegExp(r'Could not find method jcenter\(\)|'
+        r"Unresolved reference:? '?jcenter\b"),
+    (match, line, context) => FailureDiagnosis(
+      id: 'GRADLE_JCENTER_REMOVED',
+      explanation: 'A build script declares jcenter(), which Gradle 9 '
+          'removed.',
+      suggestion: 'Replace jcenter() with mavenCentral() in the app, and use '
+          'plugin versions that no longer declare it.',
+      evidence: line,
+      relatedRecipes: const [RecipeIds.androidJcenter],
+    ),
+  ),
+  _Signature(
     'XCODE_TOO_OLD',
     RegExp(r'Xcode (\d+(?:\.\d+)*) or greater is required to develop for iOS'),
     (match, line, context) {

@@ -154,6 +154,10 @@ final class KnowledgeBase {
   }
 
   static const agp9ReleaseNotesSource = android.agp9ReleaseNotesSource;
+  static const gradle9JcenterRemovalSource =
+      android.gradle9JcenterRemovalSource;
+  static const flutterTemplateJcenterRemovalSource =
+      android.flutterTemplateJcenterRemovalSource;
   static const agp8NamespaceSource = android.agp8NamespaceSource;
   static const builtInKotlinGuideSource = android.builtInKotlinGuideSource;
   static const kotlinCompilerOptionsSource =

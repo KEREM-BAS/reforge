@@ -45,7 +45,7 @@ Summary
   ✓ Complete: applying this plan resolves every known blocker for Flutter 3.47.4.
 ```
 
-> Status: early development. The engine, fifteen migration recipes and the CLI
+> Status: early development. The engine, sixteen migration recipes and the CLI
 > work end to end on the fixture projects in this repository. Expect breaking
 > changes before 1.0.
 
@@ -107,6 +107,7 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 | [ANDROID_APP_KOTLIN_PLUGIN](docs/recipes/ANDROID_APP_KOTLIN_PLUGIN.md) | Let Flutter apply the Kotlin Gradle plugin; `kotlinOptions` to `compilerOptions` |
 | [ANDROID_GRADLE_JVM_ARGS](docs/recipes/ANDROID_GRADLE_JVM_ARGS.md) | Gradle memory settings of an older template (recommended) |
 | [ANDROID_JETIFIER](docs/recipes/ANDROID_JETIFIER.md) | Stop running Jetifier (recommended) |
+| [ANDROID_JCENTER](docs/recipes/ANDROID_JCENTER.md) | `jcenter()`, removed in Gradle 9, to `mavenCentral()` |
 | [IOS_DEPLOYMENT_TARGET](docs/recipes/IOS_DEPLOYMENT_TARGET.md) | Minimum iOS deployment target |
 | [MACOS_DEPLOYMENT_TARGET](docs/recipes/MACOS_DEPLOYMENT_TARGET.md) | Minimum macOS deployment target |
 | [DART_SDK_CONSTRAINT](docs/recipes/DART_SDK_CONSTRAINT.md) | `environment.sdk` accepts the target Dart |

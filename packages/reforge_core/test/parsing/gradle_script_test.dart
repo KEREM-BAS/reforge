@@ -459,4 +459,41 @@ val agpVersion: String = "8.2.0"
     expect(of("apply plugin: 'com.android.library'\n"),
         KotlinPluginApplication.none);
   });
+
+  test('jcenter() repositories', () {
+    List<String> lines(String path, String source) {
+      final script = GradleScript.parse(path, source);
+      return [
+        for (final repository in jcenterRepositories(script))
+          '${script.refAt(repository.statement.start).line} '
+              '${repository.alongsideMavenCentral}',
+      ];
+    }
+
+    // The root build.gradle of Flutter 2.0 apps.
+    expect(
+        lines(
+            'build.gradle',
+            'buildscript {\n'
+                "    ext.kotlin_version = '1.3.50'\n"
+                '    repositories {\n        google()\n        jcenter()\n'
+                '    }\n}\n\n'
+                'allprojects {\n    repositories {\n        google()\n'
+                '        mavenCentral()\n        jcenter {\n'
+                '            content { includeGroup "com.example" }\n'
+                '        }\n    }\n}\n'),
+        ['5 false', '13 true']);
+    expect(
+        lines('settings.gradle.kts',
+            'pluginManagement {\n    repositories { google(); jcenter() }\n}\n'),
+        ['2 false']);
+    expect(
+        lines(
+            'build.gradle',
+            '// jcenter()\n'
+                'def jcenter = "https://jcenter.bintray.com"\n'
+                'repositories {\n    maven { url jcenter }\n}\n'),
+        isEmpty,
+        reason: 'comments, variables and URLs are not jcenter() calls');
+  });
 }

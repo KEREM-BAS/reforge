@@ -230,3 +230,19 @@ const kotlinCompilerOptionsSource = KnowledgeSource(
   url: 'https://kotlinlang.org/docs/gradle-compiler-options.html',
   retrieved: '2026-09-16',
 );
+
+const gradle9JcenterRemovalSource = KnowledgeSource(
+  title: 'Gradle 9.0 upgrade guide: removal of deprecated jcenter() '
+      '(deprecated in Gradle 7.0; JCenter redirected to Maven Central in '
+      'August 2024; mavenCentral() is the closest direct replacement)',
+  url:
+      'https://docs.gradle.org/current/userguide/upgrading_major_version_9.html',
+  retrieved: '2026-09-16',
+);
+
+/// Flutter's app templates declared `jcenter()` until Flutter 2.5.
+const flutterTemplateJcenterRemovalSource = KnowledgeSource(
+  title: 'flutter/flutter#80908: migrate from jcenter to mavencentral (app '
+      'templates since Flutter 2.5.0)',
+  url: 'https://github.com/flutter/flutter/pull/80908',
+);

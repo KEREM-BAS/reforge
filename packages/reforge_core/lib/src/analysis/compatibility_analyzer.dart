@@ -43,6 +43,7 @@ final class CompatibilityAnalyzer {
     }
     final android = project.android;
     if (android != null) {
+      findings.addAll(_jcenter(android, release));
       findings.addAll(_androidConsistency(android, release));
       if (release != null) findings.addAll(_androidRelease(android, release));
       if (environment != null) {
@@ -269,6 +270,45 @@ final class CompatibilityAnalyzer {
         subject: package.name,
       );
     }
+  }
+
+  /// `jcenter()` in the app's own build scripts.
+  Iterable<Finding> _jcenter(
+      AndroidProject android, FlutterRelease? release) sync* {
+    final found = [
+      for (final script in android.scripts)
+        if (script.isReliable)
+          for (final repository in jcenterRepositories(script))
+            script.refAt(repository.statement.start),
+    ];
+    if (found.isEmpty) return;
+    final gradle = android.toolchain.gradleWrapper;
+    final removed = gradle?.version != null && gradle!.version!.major >= 9;
+    yield Finding(
+      code: 'ANDROID_JCENTER_REPOSITORY',
+      severity: removed ? Severity.error : Severity.warning,
+      title: 'The Android build declares the JCenter repository',
+      message: '${_list([
+            for (final ref in found) ref.display
+          ])} declare${found.length == 1 ? 's' : ''} jcenter(), which Gradle '
+          '9 removed.',
+      impact: removed
+          ? 'Gradle ${gradle.version} fails to configure the Android build.'
+          : 'Gradle prints a deprecation warning, and the build fails once the '
+              'project upgrades to Gradle 9.',
+      suggestedAction: 'Replace jcenter() with mavenCentral(); JCenter has '
+          'redirected to Maven Central since August 2024.',
+      evidence: [
+        for (final ref in found)
+          Evidence.file('jcenter() in a repositories block', ref),
+        if (removed)
+          Evidence.file(
+              'Gradle wrapper uses ${gradle.version}', gradle.location),
+        const Evidence.knowledge('Gradle 9.0.0 removed jcenter()',
+            KnowledgeBase.gradle9JcenterRemovalSource),
+      ],
+      relatedRecipes: const [RecipeIds.androidJcenter],
+    );
   }
 
   Iterable<Finding> _deploymentTarget(
@@ -772,6 +812,51 @@ final class CompatibilityAnalyzer {
             Evidence.knowledge(
                 'Flutter ${v1Removal.value} removed PluginRegistry.Registrar',
                 v1Removal.source),
+          ],
+          project: project.path,
+          subject: package.name,
+        );
+      }
+    }
+
+    // Plugins declaring jcenter(), which Gradle 9 removed. They fail with
+    // Gradle 9 and block the upgrade when the release recommends it.
+    final wrapper = project.android?.toolchain.gradleWrapper?.version;
+    final gradleFloor = release.androidRequirements.gradle;
+    final gradle9 = wrapper != null && wrapper.major >= 9;
+    final gradle9Recommended =
+        gradleFloor != null && gradleFloor.warn.major >= 9;
+    if (project.android != null && (gradle9 || gradle9Recommended)) {
+      for (final package in report.packages) {
+        final references = package.android?.jcenterReferences ?? const [];
+        if (references.isEmpty) continue;
+        final label =
+            '${package.name}${package.version == null ? '' : ' ${package.version}'}';
+        yield Finding(
+          code: 'PLUGIN_GRADLE_JCENTER',
+          severity: gradle9 ? Severity.error : Severity.warning,
+          title: 'Plugin $label declares the JCenter repository',
+          message: '${package.name} declares jcenter() in its Android build '
+              'script, which Gradle 9 removed.',
+          impact: gradle9
+              ? 'Gradle $wrapper fails to configure the ${package.name} '
+                  'module.'
+              : 'Upgrading to Gradle ${gradleFloor!.warn}, as Flutter '
+                  '${release.version} recommends, fails to configure the '
+                  '${package.name} module.',
+          suggestedAction: 'Use a version of ${package.name} that declares '
+              'mavenCentral() instead, or replace the plugin.',
+          evidence: [
+            for (final reference in references)
+              Evidence(EvidenceKind.dependencyFile, 'Declares jcenter()',
+                  location: reference),
+            if (!gradle9)
+              Evidence.knowledge(
+                  'Flutter ${release.version} warns for Gradle versions below '
+                  '${gradleFloor!.warn}',
+                  release.dependencyCheckerSource),
+            const Evidence.knowledge('Gradle 9.0.0 removed jcenter()',
+                KnowledgeBase.gradle9JcenterRemovalSource),
           ],
           project: project.path,
           subject: package.name,

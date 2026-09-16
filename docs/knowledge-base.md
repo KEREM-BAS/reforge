@@ -67,6 +67,8 @@ Recipes only select versions from these lists.
 | Built-in Kotlin migration for apps | docs.flutter.dev, "Migrate to built-in Kotlin" |
 | `kotlinOptions` deprecation | kotlinlang.org, "Compiler options in the Kotlin Gradle plugin" |
 | Checking whether Jetifier is still needed | developer.android.com, "Build Analyzer" |
+| Gradle 9 removal of `jcenter()` | docs.gradle.org, "Upgrading to Gradle 9.0.0" |
+| Flutter app templates without `jcenter()` since 2.5 | flutter/flutter#80908 |
 
 ## Facts, observations, inferences
 

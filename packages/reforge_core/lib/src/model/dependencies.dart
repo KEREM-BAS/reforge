@@ -76,6 +76,10 @@ final class DependencyReport {
                 if (android.compileSdk != null)
                   'compileSdk': android.compileSdk,
                 if (android.minSdk != null) 'minSdk': android.minSdk,
+                if (android.jcenterReferences.isNotEmpty)
+                  'jcenterReferences': [
+                    for (final ref in android.jcenterReferences) ref.toJson(),
+                  ],
                 if (android.v1EmbeddingReferences.isNotEmpty)
                   'v1EmbeddingReferences': [
                     for (final ref in android.v1EmbeddingReferences)
@@ -146,6 +150,7 @@ final class AndroidPluginFacts {
     this.compileSdk,
     this.minSdk,
     this.v1EmbeddingReferences = const [],
+    this.jcenterReferences = const [],
   });
 
   /// Where the Android build script is, as a display path.
@@ -171,6 +176,9 @@ final class AndroidPluginFacts {
   /// Uses of `PluginRegistry.Registrar`, the Android v1 embedding API, in
   /// Java and Kotlin sources.
   final List<SourceRef> v1EmbeddingReferences;
+
+  /// `jcenter()` repositories in the build script, which Gradle 9 removed.
+  final List<SourceRef> jcenterReferences;
 }
 
 /// What Reforge read from a plugin's podspec for one Apple platform (`ios/`,

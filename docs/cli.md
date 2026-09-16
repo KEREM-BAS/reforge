@@ -31,9 +31,10 @@ removed in Flutter 3.29 (`PLUGIN_ANDROID_V1_EMBEDDING`), plugins that still
 apply the Kotlin Gradle plugin under Android Gradle Plugin 9
 (`PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN`), plugins that compile against a higher
 Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`), plugins that declare
-a higher `minSdk` than the app (`PLUGIN_MIN_SDK_ABOVE_APP`), pods whose podspec
-requires a newer iOS or macOS than the platform CocoaPods resolves for
-(`PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP`,
+a higher `minSdk` than the app (`PLUGIN_MIN_SDK_ABOVE_APP`), plugins that
+declare `jcenter()`, which Gradle 9 removed (`PLUGIN_GRADLE_JCENTER`), pods
+whose podspec requires a newer iOS or macOS than the platform CocoaPods
+resolves for (`PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP`,
 `PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP`: the Podfile platform, or the app's
 deployment target when the Podfile sets none), and locked versions whose Dart
 SDK constraint excludes the target (`DEPENDENCY_DART_SDK_INCOMPATIBLE`).
@@ -120,7 +121,8 @@ and `reforge rollback` undoes the change too.
 Failed checks are explained when the output matches a known failure, for
 example `GRADLE_OUT_OF_MEMORY`, `JETIFIER_TRANSFORM_FAILED`,
 `FLUTTER_DEPENDENCY_BELOW_MINIMUM`, `GRADLE_JDK_TOO_NEW`,
-`COCOAPODS_DEPLOYMENT_TARGET`, `XCODE_TOO_OLD` or `DART_COMPILATION_ERROR`,
+`GRADLE_JCENTER_REMOVED`, `COCOAPODS_DEPLOYMENT_TARGET`, `XCODE_TOO_OLD` or
+`DART_COMPILATION_ERROR`,
 with the recipes that address them. Output that
 matches nothing known is shown as is, never guessed at.
 

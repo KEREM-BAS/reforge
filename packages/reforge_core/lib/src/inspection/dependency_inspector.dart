@@ -163,6 +163,12 @@ final class DependencyInspector {
               script.isReliable ? kotlinPluginApplication(script) : null,
           compileSdk: _literalCompileSdk(script),
           minSdk: _literalMinSdk(script),
+          jcenterReferences: script.isReliable
+              ? [
+                  for (final repository in jcenterRepositories(script))
+                    script.refAt(repository.statement.start),
+                ]
+              : const [],
           v1EmbeddingReferences: _v1EmbeddingReferences(package, files),
         );
       }

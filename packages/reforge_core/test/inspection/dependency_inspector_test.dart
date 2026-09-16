@@ -114,6 +114,11 @@ void main() {
           reason: 'mentions in comments do not count');
       expect(modern.android!.kotlinPlugin, KotlinPluginApplication.always);
       expect(legacy.android!.minSdk, 16);
+      expect(legacy.android!.jcenterReferences.map((r) => r.display), [
+        'legacy_camera_plugin 0.5.8/android/build.gradle:7',
+        'legacy_camera_plugin 0.5.8/android/build.gradle:18',
+      ]);
+      expect(modern.android!.jcenterReferences, isEmpty);
       expect(modern.android!.minSdk, 21);
       expect(legacy.android!.kotlinPlugin, KotlinPluginApplication.none);
 

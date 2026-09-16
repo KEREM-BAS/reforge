@@ -35,6 +35,19 @@ void main() {
           contains('Android SDK Platform 35'));
     });
 
+    test('Gradle 9 removed jcenter()', () {
+      final groovy = single('> Could not find method jcenter() for arguments '
+          '[] on repository container of type '
+          'org.gradle.api.internal.artifacts.dsl.DefaultRepositoryHandler.');
+      expect(groovy.id, 'GRADLE_JCENTER_REMOVED');
+      expect(groovy.relatedRecipes, [RecipeIds.androidJcenter]);
+      expect(
+          single('e: file:///app/android/build.gradle.kts:4:9: Unresolved '
+                  "reference 'jcenter'.")
+              .id,
+          'GRADLE_JCENTER_REMOVED');
+    });
+
     test('Apple toolchain versions', () {
       final xcode = single('Found "Xcode 14.3, Build version 14E222b". Xcode '
           '15 or greater is required to develop for iOS.');

@@ -508,6 +508,37 @@ String _blockFingerprint(GradleBlock block) {
   return '{ $parameters${block.statements.map(statementFingerprint).join(' ; ')} }';
 }
 
+/// A `jcenter()` (or `jcenter { }`) declaration in a `repositories {}` block.
+/// Gradle 9 removed the method.
+final class JcenterRepository {
+  const JcenterRepository(this.statement, this.repositories);
+
+  final GradleStatement statement;
+
+  /// The enclosing `repositories {}` block.
+  final GradleBlock repositories;
+
+  /// The `jcenter` identifier.
+  GradleToken get name => statement.tokens.first;
+
+  /// Whether the same block also declares `mavenCentral()`.
+  bool get alongsideMavenCentral => repositories.statements.any((s) =>
+      s.tokens.isNotEmpty && s.tokens.first.isIdentifier('mavenCentral'));
+}
+
+/// The `jcenter()` declarations in `repositories {}` blocks of [script], at
+/// any depth (`buildscript`, `allprojects`, `pluginManagement`, ...).
+List<JcenterRepository> jcenterRepositories(GradleScript script) => [
+      for (final statement in script.allStatements)
+        if (statement.isBlockNamed('repositories'))
+          for (final inner in statement.blocks.first.statements)
+            if (inner.tokens.isNotEmpty &&
+                inner.tokens.first.isIdentifier('jcenter') &&
+                (inner.tokens.length == 1 ||
+                    inner.tokens[1].isPunctuation('(')))
+              JcenterRepository(inner, statement.blocks.first),
+    ];
+
 /// Returns true when [name] is referenced anywhere in [script] other than in
 /// the given [excluding] statements: as an identifier token or inside a
 /// string interpolation.
