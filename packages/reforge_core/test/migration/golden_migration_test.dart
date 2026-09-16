@@ -85,7 +85,11 @@ void main() {
       );
       final target = knowledge.resolveFlutterVersion('${spec['target']}');
       final files = LocalProjectFileSystem(project);
-      final plan = planner.plan(files: files, target: target, options: options);
+      final plan = planner.plan(
+          files: files,
+          target: target,
+          options: options,
+          packageSources: const LocalPackageSources());
 
       final summaryFile = File(p.join(directory.path, 'plan.md'));
       final expectedDirectory = Directory(p.join(directory.path, 'files'));

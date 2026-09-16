@@ -3,6 +3,7 @@ import '../common/errors.dart';
 import '../environment/environment.dart';
 import '../fs/project_file_system.dart';
 import '../inspection/current_flutter_version.dart';
+import '../inspection/dependency_inspector.dart';
 import '../inspection/project_inspector.dart';
 import '../knowledge/flutter_release.dart';
 import '../knowledge/knowledge_base.dart';
@@ -31,12 +32,17 @@ final class MigrationPlanner {
   final List<MigrationRecipe> recipes;
   final String reforgeVersion;
 
+  /// Plans the migration of the workspace in [files] to [target].
+  ///
+  /// With [packageSources], the packages each project resolved are read and
+  /// checked too; their problems appear in the plan's remaining findings.
   MigrationPlan plan({
     required ProjectFileSystem files,
     required FlutterRelease target,
     PlanOptions options = const PlanOptions(),
     Environment? environment,
     String? projectPath,
+    PackageSources? packageSources,
   }) {
     final overlay = OverlayFileSystem(files);
     final workspace =
@@ -159,8 +165,14 @@ final class MigrationPlanner {
 
       final migrated = ProjectInspector(overlay, knowledge: knowledge)
           .inspectProject(original.path);
-      remaining.addAll(CompatibilityAnalyzer(knowledge)
-          .analyze(migrated, release: target, environment: environment));
+      remaining.addAll(CompatibilityAnalyzer(knowledge).analyze(
+        migrated,
+        release: target,
+        environment: environment,
+        dependencies: packageSources == null
+            ? null
+            : DependencyInspector(packageSources).inspect(original, overlay),
+      ));
     }
 
     final fileChanges = [

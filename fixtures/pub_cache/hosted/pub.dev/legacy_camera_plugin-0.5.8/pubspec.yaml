@@ -1,0 +1,22 @@
+name: legacy_camera_plugin
+description: A camera plugin in the style of 2021 Flutter plugins (fixture).
+version: 0.5.8
+homepage: https://example.com/legacy_camera_plugin
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  string_tools: ^1.2.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.legacycamera
+        pluginClass: LegacyCameraPlugin
+      ios:
+        pluginClass: LegacyCameraPlugin

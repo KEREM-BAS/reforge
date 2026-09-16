@@ -57,6 +57,7 @@ Raise the iOS deployment target to 13.0.
 
 ## Remaining findings
 
+- info DEPENDENCIES_NOT_RESOLVED
 - info ANDROID_NAMESPACE_MISSING
 - warning ANDROID_COMPILE_SDK_REQUIRES_NEWER_AGP
 - error ANDROID_AGP_BELOW_FLUTTER_MINIMUM

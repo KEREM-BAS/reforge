@@ -1,3 +1,5 @@
+import 'package:pub_semver/pub_semver.dart';
+
 import '../common/source.dart';
 import '../environment/environment.dart';
 import '../knowledge/flutter_release.dart';
@@ -5,8 +7,11 @@ import '../knowledge/knowledge_base.dart';
 import '../migration/recipe_ids.dart';
 import '../model/android_project.dart';
 import '../model/declarations.dart';
+import '../model/dependencies.dart';
 import '../model/finding.dart';
 import '../model/flutter_project.dart';
+import '../parsing/pub/pub_metadata.dart';
+import '../parsing/pub/sdk_constraint.dart';
 import '../version/tool_version.dart';
 
 /// Finds compatibility problems in a project.
@@ -21,13 +26,19 @@ final class CompatibilityAnalyzer {
 
   final KnowledgeBase knowledge;
 
+  /// Analyzes [project], against [release] when given. With [dependencies],
+  /// the project's resolved packages are checked too.
   List<Finding> analyze(
     FlutterProject project, {
     FlutterRelease? release,
     Environment? environment,
+    DependencyReport? dependencies,
   }) {
     final findings = <Finding>[];
     findings.addAll(_problems(project));
+    if (dependencies != null && release != null) {
+      findings.addAll(_dependencies(project, release, dependencies));
+    }
     final android = project.android;
     if (android != null) {
       findings.addAll(_androidConsistency(android, release));
@@ -368,6 +379,153 @@ final class CompatibilityAnalyzer {
     final minSdk = _minSdkFinding(android, release);
     if (minSdk != null) yield minSdk;
   }
+
+  Iterable<Finding> _dependencies(FlutterProject project,
+      FlutterRelease release, DependencyReport report) sync* {
+    if (!report.resolved) {
+      yield Finding(
+        code: 'DEPENDENCIES_NOT_RESOLVED',
+        severity: Severity.info,
+        title: 'Dependencies were not checked',
+        message: '${project.file('.dart_tool/package_config.json')} does not '
+            'exist, so Reforge could not read the packages this project uses.',
+        suggestedAction: 'Run `flutter pub get`, then run Reforge again to '
+            'check plugins and packages against Flutter ${release.version}.',
+      );
+      return;
+    }
+    if (report.unavailable.isNotEmpty) {
+      yield Finding(
+        code: 'DEPENDENCY_FILES_UNAVAILABLE',
+        severity: Severity.info,
+        title: '${report.unavailable.length} package(s) could not be read',
+        message: 'The directories of ${_list(report.unavailable)} are missing '
+            'or unreadable, so they were not checked.',
+        suggestedAction: 'Run `flutter pub get` to restore them.',
+      );
+    }
+
+    String upgradeAdvice(ResolvedPackage package) {
+      final kind = package.locked?.kind;
+      if (kind == LockedDependencyKind.directMain ||
+          kind == LockedDependencyKind.directDev ||
+          kind == LockedDependencyKind.directOverridden) {
+        return 'Upgrade ${package.name} (a direct dependency): allow a newer '
+            'version in pubspec.yaml; `flutter pub outdated` lists them.';
+      }
+      final dependents = report.dependentsOf(package.name).map((d) => d.name);
+      return 'Upgrade the packages that depend on ${package.name}'
+          '${dependents.isEmpty ? '' : ' (${_list(dependents.toList())})'} so '
+          'that pub selects a newer ${package.name}; `flutter pub outdated` '
+          'lists newer versions.';
+    }
+
+    // Dart SDK constraints of the locked versions.
+    final dart = release.dartVersion;
+    for (final package in report.packages) {
+      final constraint = package.pubspec?.sdkConstraint;
+      if (constraint == null) continue;
+      final VersionConstraint parsed;
+      try {
+        parsed = VersionConstraint.parse(constraint.value);
+      } on FormatException {
+        continue;
+      }
+      if (effectiveDartSdkConstraint(parsed, dart).allows(dart)) continue;
+      yield Finding(
+        code: 'DEPENDENCY_DART_SDK_INCOMPATIBLE',
+        severity: Severity.warning,
+        title: '${package.name} ${package.version ?? ''} does not support '
+                'Dart $dart'
+            .replaceAll('  ', ' '),
+        message: 'The locked version requires Dart "${constraint.value}"; '
+            'Flutter ${release.version} bundles Dart $dart.',
+        impact: '`flutter pub get` has to select another version of '
+            '${package.name}. If none within the constraints supports Dart '
+            '$dart, it fails.',
+        suggestedAction: upgradeAdvice(package),
+        evidence: [
+          Evidence(EvidenceKind.dependencyFile,
+              'environment.sdk: ${constraint.value}',
+              location: SourceRef(package.displayPath('pubspec.yaml'),
+                  line: constraint.location.line)),
+          Evidence.knowledge('Flutter ${release.version} bundles Dart $dart',
+              FlutterRelease.releaseManifestSource),
+        ],
+        project: project.path,
+      );
+    }
+
+    // Android plugins.
+    final declaredAgp = project.android?.toolchain.androidGradlePlugin?.version;
+    final agpMajor = declaredAgp?.major ??
+        release.androidRequirements.androidGradlePlugin?.error.major;
+    final v1Removal = KnowledgeBase.androidV1EmbeddingRemoval;
+    for (final package in report.packages) {
+      final android = package.android;
+      if (android == null) continue;
+      final label =
+          '${package.name}${package.version == null ? '' : ' ${package.version}'}';
+      if (android.declaresNamespace == false &&
+          agpMajor != null &&
+          agpMajor >= 8) {
+        yield Finding(
+          code: 'PLUGIN_ANDROID_NAMESPACE_MISSING',
+          severity: Severity.error,
+          title: 'Plugin $label does not declare an Android namespace',
+          message: 'Its Android build script sets no namespace, which Android '
+              'Gradle Plugin 8 and later require'
+              '${declaredAgp == null ? '' : ' (this project uses $declaredAgp)'}.',
+          impact: 'Android builds fail with "Namespace not specified" in the '
+              ':${package.name} module.',
+          suggestedAction: upgradeAdvice(package),
+          evidence: [
+            Evidence(EvidenceKind.dependencyFile,
+                'The android block sets no namespace',
+                location: android.buildFile),
+            const Evidence.knowledge(
+                'Android Gradle Plugin 8 requires namespace in the '
+                'module-level build script',
+                KnowledgeBase.agp8NamespaceSource),
+          ],
+          project: project.path,
+        );
+      }
+      if (android.v1EmbeddingReferences.isNotEmpty) {
+        final removed = release.version >= v1Removal.value;
+        yield Finding(
+          code: 'PLUGIN_ANDROID_V1_EMBEDDING',
+          severity: removed ? Severity.error : Severity.warning,
+          title: removed
+              ? 'Plugin $label uses the Android v1 embedding, which Flutter '
+                  '${release.version} no longer has'
+              : 'Plugin $label uses the Android v1 embedding, which Flutter '
+                  '${v1Removal.value} removes',
+          message: 'Its Android sources use PluginRegistry.Registrar.',
+          impact: removed
+              ? 'Android builds fail compiling ${package.name} ("cannot find '
+                  'symbol ... Registrar").'
+              : 'Upgrading to Flutter ${v1Removal.value} or later breaks the '
+                  'Android build.',
+          suggestedAction: upgradeAdvice(package),
+          evidence: [
+            for (final reference in android.v1EmbeddingReferences)
+              Evidence(
+                  EvidenceKind.dependencyFile, 'Uses PluginRegistry.Registrar',
+                  location: reference),
+            Evidence.knowledge(
+                'Flutter ${v1Removal.value} removed PluginRegistry.Registrar',
+                v1Removal.source),
+          ],
+          project: project.path,
+        );
+      }
+    }
+  }
+
+  static String _list(List<String> names) => names.length <= 5
+      ? names.join(', ')
+      : '${names.take(5).join(', ')} and ${names.length - 5} more';
 
   Finding? _minSdkFinding(AndroidProject android, FlutterRelease release) {
     final app = android.app;

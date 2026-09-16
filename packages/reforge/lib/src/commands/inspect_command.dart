@@ -35,16 +35,23 @@ final class InspectCommand extends ReforgeCommand {
     final environment = await environmentFuture;
 
     final analyzer = CompatibilityAnalyzer(context.knowledge);
+    final dependencyInspector =
+        DependencyInspector(const LocalPackageSources());
+    final files = LocalProjectFileSystem(projectDirectory);
     final reports = <ProjectReport>[];
     for (final project in workspace.projects) {
       if (project.kind == FlutterProjectKind.dartPackage) continue;
       final current = resolveCurrentFlutterVersion(project,
           environment: environment, knowledge: context.knowledge);
+      final dependencies = dependencyInspector.inspect(project, files);
       reports.add(ProjectReport(
         project,
         current,
         analyzer.analyze(project,
-            release: current?.release, environment: environment),
+            release: current?.release,
+            environment: environment,
+            dependencies: dependencies),
+        dependencies: dependencies,
       ));
     }
 
@@ -61,6 +68,8 @@ final class InspectCommand extends ReforgeCommand {
             {
               ...report.project.toJson(),
               'currentFlutter': report.current?.toJson(),
+              if (report.dependencies != null)
+                'resolvedDependencies': report.dependencies!.toJson(),
             },
         ],
         'environment': environment?.toJson(),
@@ -88,11 +97,14 @@ final class InspectCommand extends ReforgeCommand {
 }
 
 final class ProjectReport {
-  ProjectReport(this.project, this.current, this.findings);
+  ProjectReport(this.project, this.current, this.findings, {this.dependencies});
 
   final FlutterProject project;
   final CurrentFlutterVersion? current;
   final List<Finding> findings;
+
+  /// The packages the project resolved, when they were inspected.
+  final DependencyReport? dependencies;
 }
 
 Map<String, int> findingSummary(List<Finding> findings) => {

@@ -57,7 +57,7 @@ void renderProject(Terminal t, ProjectReport report, KnowledgeBase knowledge,
     t.line(
         '  ${t.bold('Other platforms')}  ${project.otherPlatforms.join(', ')}');
   }
-  _renderDependencies(t, project);
+  _renderDependencies(t, project, report.dependencies);
 }
 
 void _renderAndroid(
@@ -201,7 +201,8 @@ void _renderIos(Terminal t, IosProject ios) {
   }
 }
 
-void _renderDependencies(Terminal t, FlutterProject project) {
+void _renderDependencies(
+    Terminal t, FlutterProject project, DependencyReport? dependencies) {
   t.line();
   t.line('  ${t.bold('Dependencies')}');
   final pubspec = project.pubspec;
@@ -216,7 +217,26 @@ void _renderDependencies(Terminal t, FlutterProject project) {
       lock == null
           ? t.dim('no pubspec.lock')
           : '${lock.packages.length} packages');
-  if (project.pluginRegistry == null) {
+  if (dependencies != null && dependencies.resolved) {
+    final plugins = [
+      for (final package in dependencies.packages)
+        if (package.android != null) package,
+    ];
+    t.field(
+        'Android',
+        plugins.isEmpty
+            ? t.dim('no Android plugins')
+            : plugins
+                .map((p) =>
+                    '${p.name}${p.version == null ? '' : ' ${p.version}'}')
+                .join(', '));
+    if (dependencies.unavailable.isNotEmpty) {
+      t.field(
+          'Unread',
+          t.yellow('${dependencies.unavailable.length} package(s) missing; '
+              'run flutter pub get'));
+    }
+  } else if (project.pluginRegistry == null) {
     t.field('Plugins',
         t.dim('unknown (run flutter pub get to generate the plugin registry)'));
   } else {

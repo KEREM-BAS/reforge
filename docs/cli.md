@@ -23,6 +23,15 @@ checks it against the Flutter version the project currently uses: pinned with
 FVM or `.tool-versions`, otherwise `flutter` on PATH, otherwise the SDK that
 last ran `pub get`, otherwise the SDK that created the project.
 
+When `flutter pub get` has run, the packages the project resolved are read
+from their directories (usually the pub cache) and checked too: Android plugins
+without a `namespace` under Android Gradle Plugin 8
+(`PLUGIN_ANDROID_NAMESPACE_MISSING`), plugins using the Android v1 embedding
+removed in Flutter 3.29 (`PLUGIN_ANDROID_V1_EMBEDDING`), and locked versions
+whose Dart SDK constraint excludes the target (`DEPENDENCY_DART_SDK_INCOMPATIBLE`).
+`plan` runs the same checks against the target release and the planned Android
+Gradle Plugin; errors among them make a plan incomplete.
+
 `--no-env` skips probing the local toolchain.
 
 ### `env`

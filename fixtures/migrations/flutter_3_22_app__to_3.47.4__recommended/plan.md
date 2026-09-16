@@ -58,3 +58,4 @@ Raise the iOS deployment target to 15.0.
 
 ## Remaining findings
 
+- info DEPENDENCIES_NOT_RESOLVED

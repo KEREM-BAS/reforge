@@ -195,3 +195,24 @@ const androidApiLevelVersions = <int, String>{
   35: '15',
   36: '16',
 };
+
+const agp8NamespaceSource = KnowledgeSource(
+  title: 'Android Gradle plugin 8.0.0 release notes: namespace required in '
+      'module-level build script',
+  url:
+      'https://developer.android.com/build/releases/past-releases/agp-8-0-0-release-notes',
+  retrieved: '2026-09-16',
+);
+
+/// The first Flutter release without the Android v1 embedding API
+/// (`io.flutter.plugin.common.PluginRegistry.Registrar`). The interface is in
+/// the engine of Flutter 3.27.4 (engine 82bd5b72) and absent from the engine
+/// sources of Flutter 3.29.0.
+const androidV1EmbeddingRemovedIn = '3.29.0';
+
+const androidV1EmbeddingRemovalSource = KnowledgeSource(
+  title: 'flutter/engine#52022: Delete v1 android engine embedding '
+      '(PluginRegistry.Registrar is absent from Flutter 3.29.0)',
+  url: 'https://github.com/flutter/engine/pull/52022',
+  retrieved: '2026-09-16',
+);

@@ -76,6 +76,14 @@ exact literal that defines it.
   diagnostics and lower confidence; they never crash inspection and never
   become silent assumptions. A project is not assumed to look like a freshly
   generated template.
+- **Dependencies from what pub resolved.** Packages are read from the
+  directories recorded in `.dart_tool/package_config.json` (the pub cache,
+  path dependencies), each through its own read-only `ProjectFileSystem`, only
+  after `pub get` has run. Reforge reads each package's pubspec, the Android
+  build script of plugins (does it set `namespace`?) and plugin Java/Kotlin
+  sources (tokenized, so comments and strings do not count) for uses of the
+  removed v1 embedding. Facts describe the locked versions; a later `pub get`
+  with a new SDK may select others, and findings say so.
 - **Evidence-derived confidence.** `certain` (literal in a project file),
   `high` (resolved through a variable or a generated file), `medium`
   (heuristic, e.g. which JDK Flutter will pick), `low` (weak signal).

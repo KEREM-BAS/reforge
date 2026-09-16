@@ -154,6 +154,12 @@ final class KnowledgeBase {
   }
 
   static const agp9ReleaseNotesSource = android.agp9ReleaseNotesSource;
+  static const agp8NamespaceSource = android.agp8NamespaceSource;
+
+  /// The first Flutter release without the Android v1 embedding API.
+  static final Fact<Version> androidV1EmbeddingRemoval = Fact(
+      Version.parse(android.androidV1EmbeddingRemovedIn),
+      android.androidV1EmbeddingRemovalSource);
 
   /// The Android platform version of [apiLevel] (for example `7.0` for 24),
   /// or `null` when unknown.

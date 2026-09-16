@@ -1,0 +1,53 @@
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "flutter",
+      "rootUri": "file:///opt/flutter/packages/flutter",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "flutter_test",
+      "rootUri": "file:///opt/flutter/packages/flutter_test",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "legacy_camera_plugin",
+      "rootUri": "../../../pub_cache/hosted/pub.dev/legacy_camera_plugin-0.5.8",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "modern_share_plugin",
+      "rootUri": "../../../pub_cache/hosted/pub.dev/modern_share_plugin-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "sky_engine",
+      "rootUri": "file:///opt/flutter/bin/cache/pkg/sky_engine",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "string_tools",
+      "rootUri": "../../../pub_cache/hosted/pub.dev/string_tools-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "plugins_app",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    }
+  ],
+  "generated": "2024-05-20T09:12:44.518204Z",
+  "generator": "pub",
+  "generatorVersion": "3.4.0",
+  "flutterRoot": "file:///opt/flutter",
+  "flutterVersion": "3.22.0",
+  "pubCache": "file:///home/developer/.pub-cache"
+}

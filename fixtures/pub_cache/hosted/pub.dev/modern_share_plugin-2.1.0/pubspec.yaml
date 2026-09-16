@@ -1,0 +1,18 @@
+name: modern_share_plugin
+description: A share plugin in the style of current Flutter plugins (fixture).
+version: 2.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.modernshare
+        pluginClass: ModernSharePlugin

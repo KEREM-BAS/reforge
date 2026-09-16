@@ -107,6 +107,7 @@ mixin PlanningCommand on ReforgeCommand {
       options: options,
       environment: environment,
       projectPath: argResults!['workspace-project'] as String?,
+      packageSources: const LocalPackageSources(),
     );
     return (plan, environment);
   }

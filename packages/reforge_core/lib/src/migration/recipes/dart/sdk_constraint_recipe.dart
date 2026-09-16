@@ -3,30 +3,13 @@ import 'package:pub_semver/pub_semver.dart';
 import '../../../common/source.dart';
 import '../../../knowledge/flutter_release.dart';
 import '../../../model/finding.dart';
+import '../../../parsing/pub/sdk_constraint.dart';
 import '../../../text/text_edit.dart';
 import '../../recipe.dart';
 import '../../recipe_ids.dart';
 
-/// Pub (Dart 3+) treats a `<3.0.0` upper bound of a null-safe constraint
-/// (lower bound 2.12 or higher) as `<4.0.0`.
-///
-/// Source: dart-lang/pub, `SdkConstraint.interpretDartSdkConstraint`.
-VersionConstraint effectiveDartSdkConstraint(
-    VersionConstraint constraint, Version sdk) {
-  if (sdk.major >= 3 &&
-      constraint is VersionRange &&
-      constraint.min != null &&
-      constraint.min! >= Version(2, 12, 0) &&
-      constraint.max == Version(3, 0, 0).firstPreRelease &&
-      !constraint.includeMax) {
-    return VersionRange(
-      min: constraint.min,
-      includeMin: constraint.includeMin,
-      max: Version(4, 0, 0),
-    );
-  }
-  return constraint;
-}
+export '../../../parsing/pub/sdk_constraint.dart'
+    show effectiveDartSdkConstraint;
 
 /// Makes `environment.sdk` in pubspec.yaml accept the Dart version of the
 /// target Flutter release without changing the language version.

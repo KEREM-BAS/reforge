@@ -10,7 +10,7 @@ problem.
 
 | Operation | Executes project code? |
 | --- | --- |
-| `inspect`, `plan`, `history` | No. Files are only read. Symbolic links pointing outside the project are refused. |
+| `inspect`, `plan`, `history` | No. Files are only read. Symbolic links pointing outside the project are refused. Package directories listed in `.dart_tool/package_config.json` (the pub cache, path dependencies) are read the same way, each confined to its own directory. |
 | `env` | Runs `flutter`, `java`, `xcodebuild`, `pod` and `git` with version flags only. |
 | `apply`, `rollback` | No. Writes files inside the project and `.reforge/`. Runs `git status` with `core.fsmonitor` disabled. `rollback` deletes files that a verified tool created, only if they are unchanged. |
 | `verify --check pub-get/analyze` | Runs `flutter pub get` / `flutter analyze`. Analyzer plugins configured by the project may run. |
