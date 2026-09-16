@@ -154,6 +154,12 @@ final class KnowledgeBase {
   }
 
   static const agp9ReleaseNotesSource = android.agp9ReleaseNotesSource;
+  static const flutterTemplateJvmTargetSource =
+      android.flutterTemplateJvmTargetSource;
+  static const kotlinJvmTargetValidationSource =
+      android.kotlinJvmTargetValidationSource;
+  static final kotlinJvmTargetFailureSince =
+      ToolVersion.parse(android.kotlinJvmTargetFailureSince);
   static const gradle9JcenterRemovalSource =
       android.gradle9JcenterRemovalSource;
   static const flutterTemplateJcenterRemovalSource =

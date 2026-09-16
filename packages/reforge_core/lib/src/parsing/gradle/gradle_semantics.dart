@@ -508,6 +508,83 @@ String _blockFingerprint(GradleBlock block) {
   return '{ $parameters${block.statements.map(statementFingerprint).join(' ; ')} }';
 }
 
+/// The JVM targets an Android module's build script declares for Java and
+/// Kotlin.
+final class JvmTargets {
+  const JvmTargets({
+    required this.android,
+    required this.compileOptions,
+    required this.javaTarget,
+    required this.javaTargetText,
+    required this.kotlinConfigured,
+    required this.kotlinBlock,
+  });
+
+  /// The top-level `android {}` statement, when present.
+  final GradleStatement? android;
+
+  /// `android { compileOptions {} }`, when present.
+  final GradleStatement? compileOptions;
+
+  /// `targetCompatibility` normalized to `1.8`, `11`, `17`, ..., or `null`
+  /// when it is not set or not a recognized constant.
+  final String? javaTarget;
+
+  /// `targetCompatibility` as written, when it is set.
+  final String? javaTargetText;
+
+  /// Whether the script configures the Kotlin JVM target or a JVM toolchain
+  /// anywhere (`jvmTarget`, `jvmToolchain`, `toolchain`).
+  final bool kotlinConfigured;
+
+  /// A top-level `kotlin {}` block, when present.
+  final GradleStatement? kotlinBlock;
+}
+
+/// Reads the Java and Kotlin JVM target declarations of [script].
+JvmTargets jvmTargets(GradleScript script) {
+  final android =
+      script.statements.where((s) => s.isBlockNamed('android')).firstOrNull;
+  final compileOptions = android?.blocks.first.statements
+      .where((s) => s.isBlockNamed('compileOptions'))
+      .firstOrNull;
+  List<GradleToken>? value;
+  for (final statement
+      in compileOptions?.blocks.first.statements ?? const <GradleStatement>[]) {
+    value = statement.propertyValue('targetCompatibility') ?? value;
+  }
+  String? javaTarget;
+  if (value != null) {
+    String? normalize(String version) => switch (version) {
+          '1.8' || '8' || '1_8' => '1.8',
+          _ when RegExp(r'^(9|[1-9]\d)$').hasMatch(version) => version,
+          _ => null,
+        };
+    if (value.length == 3 &&
+        value[0].isIdentifier('JavaVersion') &&
+        value[1].isPunctuation('.') &&
+        value[2].identifierName.startsWith('VERSION_')) {
+      javaTarget = normalize(value[2].identifierName.substring(8));
+    } else if (value.length == 1) {
+      final token = value.single;
+      javaTarget = normalize(token.string?.constantValue ??
+          (token.kind == GradleTokenKind.number ? token.text : ''));
+    }
+  }
+  return JvmTargets(
+    android: android,
+    compileOptions: compileOptions,
+    javaTarget: javaTarget,
+    javaTargetText: value?.map((t) => t.text).join(),
+    kotlinConfigured: script.tokens.any((t) =>
+        t.isIdentifier('jvmTarget') ||
+        t.isIdentifier('jvmToolchain') ||
+        t.isIdentifier('toolchain')),
+    kotlinBlock:
+        script.statements.where((s) => s.isBlockNamed('kotlin')).firstOrNull,
+  );
+}
+
 /// A `jcenter()` (or `jcenter { }`) declaration in a `repositories {}` block.
 /// Gradle 9 removed the method.
 final class JcenterRepository {

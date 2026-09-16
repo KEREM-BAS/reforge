@@ -33,6 +33,7 @@ Raise the iOS deployment target to 13.0.
 - ANDROID_FLUTTER_GRADLE_PLUGIN_DSL: Flutter's Gradle plugins are already applied declaratively.
 - ANDROID_AGP9_OPT_OUTS: The Flutter 3.35.0 tool does not add Android Gradle Plugin 9 opt-outs to projects.
 - ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.35.0).
+- ANDROID_KOTLIN_JVM_TARGET: Recommended but not required for Flutter 3.35.0: Set the Kotlin jvmTarget of android/app/build.gradle to 1.8, its Java target.
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.35.0 does not apply the Kotlin Gradle plugin itself, so the app module keeps applying it.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.

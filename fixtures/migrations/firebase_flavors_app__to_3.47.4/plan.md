@@ -57,6 +57,7 @@ Raise the iOS deployment target to 15.0.
 ## Skipped
 
 - DART_SDK_CONSTRAINT: environment.sdk ">=3.1.0 <4.0.0" allows Dart 3.13.3.
+- ANDROID_KOTLIN_JVM_TARGET: android/app/build.gradle configures the Kotlin JVM target or a JVM toolchain.
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.47.4 only warns about apps applying the Kotlin Gradle plugin with Android Gradle Plugin 9 or later; this project uses 8.11.1.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_CLEAN_TASK: android/build.gradle has no clean task in the form the Flutter tool migrates.

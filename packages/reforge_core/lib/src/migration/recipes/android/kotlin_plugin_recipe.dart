@@ -34,6 +34,7 @@ final class AppKotlinPluginRecipe extends MigrationRecipe {
           RecipeIds.androidAgp9OptOuts,
           RecipeIds.androidAgpVersion,
           RecipeIds.androidKotlinVersion,
+          RecipeIds.androidKotlinJvmTarget,
         ],
       );
 

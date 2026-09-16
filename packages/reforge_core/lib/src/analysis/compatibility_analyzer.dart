@@ -389,6 +389,57 @@ final class CompatibilityAnalyzer {
     final agpVersion = agp?.version;
     final gradleVersion = wrapper?.version;
 
+    // Kotlin compiles to the JVM Gradle runs on unless jvmTarget is set;
+    // Gradle 8 fails the build when Java compiles to another target.
+    final app = android.app;
+    final kotlinVersion = android.toolchain.kotlin?.version;
+    if (app != null &&
+        app.script.isReliable &&
+        gradleVersion != null &&
+        gradleVersion.major >= 8 &&
+        kotlinVersion != null &&
+        kotlinVersion >= KnowledgeBase.kotlinJvmTargetFailureSince &&
+        kotlinAndroidPluginApplications(app.script).isNotEmpty) {
+      final targets = jvmTargets(app.script);
+      final mode =
+          android.gradleProperties?['kotlin.jvm.target.validation.mode'];
+      if (!targets.kotlinConfigured &&
+          (mode == null || mode == 'error') &&
+          targets.android != null) {
+        yield Finding(
+          code: 'ANDROID_KOTLIN_JVM_TARGET_UNSET',
+          severity: Severity.error,
+          title: 'The app module does not set the Kotlin JVM target',
+          message: '${app.script.path} applies the Kotlin Gradle plugin '
+              '$kotlinVersion without a jvmTarget, so Kotlin compiles to the '
+              'JVM Gradle runs on, and Java to '
+              '${targets.javaTargetText ?? 'Java 8 (no compileOptions)'}.',
+          impact: 'Gradle $gradleVersion fails Android builds: '
+              '"Inconsistent JVM-target compatibility detected for tasks '
+              "'compileDebugJavaWithJavac' and 'compileDebugKotlin'\".",
+          suggestedAction: 'Set the Kotlin jvmTarget to the Java '
+              'targetCompatibility, as Flutter 3.24+ templates do.',
+          evidence: [
+            Evidence.file(
+                'No Kotlin jvmTarget',
+                app.script
+                    .refAt((targets.compileOptions ?? targets.android!).start)),
+            Evidence.file(
+                'Gradle wrapper uses $gradleVersion', wrapper!.location),
+            const Evidence.knowledge(
+                'The Kotlin Gradle plugin fails builds on Gradle 8.0+ when '
+                'Java and Kotlin compile to different JVM targets',
+                KnowledgeBase.kotlinJvmTargetValidationSource),
+            const Evidence.knowledge(
+                'New Flutter 3.22 projects failed with Kotlin 1.9.23 and '
+                'Gradle 8.6 until templates set jvmTarget again',
+                KnowledgeBase.flutterTemplateJvmTargetSource),
+          ],
+          relatedRecipes: const [RecipeIds.androidKotlinJvmTarget],
+        );
+      }
+    }
+
     if (agpVersion != null && gradleVersion != null) {
       final minimum = knowledge.minimumGradleForAgp(agpVersion);
       if (minimum != null && gradleVersion < minimum.value) {
@@ -418,7 +469,6 @@ final class CompatibilityAnalyzer {
       }
     }
 
-    final app = android.app;
     if (app != null && app.script.isReliable && app.namespace == null) {
       final requiresNamespace =
           agpVersion != null && agpVersion >= ToolVersion(8, 0);

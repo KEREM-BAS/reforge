@@ -69,6 +69,9 @@ List<Diagnosis> correlateFailures(
                   ]
                 : withCode('PLUGIN_ANDROID_NAMESPACE_MISSING',
                     subjects: {module}),
+          'JVM_TARGET_MISMATCH' => module == null || module == 'app'
+              ? withCode('ANDROID_KOTLIN_JVM_TARGET_UNSET')
+              : const <Finding>[],
           'PLUGIN_MIN_SDK_HIGHER' => withCode('PLUGIN_MIN_SDK_ABOVE_APP',
               subjects: {failure.details['library']!}),
           'PLUGIN_V1_EMBEDDING' => withCode('PLUGIN_ANDROID_V1_EMBEDDING',

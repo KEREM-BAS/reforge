@@ -28,6 +28,12 @@ Upgrade the Kotlin Gradle plugin from 1.7.10 to 2.2.20.
 - note: Kotlin 2 compiles with the K2 compiler by default. Kotlin sources in the app module and Kotlin-based plugins should be rebuilt and tested.
 - files: apps/customer_app/android/settings.gradle
 
+## ANDROID_KOTLIN_JVM_TARGET (review, required, applied)
+
+Set the Kotlin jvmTarget of apps/customer_app/android/app/build.gradle to 1.8, its Java target.
+- note: Kotlin code that inlines functions compiled for a newer JVM target fails to compile with an older target; raise both targets together if that happens.
+- files: apps/customer_app/android/app/build.gradle
+
 ## IOS_DEPLOYMENT_TARGET (auto, required, applied)
 
 Raise the iOS deployment target to 15.0.
@@ -89,6 +95,7 @@ Raise the iOS deployment target to 15.0.
 - MACOS_DEPLOYMENT_TARGET: The project has no macOS host.
 - DART_SDK_CONSTRAINT: environment.sdk "^3.6.0" allows Dart 3.13.3.
 - ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.47.4).
+- ANDROID_KOTLIN_JVM_TARGET: apps/driver_app/android/app/build.gradle configures the Kotlin JVM target or a JVM toolchain.
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.47.4 only warns about apps applying the Kotlin Gradle plugin with Android Gradle Plugin 9 or later; this project uses 8.11.1.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
@@ -104,6 +111,7 @@ Raise the iOS deployment target to 15.0.
 - ANDROID_COMPILE_SDK: The project has no Android app module.
 - ANDROID_AGP_VERSION: The project has no Android host.
 - ANDROID_KOTLIN_VERSION: The project has no Android host.
+- ANDROID_KOTLIN_JVM_TARGET: The project has no Android app module.
 - ANDROID_APP_KOTLIN_PLUGIN: The project has no Android app module.
 - ANDROID_NAMESPACE: The project has no Android app module.
 - ANDROID_MIN_SDK: The project has no Android app module.

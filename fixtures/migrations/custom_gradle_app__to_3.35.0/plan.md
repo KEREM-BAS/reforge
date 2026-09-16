@@ -55,6 +55,7 @@ Raise the iOS deployment target to 13.0.
 - DART_SDK_CONSTRAINT: environment.sdk ">=2.18.0 <3.0.0" allows Dart 3.9.0 (pub reads the <3.0.0 upper bound as <4.0.0).
 - ANDROID_AGP9_OPT_OUTS: The Flutter 3.35.0 tool does not add Android Gradle Plugin 9 opt-outs to projects.
 - ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.35.0).
+- ANDROID_KOTLIN_JVM_TARGET: android/app/build.gradle configures the Kotlin JVM target or a JVM toolchain.
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.35.0 does not apply the Kotlin Gradle plugin itself, so the app module keeps applying it.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
 - ANDROID_JCENTER: The Android build scripts do not declare jcenter().

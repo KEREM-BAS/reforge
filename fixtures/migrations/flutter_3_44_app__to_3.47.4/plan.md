@@ -17,6 +17,7 @@ Raise the iOS deployment target to 15.0.
 - ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.47.4).
 - ANDROID_AGP_VERSION: Android Gradle Plugin 9.0.1 already satisfies Flutter 3.47.4.
 - ANDROID_KOTLIN_VERSION: Kotlin Gradle plugin 2.3.20 already satisfies Flutter 3.47.4.
+- ANDROID_KOTLIN_JVM_TARGET: The app module does not apply the Kotlin Gradle plugin.
 - ANDROID_APP_KOTLIN_PLUGIN: The app module does not apply the Kotlin Gradle plugin.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.

@@ -707,6 +707,127 @@ void main() {
       });
     });
 
+    group('Kotlin JVM target', () {
+      Map<String, String> kotlinApp(String app,
+              {String kotlin = '1.9.24', String gradle = '8.14'}) =>
+          {
+            'pubspec.yaml': pubspec('^3.9.0'),
+            'android/settings.gradle': 'plugins {\n'
+                '    id "dev.flutter.flutter-plugin-loader" version "1.0.0"\n'
+                '    id "com.android.application" version "8.11.1" apply false\n'
+                '    id "org.jetbrains.kotlin.android" version "$kotlin" '
+                'apply false\n}\ninclude ":app"\n',
+            'android/build.gradle': 'allprojects {}\n',
+            'android/app/build.gradle': app,
+            'android/gradle/wrapper/gradle-wrapper.properties':
+                'distributionUrl=https\\://services.gradle.org/distributions/'
+                    'gradle-$gradle-bin.zip\n',
+          };
+      // Keep the declared Kotlin and Gradle versions.
+      const frozen = PlanOptions(acceptAllReviews: true, skippedRecipes: {
+        RecipeIds.androidKotlinVersion,
+        RecipeIds.androidGradleWrapper,
+        RecipeIds.androidAgp9OptOuts,
+      });
+      const header = 'plugins {\n    id "com.android.application"\n'
+          '    id "kotlin-android"\n'
+          '    id "dev.flutter.flutter-gradle-plugin"\n}\n\n';
+
+      test('Flutter 3.22 template: Kotlin 2 gets compilerOptions', () {
+        final plan = planFor(
+            kotlinApp('${header}android {\n    namespace = "com.example.app"\n'
+                '    compileOptions {\n'
+                '        sourceCompatibility = JavaVersion.VERSION_1_8\n'
+                '        targetCompatibility = JavaVersion.VERSION_1_8\n    }\n'
+                '}\n\nflutter {\n    source = "../.."\n}\n'));
+        final jvm = step(plan, RecipeIds.androidKotlinJvmTarget);
+        expect(jvm.status, StepStatus.review);
+        expect(jvm.proposal.necessity, Necessity.required);
+        expect(
+            fileAfter(plan, 'android/app/build.gradle'),
+            contains('    }\n}\n\nkotlin {\n    compilerOptions {\n'
+                '        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.'
+                'JVM_1_8\n    }\n}\n\nflutter {'));
+        expect(plan.remainingFindings.map((f) => f.code),
+            isNot(contains('ANDROID_KOTLIN_JVM_TARGET_UNSET')));
+      });
+
+      test('no compileOptions, Kotlin 1.9: both targets become explicit', () {
+        final plan = planFor(
+            kotlinApp('${header}android {\n    namespace "com.example.app"\n'
+                '    defaultConfig {\n        minSdkVersion 24\n    }\n}\n'),
+            options: frozen);
+        final jvm = step(plan, RecipeIds.androidKotlinJvmTarget);
+        expect(jvm.proposal.summary,
+            'Declare Java and Kotlin JVM target 1.8 in android/app/build.gradle.');
+        expect(
+            fileAfter(plan, 'android/app/build.gradle'),
+            contains('android {\n    namespace "com.example.app"\n'
+                '    compileOptions {\n'
+                '        sourceCompatibility = JavaVersion.VERSION_1_8\n'
+                '        targetCompatibility = JavaVersion.VERSION_1_8\n'
+                '    }\n\n'
+                '    kotlinOptions {\n'
+                '        jvmTarget = JavaVersion.VERSION_1_8.toString()\n'
+                '    }\n\n'
+                '    defaultConfig {'));
+      });
+
+      test('Kotlin DSL with a Java 17 target', () {
+        final files = kotlinApp('', kotlin: '2.2.20')
+          ..remove('android/app/build.gradle')
+          ..['android/app/build.gradle.kts'] = 'plugins {\n'
+              '    id("com.android.application")\n'
+              '    id("kotlin-android")\n'
+              '    id("dev.flutter.flutter-gradle-plugin")\n}\n\n'
+              'android {\n    namespace = "com.example.app"\n'
+              '    compileOptions {\n'
+              '        sourceCompatibility = JavaVersion.VERSION_17\n'
+              '        targetCompatibility = JavaVersion.VERSION_17\n    }\n}\n';
+        final plan = planFor(files, options: frozen);
+        expect(fileAfter(plan, 'android/app/build.gradle.kts'),
+            endsWith('JvmTarget.JVM_17\n    }\n}\n'));
+      });
+
+      test('configured targets, validation mode and old toolchains', () {
+        String reason(Map<String, String> files) => skipReason(
+            planFor(files, options: frozen), RecipeIds.androidKotlinJvmTarget);
+        expect(
+            reason(kotlinApp('${header}android {\n'
+                '    kotlinOptions {\n        jvmTarget = "17"\n    }\n}\n')),
+            contains('configures the Kotlin JVM target'));
+        expect(
+            reason(kotlinApp('${header}android {\n}\n'
+                'kotlin {\n    jvmToolchain(17)\n}\n')),
+            contains('JVM toolchain'));
+        expect(
+            reason({
+              ...kotlinApp('${header}android {\n}\n'),
+              'android/gradle.properties':
+                  'kotlin.jvm.target.validation.mode=warning\n',
+            }),
+            'gradle.properties sets kotlin.jvm.target.validation.mode=warning.');
+
+        final old = planFor(
+            kotlinApp('${header}android {\n}\n',
+                kotlin: '1.7.10', gradle: '7.6.3'),
+            options: frozen);
+        expect(old.recommendationsNotIncluded.map((s) => s.recipe.id),
+            contains(RecipeIds.androidKotlinJvmTarget),
+            reason: 'Gradle 7 only warns about inconsistent targets');
+      });
+
+      test('an unrecognized Java target is left to a person', () {
+        final plan = planFor(
+            kotlinApp('${header}android {\n    compileOptions {\n'
+                '        targetCompatibility = javaTarget\n    }\n}\n'),
+            options: frozen);
+        final jvm = step(plan, RecipeIds.androidKotlinJvmTarget);
+        expect(jvm.status, StepStatus.manual);
+        expect(jvm.proposal.manualSteps.single, contains('"javaTarget"'));
+      });
+    });
+
     group('jcenter()', () {
       const rootBuild = 'buildscript {\n'
           '    repositories {\n        google()\n        jcenter()\n    }\n'

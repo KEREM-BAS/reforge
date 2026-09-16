@@ -246,3 +246,26 @@ const flutterTemplateJcenterRemovalSource = KnowledgeSource(
       'templates since Flutter 2.5.0)',
   url: 'https://github.com/flutter/flutter/pull/80908',
 );
+
+/// Flutter 3.22 app templates did not set the Kotlin JVM target; new projects
+/// failed to build with Kotlin 1.9.23 on Gradle 8.6 (flutter/flutter#147185).
+const flutterTemplateJvmTargetSource = KnowledgeSource(
+  title: 'flutter/flutter#147326: Add kotlinOptions jvmTarget to templates '
+      '(Flutter 3.24; fixes #147185, "Inconsistent JVM-target compatibility '
+      "detected for tasks 'compileDebugJavaWithJavac' (1.8) and "
+      "'compileDebugKotlin' (17)\" with Kotlin 1.9.23 and Gradle 8.6)",
+  url: 'https://github.com/flutter/flutter/pull/147326',
+  retrieved: '2026-09-16',
+);
+
+const kotlinJvmTargetValidationSource = KnowledgeSource(
+  title: 'Kotlin Gradle plugin: check for JVM target compatibility of related '
+      'compile tasks (kotlin.jvm.target.validation.mode is error by default '
+      'on Gradle 8.0+)',
+  url: 'https://kotlinlang.org/docs/gradle-configure-project.html',
+  retrieved: '2026-09-16',
+);
+
+/// The first Kotlin Gradle plugin version shown to fail Flutter app builds
+/// without a Kotlin JVM target on Gradle 8 (flutter/flutter#147185).
+const kotlinJvmTargetFailureSince = '1.9.0';

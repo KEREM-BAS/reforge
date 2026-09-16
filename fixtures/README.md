@@ -7,6 +7,7 @@ Flutter projects from specific eras, including their quirks.
 
 | Fixture | Origin | What it exercises |
 | --- | --- | --- |
+| `flutter_2_2_app` | `flutter create` templates of Flutter **2.2.0**, rendered with `tool/render_flutter_app_template.dart` | An app from before Flutter 2.5: `jcenter()`, AGP 4.1.0 / Gradle 6.7 / Kotlin 1.3.50 hard-coded in the templates, literal `compileSdkVersion 30` / `minSdkVersion 16` / `targetSdkVersion 30`, no `compileOptions` or `kotlinOptions`, `kotlin-stdlib-jdk7` dependency, imperative plugin loader in `settings.gradle`, `package=` in manifests, iOS 9.0, `sdk: ">=2.12.0 <3.0.0"`, no `analysis_options.yaml` |
 | `flutter_3_3_app` | `flutter create` templates of Flutter **3.3.0**, rendered with `tool/render_flutter_app_template.dart` | Imperative Gradle plugin apply, `package=` in manifests (no `namespace`), AGP 7.1.2 / Gradle 7.4 / Kotlin 1.6.10, `sdk: '>=2.18.0 <3.0.0'`, iOS 11.0, a macOS host with macOS 10.11 |
 | `flutter_3_13_app` | Flutter **3.13.0** templates | The transitional template: imperative `app_plugin_loader.gradle` in `settings.gradle` but a declarative `plugins {}` block in the app module, AGP/Kotlin still in the root `buildscript`; `namespace` present; AGP 7.3.0 / Gradle 7.5 / Kotlin 1.7.10, iOS 11.0 |
 | `flutter_3_22_app` | Flutter **3.22.0** templates | Declarative `plugins {}` (Groovy), AGP 7.3.0 / Gradle 7.6.3 / Kotlin 1.7.10, iOS 12.0 |
@@ -40,3 +41,7 @@ dart run tool/render_flutter_app_template.dart \
   --out ../../fixtures/projects/flutter_3_3_app --name legacy_app \
   --platforms android,ios,macos --podfile
 ```
+
+`flutter_2_2_app` was rendered with `--tag 2.2.0 --sdk-bounds '">=2.12.0 <3.0.0"'
+--name legacy_2021_app --podfile`. Binary images (launcher icons) are not
+rendered; add them from any Flutter app before building a copy.

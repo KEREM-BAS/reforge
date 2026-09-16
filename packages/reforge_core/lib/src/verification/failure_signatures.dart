@@ -488,6 +488,7 @@ final List<_Signature> _signatures = [
       suggestion: 'If the failing task belongs to a plugin, upgrade the '
           'plugin; otherwise align compileOptions and the Kotlin jvmTarget.',
       evidence: line,
+      relatedRecipes: const [RecipeIds.androidKotlinJvmTarget],
     ),
   ),
   _Signature(

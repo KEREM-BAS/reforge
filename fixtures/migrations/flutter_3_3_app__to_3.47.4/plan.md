@@ -61,6 +61,7 @@ Raise the macOS deployment target to 12.0.
 
 - DART_SDK_CONSTRAINT: environment.sdk ">=2.18.0 <3.0.0" allows Dart 3.13.3 (pub reads the <3.0.0 upper bound as <4.0.0).
 - ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.47.4).
+- ANDROID_KOTLIN_JVM_TARGET: android/app/build.gradle configures the Kotlin JVM target or a JVM toolchain.
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.47.4 only warns about apps applying the Kotlin Gradle plugin with Android Gradle Plugin 9 or later; this project uses 8.11.1.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
 - ANDROID_JCENTER: The Android build scripts do not declare jcenter().

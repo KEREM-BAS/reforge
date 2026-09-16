@@ -45,7 +45,7 @@ Summary
   ✓ Complete: applying this plan resolves every known blocker for Flutter 3.47.4.
 ```
 
-> Status: early development. The engine, sixteen migration recipes and the CLI
+> Status: early development. The engine, seventeen migration recipes and the CLI
 > work end to end on the fixture projects in this repository. Expect breaking
 > changes before 1.0.
 
@@ -99,6 +99,7 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 | [ANDROID_GRADLE_WRAPPER](docs/recipes/ANDROID_GRADLE_WRAPPER.md) | Gradle wrapper version and checksum |
 | [ANDROID_AGP_VERSION](docs/recipes/ANDROID_AGP_VERSION.md) | Android Gradle Plugin version |
 | [ANDROID_KOTLIN_VERSION](docs/recipes/ANDROID_KOTLIN_VERSION.md) | Kotlin Gradle plugin version |
+| [ANDROID_KOTLIN_JVM_TARGET](docs/recipes/ANDROID_KOTLIN_JVM_TARGET.md) | Kotlin `jvmTarget` matching Java, which Gradle 8 enforces |
 | [ANDROID_NAMESPACE](docs/recipes/ANDROID_NAMESPACE.md) | `android.namespace` instead of manifest `package` |
 | [ANDROID_MIN_SDK](docs/recipes/ANDROID_MIN_SDK.md) | `minSdk` below the Flutter minimum |
 | [ANDROID_COMPILE_SDK](docs/recipes/ANDROID_COMPILE_SDK.md) | `compileSdk` below Flutter's default or the plugins' (recommended) |

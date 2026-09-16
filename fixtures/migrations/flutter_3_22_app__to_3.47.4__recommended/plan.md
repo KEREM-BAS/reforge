@@ -29,6 +29,12 @@ Upgrade the Kotlin Gradle plugin from 1.7.10 to 2.3.20.
 - note: Kotlin 2 compiles with the K2 compiler by default. Kotlin sources in the app module and Kotlin-based plugins should be rebuilt and tested.
 - files: android/settings.gradle
 
+## ANDROID_KOTLIN_JVM_TARGET (review, required, applied)
+
+Set the Kotlin jvmTarget of android/app/build.gradle to 1.8, its Java target.
+- note: Kotlin code that inlines functions compiled for a newer JVM target fails to compile with an older target; raise both targets together if that happens.
+- files: android/app/build.gradle
+
 ## ANDROID_APP_KOTLIN_PLUGIN (review, recommended, applied)
 
 Stop applying the Kotlin Gradle plugin in android/app/build.gradle; Flutter applies it.

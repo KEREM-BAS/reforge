@@ -40,6 +40,7 @@ Raise the iOS deployment target to 15.0.
 - DART_SDK_CONSTRAINT: environment.sdk ">=3.4.0 <4.0.0" allows Dart 3.13.3.
 - ANDROID_FLUTTER_GRADLE_PLUGIN_DSL: Flutter's Gradle plugins are already applied declaratively.
 - ANDROID_COMPILE_SDK: android/app/build.gradle could not be parsed reliably (see PROJECT_FILE_UNREADABLE).
+- ANDROID_KOTLIN_JVM_TARGET: android/app/build.gradle could not be parsed reliably (see PROJECT_FILE_UNREADABLE).
 - ANDROID_APP_KOTLIN_PLUGIN: android/app/build.gradle could not be parsed reliably (see PROJECT_FILE_UNREADABLE).
 - ANDROID_NAMESPACE: android/app/build.gradle could not be parsed reliably, so its namespace is unknown (see PROJECT_FILE_UNREADABLE).
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.

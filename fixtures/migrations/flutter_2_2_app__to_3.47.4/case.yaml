@@ -1,0 +1,4 @@
+project: flutter_2_2_app
+target: 3.47.4
+acceptReviews: true
+includeRecommended: false
