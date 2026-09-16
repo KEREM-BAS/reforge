@@ -30,7 +30,9 @@ without a `namespace` under Android Gradle Plugin 8
 removed in Flutter 3.29 (`PLUGIN_ANDROID_V1_EMBEDDING`), plugins that still
 apply the Kotlin Gradle plugin under Android Gradle Plugin 9
 (`PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN`), plugins that compile against a higher
-Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`), plugins that declare
+Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`) or lower than the
+Android embedding requires, which fails with Android Gradle Plugin 9
+(`PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM`), plugins that declare
 a higher `minSdk` than the app (`PLUGIN_MIN_SDK_ABOVE_APP`), plugins that
 declare `jcenter()`, which Gradle 9 removed (`PLUGIN_GRADLE_JCENTER`), pods
 whose podspec requires a newer iOS or macOS than the platform CocoaPods

@@ -269,3 +269,18 @@ const kotlinJvmTargetValidationSource = KnowledgeSource(
 /// The first Kotlin Gradle plugin version shown to fail Flutter app builds
 /// without a Kotlin JVM target on Gradle 8 (flutter/flutter#147185).
 const kotlinJvmTargetFailureSince = '1.9.0';
+
+/// With Android Gradle Plugin 9, plugin (library) modules check the AAR
+/// metadata of their dependencies too. Observed in Reforge's validation runs;
+/// the release notes only describe the related compile SDK behavior change.
+const pluginAarMetadataCheckSinceAgp = '9.0.0';
+
+const pluginAarMetadataCheckSource = KnowledgeSource(
+  title: 'Reforge validation run 10: plugin modules compiling against Android '
+      'SDK 31 and 33 failed checkDebugAarMetadata with Android Gradle Plugin '
+      '9.0.1 and Flutter 3.44.0 (androidx.fragment:fragment:1.7.1 requires '
+      '34), and built with 8.11.1. See also the AGP 9.0.0 release notes, '
+      '"Behavior changes".',
+  url: 'https://github.com/KEREM-BAS/reforge/blob/main/docs/validation.md',
+  retrieved: '2026-09-16',
+);

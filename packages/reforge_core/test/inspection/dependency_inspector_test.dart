@@ -246,6 +246,31 @@ void main() {
           contains('missing'));
     });
 
+    test('plugins compiling against less than the embedding requires', () {
+      // kts_plugin resolves to a directory that sets compileSdkVersion 30.
+      final agp8 =
+          find(analyze('3.47.4'), 'PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM')!;
+      expect(agp8.severity, Severity.warning);
+      expect(agp8.subject, 'kts_plugin');
+      expect(
+          agp8.impact,
+          'Upgrading to Android Gradle Plugin 9.0.1, as Flutter 3.47.4 '
+          'recommends, fails in :kts_plugin:checkDebugAarMetadata.');
+
+      final agp9 = find(analyze('3.47.4', agp: '9.0.1'),
+          'PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM')!;
+      expect(agp9.severity, Severity.error);
+      expect(
+          agp9.message,
+          "Flutter 3.47.4's Android embedding depends on AndroidX libraries "
+          'that require compileSdk 34; kts_plugin compiles against 30.');
+
+      expect(
+          find(analyze('3.27.4'), 'PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM'),
+          isNull,
+          reason: 'the embedding requirement is unknown before 3.29');
+    });
+
     test('plugins applying the Kotlin Gradle plugin, with AGP 9 only', () {
       final files = MemoryProjectFileSystem({
         'pubspec.yaml': 'name: app\nenvironment:\n  sdk: ^3.4.0\n',

@@ -904,6 +904,60 @@ final class CompatibilityAnalyzer {
       }
     }
 
+    // Plugins compiling against less than the Android embedding's AndroidX
+    // libraries require: Android Gradle Plugin 9 checks the AAR metadata in
+    // plugin modules too.
+    final embeddingFloor = release.embeddingMinCompileSdk;
+    final agp = project.android?.toolchain.androidGradlePlugin?.version;
+    final agpFloor = release.androidRequirements.androidGradlePlugin;
+    final checksPlugins =
+        agp != null && agp >= KnowledgeBase.pluginAarMetadataCheckSinceAgp;
+    final checkRecommended = !checksPlugins &&
+        agpFloor != null &&
+        agpFloor.warn >= KnowledgeBase.pluginAarMetadataCheckSinceAgp;
+    if (embeddingFloor != null && (checksPlugins || checkRecommended)) {
+      for (final package in report.packages) {
+        final sdk = package.android?.compileSdk;
+        if (sdk == null || sdk >= embeddingFloor) continue;
+        final label =
+            '${package.name}${package.version == null ? '' : ' ${package.version}'}';
+        yield Finding(
+          code: 'PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
+          severity: checksPlugins ? Severity.error : Severity.warning,
+          title: 'Plugin $label compiles against Android SDK $sdk',
+          message: "Flutter ${release.version}'s Android embedding depends on "
+              'AndroidX libraries that require compileSdk $embeddingFloor; '
+              '${package.name} compiles against $sdk.',
+          impact: checksPlugins
+              ? 'Android builds fail in '
+                  ':${package.name}:checkDebugAarMetadata with Android Gradle '
+                  'Plugin $agp.'
+              : 'Upgrading to Android Gradle Plugin ${agpFloor!.warn}, as '
+                  'Flutter ${release.version} recommends, fails in '
+                  ':${package.name}:checkDebugAarMetadata.',
+          suggestedAction: 'Use a version of ${package.name} that compiles '
+              'against Android SDK $embeddingFloor or later'
+              '${checksPlugins ? ', or keep Android Gradle Plugin 8 until then' : ''}.',
+          evidence: [
+            Evidence(EvidenceKind.dependencyFile,
+                '${package.name} compiles against Android SDK $sdk',
+                location: package.android!.buildFile),
+            Evidence.knowledge(
+                "Flutter ${release.version}'s Android embedding depends on "
+                '${_list(release.embeddingMinCompileSdkLibraries)}, which '
+                'require compileSdk $embeddingFloor (AAR metadata)',
+                release.embeddingDependenciesSource),
+            const Evidence.knowledge(
+                'Plugin modules fail AAR metadata checks with Android Gradle '
+                'Plugin 9 (observed with 9.0.1, not with 8.11.1)',
+                KnowledgeBase.pluginAarMetadataCheckSource),
+          ],
+          project: project.path,
+          subject: package.name,
+        );
+      }
+    }
+
     // Plugins declaring jcenter(), which Gradle 9 removed. They fail with
     // Gradle 9 and block the upgrade when the release recommends it.
     final wrapper = project.android?.toolchain.gradleWrapper?.version;

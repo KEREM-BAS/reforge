@@ -27,12 +27,6 @@ const _findingCodes = <String, List<String>>{
   'IMPERATIVE_GRADLE_APPLY': ['ANDROID_IMPERATIVE_GRADLE_APPLY'],
   'COMPILE_SDK_REQUIRES_NEWER_AGP': ['ANDROID_COMPILE_SDK_REQUIRES_NEWER_AGP'],
   'XCODE_TOO_OLD': ['ENV_XCODE_BELOW_FLUTTER_MINIMUM'],
-  'COMPILE_SDK_BELOW_LIBRARY_MINIMUM': [
-    'ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
-  ],
-  'COMPILE_SDK_BELOW_DEPENDENCY_MINIMUM': [
-    'ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
-  ],
   'COCOAPODS_TOO_OLD': ['ENV_COCOAPODS_BELOW_FLUTTER_MINIMUM'],
 };
 
@@ -65,6 +59,17 @@ List<Diagnosis> correlateFailures(
                   ]
                 : withCode('PLUGIN_ANDROID_NAMESPACE_MISSING',
                     subjects: {module}),
+          'COMPILE_SDK_BELOW_LIBRARY_MINIMUM' ||
+          'COMPILE_SDK_BELOW_DEPENDENCY_MINIMUM' =>
+            module == null
+                ? [
+                    ...withCode('ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM'),
+                    ...withCode('PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM'),
+                  ]
+                : module.isEmpty || module == 'app'
+                    ? withCode('ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM')
+                    : withCode('PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
+                        subjects: {module}),
           'GRADLE_JCENTER_REMOVED' => module == null
               ? [
                   ...withCode('ANDROID_JCENTER_REPOSITORY'),

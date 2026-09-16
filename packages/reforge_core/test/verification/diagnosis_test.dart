@@ -190,6 +190,8 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('PLUGIN_ANDROID_V1_EMBEDDING', subject: 'old_share'),
       finding('PLUGIN_MIN_SDK_ABOVE_APP', subject: 'camera_android'),
       finding('PLUGIN_GRADLE_JCENTER', subject: 'speech_to_text'),
+      finding('PLUGIN_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
+          subject: 'flutter_keyboard_visibility'),
       finding('ANDROID_JCENTER_REPOSITORY'),
       finding('DEPENDENCY_DART_SDK_INCOMPATIBLE', subject: 'string_tools'),
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
@@ -209,6 +211,38 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
             .confirmedBy
             .map((f) => f.subject ?? f.code)
             .toList();
+
+    test('AAR metadata failures of plugin modules name the plugin', () {
+      // Android Gradle Plugin 9.0.1 with flutter_keyboard_visibility 6.0.0.
+      const output = '* What went wrong:\n'
+          'Execution failed for task '
+          "':flutter_keyboard_visibility:checkDebugAarMetadata'.\n"
+          '> A failure occurred while executing '
+          'com.android.build.gradle.internal.tasks.CheckAarMetadataWorkAction\n'
+          '   > 15 issues were found when checking AAR metadata:\n\n'
+          "       1.  Dependency 'androidx.fragment:fragment:1.7.1' requires "
+          'libraries and applications that\n'
+          '           depend on it to compile against version 34 or later of '
+          'the\n           Android APIs.\n\n'
+          '           :flutter_keyboard_visibility is currently compiled '
+          'against android-31.';
+      final failure = diagnoseFailure(output).single;
+      expect(
+          failure.explanation,
+          endsWith('flutter_keyboard_visibility '
+              'compiles against less.'));
+      expect(
+          failure.suggestion,
+          'Use a version of flutter_keyboard_visibility that compiles against '
+          'Android SDK 34 or later.');
+      expect(
+          correlateFailures([failure], findings,
+                  failingModule: failingGradleModule(output))
+              .single
+              .confirmedBy
+              .map((f) => f.subject ?? f.code),
+          ['flutter_keyboard_visibility']);
+    });
 
     test('jcenter() failures are confirmed for the failing module', () {
       const output = '* Where:\n'
@@ -274,7 +308,8 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
           ['ENV_XCODE_BELOW_FLUTTER_MINIMUM']);
       // From a Flutter 2.2 app built with Flutter 3.44 and compileSdk 30.
       expect(
-          confirmed('   > 21 issues were found when checking AAR metadata:\n\n'
+          confirmed(
+              '   > 21 issues were found when checking AAR metadata:\n\n'
               "       1.  Dependency 'androidx.fragment:fragment:1.7.1' "
               'requires libraries and applications that\n'
               '           depend on it to compile against version 34 or later '
@@ -285,7 +320,8 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
               'libraries and applications that\n'
               '           depend on it to compile against version 34 or later '
               'of the\n'
-              '           Android APIs.'),
+              '           Android APIs.',
+              module: ':app'),
           ['ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM']);
       expect(
           confirmed('[!] CocoaPods could not find compatible versions for pod '

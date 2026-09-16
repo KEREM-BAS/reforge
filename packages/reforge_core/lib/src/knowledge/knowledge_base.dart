@@ -169,6 +169,10 @@ final class KnowledgeBase {
       android.kotlinJvmTargetValidationSource;
   static final kotlinJvmTargetFailureSince =
       ToolVersion.parse(android.kotlinJvmTargetFailureSince);
+  static const pluginAarMetadataCheckSource =
+      android.pluginAarMetadataCheckSource;
+  static final pluginAarMetadataCheckSinceAgp =
+      ToolVersion.parse(android.pluginAarMetadataCheckSinceAgp);
   static const gradle9JcenterRemovalSource =
       android.gradle9JcenterRemovalSource;
   static const flutterTemplateJcenterRemovalSource =

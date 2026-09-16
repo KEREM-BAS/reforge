@@ -250,14 +250,19 @@ final List<_Signature> _signatures = [
               r'\s+depend on it to compile against version (\d+) or later')
           .firstMatch(context.output);
       if (requirement == null) return null;
+      final module = failingGradleModule(context.output);
+      final plugin =
+          module == null || module == ':' || module == ':app' ? null : module;
       return FailureDiagnosis(
         id: 'COMPILE_SDK_BELOW_LIBRARY_MINIMUM',
         explanation: '${requirement.group(1)} requires modules that depend on '
             'it to compile against Android SDK ${requirement.group(2)} or '
-            'later.',
-        suggestion: 'Raise compileSdk of the failing module to '
-            '${requirement.group(2)}; for the app, flutter.compileSdkVersion '
-            'when it is high enough.',
+            'later${plugin == null ? '' : '; ${plugin.substring(1)} compiles against less'}.',
+        suggestion: plugin == null
+            ? 'Raise compileSdk of the app to ${requirement.group(2)}, or to '
+                'flutter.compileSdkVersion when it is high enough.'
+            : 'Use a version of ${plugin.substring(1)} that compiles against '
+                'Android SDK ${requirement.group(2)} or later.',
         evidence: line,
         relatedRecipes: const [RecipeIds.androidCompileSdk],
         details: {
