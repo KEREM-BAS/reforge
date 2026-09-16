@@ -78,6 +78,15 @@ KnowledgeSource _flutterHandler(String handler) => KnowledgeSource(
           'flutter_tools/lib/src/android/gradle_errors.dart',
     );
 
+/// Flutter tool source [file] (below `packages/flutter_tools/lib/src/`) that
+/// prints a message a signature matches.
+KnowledgeSource _flutterToolSource(String file, String description) =>
+    KnowledgeSource(
+      title: 'Flutter tool $description (Flutter 3.47.4)',
+      url: 'https://github.com/flutter/flutter/blob/3.47.4/packages/'
+          'flutter_tools/lib/src/$file',
+    );
+
 const _jetifierFailure = 'Jetifier failed to transform';
 
 final _pubCachePlugin = RegExp(
@@ -547,6 +556,66 @@ final List<_Signature> _signatures = [
         },
       );
     },
+  ),
+  _Signature(
+    'XCODE_TOO_OLD',
+    RegExp(r'Xcode (\d+(?:\.\d+)*) or greater is required to develop for iOS'),
+    (match, line, context) {
+      final required = match.group(1)!;
+      final found = RegExp(r'Found "Xcode (\d+(?:\.\d+)*)').firstMatch(line);
+      final missing = line.contains('Cannot find "xcodebuild"');
+      return FailureDiagnosis(
+        id: 'XCODE_TOO_OLD',
+        explanation: missing
+            ? 'xcodebuild was not found; iOS builds need a full Xcode '
+                '$required or newer installation.'
+            : found == null
+                ? 'The Flutter tool requires Xcode $required or newer for iOS '
+                    'builds.'
+                : 'Xcode ${found.group(1)} is older than the Xcode $required '
+                    'the Flutter tool requires for iOS builds.',
+        suggestion: 'Install Xcode $required or newer and select it with '
+            '`xcode-select --switch`.',
+        evidence: line,
+        details: {
+          'required': required,
+          if (found != null) 'installed': found.group(1)!,
+        },
+        source: _flutterToolSource('ios/mac.dart', 'Xcode version check'),
+      );
+    },
+  ),
+  _Signature(
+    'COCOAPODS_TOO_OLD',
+    RegExp(r'CocoaPods minimum required version (\d+(?:\.\d+)*) or greater '
+        r'not installed'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'COCOAPODS_TOO_OLD',
+      explanation: 'The Flutter tool requires CocoaPods ${match.group(1)} or '
+          'newer and skipped `pod install`.',
+      suggestion: 'Update CocoaPods, the same way it was installed.',
+      evidence: line,
+      details: {'required': match.group(1)!},
+      source: _flutterToolSource('macos/cocoapods.dart', 'CocoaPods check'),
+    ),
+  ),
+  _Signature(
+    'COCOAPODS_NOT_INSTALLED',
+    RegExp(r'CocoaPods not installed\. Skipping pod install\.|'
+        r'CocoaPods is installed but broken\. Skipping pod install\.'),
+    (match, line, context) => FailureDiagnosis(
+      id: 'COCOAPODS_NOT_INSTALLED',
+      explanation: match.group(0)!.contains('broken')
+          ? 'CocoaPods is installed but broken, so the Flutter tool skipped '
+              '`pod install`.'
+          : 'CocoaPods is not installed, so the Flutter tool skipped '
+              '`pod install`.',
+      suggestion: 'Install or repair CocoaPods '
+          '(https://guides.cocoapods.org/using/getting-started.html), then '
+          'build again.',
+      evidence: line,
+      source: _flutterToolSource('macos/cocoapods.dart', 'CocoaPods check'),
+    ),
   ),
   _Signature(
     'COCOAPODS_INCOMPATIBLE',

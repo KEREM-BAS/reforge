@@ -53,6 +53,9 @@ final class CompatibilityAnalyzer {
       for (final host in [project.ios, project.macos].nonNulls) {
         findings.addAll(_deploymentTarget(host, release));
       }
+      if (environment != null) {
+        findings.addAll(_darwinEnvironment(project, environment, release));
+      }
     }
     if (environment?.flutter?.version != null &&
         project.pinnedFlutterVersion != null &&
@@ -77,6 +80,119 @@ final class CompatibilityAnalyzer {
       ));
     }
     return [for (final finding in findings) finding.forProject(project.path)];
+  }
+
+  /// Xcode and CocoaPods on this machine against the versions [release]
+  /// checks, for projects with an iOS or macOS host.
+  Iterable<Finding> _darwinEnvironment(FlutterProject project,
+      Environment environment, FlutterRelease release) sync* {
+    final hosts = [project.ios, project.macos].nonNulls.toList();
+    if (hosts.isEmpty || !environment.isMacOS) return;
+    final requirements = release.darwinRequirements;
+
+    final xcode = environment.xcode?.version;
+    final xcodeVersion = xcode == null ? null : ToolVersion.tryParse(xcode);
+    if (xcodeVersion != null) {
+      final floor = requirements.xcode;
+      final evidence = [
+        Evidence(EvidenceKind.environment,
+            '`xcodebuild -version` reports Xcode $xcode'),
+        Evidence.knowledge(
+            'Flutter ${release.version} requires Xcode ${floor.error} and '
+            'recommends Xcode ${floor.warn}',
+            release.xcodeRequirementsSource),
+      ];
+      switch (floor.statusOf(xcodeVersion)) {
+        case FloorStatus.belowError:
+          final ios = project.ios != null;
+          yield Finding(
+            code: 'ENV_XCODE_BELOW_FLUTTER_MINIMUM',
+            severity: ios ? Severity.error : Severity.warning,
+            title: 'Xcode $xcode is below the minimum of Flutter '
+                '${release.version}',
+            message: 'Flutter ${release.version} requires Xcode ${floor.error} '
+                'or newer.',
+            impact: ios
+                ? 'iOS builds stop with "Xcode ${floor.error} or greater is '
+                    'required to develop for iOS", and `flutter doctor` '
+                    'reports an error.'
+                : '`flutter doctor` reports an error.',
+            suggestedAction: 'Install Xcode ${floor.warn} or newer and select '
+                'it with `xcode-select --switch`.',
+            evidence: evidence,
+          );
+        case FloorStatus.belowWarn:
+          yield Finding(
+            code: 'ENV_XCODE_BELOW_FLUTTER_RECOMMENDED',
+            severity: Severity.warning,
+            title: 'Xcode $xcode is below the version Flutter '
+                '${release.version} recommends',
+            message: 'Flutter ${release.version} recommends Xcode '
+                '${floor.warn} or newer.',
+            impact: '`flutter doctor` warns; a future Flutter release may '
+                'require the newer Xcode.',
+            suggestedAction: 'Install Xcode ${floor.warn} or newer.',
+            evidence: evidence,
+          );
+        case FloorStatus.satisfied:
+          break;
+      }
+    }
+
+    // CocoaPods runs when a host has a Podfile, or when Flutter creates one
+    // for plugins.
+    final usesCocoaPods = hosts.any((host) => switch (host.dependencyManager) {
+          DarwinDependencyManager.cocoapods ||
+          DarwinDependencyManager.both =>
+            true,
+          DarwinDependencyManager.none =>
+            project.pluginsFor(host.platform.name).isNotEmpty,
+          DarwinDependencyManager.swiftPackageManager => false,
+        });
+    final pod = environment.cocoapods?.version;
+    final podVersion = pod == null ? null : ToolVersion.tryParse(pod);
+    if (usesCocoaPods && podVersion != null) {
+      final floor = requirements.cocoapods;
+      final evidence = [
+        Evidence(EvidenceKind.environment, '`pod --version` reports $pod'),
+        Evidence.knowledge(
+            'Flutter ${release.version} requires CocoaPods ${floor.error} and '
+            'recommends CocoaPods ${floor.warn}',
+            release.cocoapodsRequirementsSource),
+      ];
+      switch (floor.statusOf(podVersion)) {
+        case FloorStatus.belowError:
+          yield Finding(
+            code: 'ENV_COCOAPODS_BELOW_FLUTTER_MINIMUM',
+            severity: Severity.error,
+            title: 'CocoaPods $pod is below the minimum of Flutter '
+                '${release.version}',
+            message: 'Flutter ${release.version} requires CocoaPods '
+                '${floor.error} or newer.',
+            impact: 'Builds skip `pod install` and stop with "CocoaPods not '
+                'installed or not in valid state."',
+            suggestedAction: 'Update CocoaPods to ${floor.warn} or newer, the '
+                'same way it was installed (for example with `gem` or '
+                'Homebrew).',
+            evidence: evidence,
+          );
+        case FloorStatus.belowWarn:
+          yield Finding(
+            code: 'ENV_COCOAPODS_BELOW_FLUTTER_RECOMMENDED',
+            severity: Severity.warning,
+            title: 'CocoaPods $pod is below the version Flutter '
+                '${release.version} recommends',
+            message: 'Flutter ${release.version} recommends CocoaPods '
+                '${floor.warn} or newer.',
+            impact: 'Builds warn that pods handling may fail on some projects '
+                'involving plugins.',
+            suggestedAction: 'Update CocoaPods to ${floor.warn} or newer.',
+            evidence: evidence,
+          );
+        case FloorStatus.satisfied:
+          break;
+      }
+    }
   }
 
   Iterable<Finding> _podsAboveApp(FlutterProject project, DarwinProject host,

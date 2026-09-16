@@ -105,8 +105,9 @@ Knowledge is data, not code paths, and every entry cites a source.
   minSdk error and warning floors; template toolchain versions, DSL, plugin
   style and `gradle.properties`; `flutter.*SdkVersion` defaults; the Android
   project migrations the tool runs before builds; whether Flutter applies the
-  Kotlin Gradle plugin itself; imperative Gradle apply support; and the minimum
-  iOS and macOS deployment targets.
+  Kotlin Gradle plugin itself; imperative Gradle apply support; the minimum
+  iOS and macOS deployment targets; and the Xcode and CocoaPods versions the
+  tool checks.
 - Toolchain release lists (Gradle with checksums, AGP, Kotlin) are generated
   from their official metadata by `tool/generate_toolchain_releases.dart`.
 - Android tables and facts that are not in Flutter's sources (AGP to minimum

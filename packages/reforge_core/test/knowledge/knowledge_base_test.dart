@@ -91,6 +91,20 @@ void main() {
       expect(release('3.3.0').iosMinimumDeploymentTarget, v('11.0'));
     });
 
+    test('Xcode and CocoaPods requirements', () {
+      String floor(VersionFloor floor) => '${floor.error}/${floor.warn}';
+      DarwinRequirements apple(String version) =>
+          release(version).darwinRequirements;
+      expect(floor(apple('3.0.0').cocoapods), '1.9.0/1.11.0');
+      expect(floor(apple('3.3.0').xcode), '13/13');
+      expect(floor(apple('3.13.0').xcode), '14/14');
+      expect(floor(apple('3.22.0').xcode), '14/15');
+      expect(floor(apple('3.29.0').cocoapods), '1.10.0/1.16.2');
+      expect(floor(apple('3.44.0').xcode), '15/16');
+      expect(release('3.47.4').xcodeRequirementsSource.url,
+          endsWith('packages/flutter_tools/lib/src/macos/xcode.dart'));
+    });
+
     test('macOS minimum deployment targets', () {
       expect(release('3.3.10').macosMinimumDeploymentTarget, v('10.11'));
       expect(release('3.7.0').macosMinimumDeploymentTarget, v('10.14'));

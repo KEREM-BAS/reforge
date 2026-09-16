@@ -35,6 +35,31 @@ void main() {
           contains('Android SDK Platform 35'));
     });
 
+    test('Apple toolchain versions', () {
+      final xcode = single('Found "Xcode 14.3, Build version 14E222b". Xcode '
+          '15 or greater is required to develop for iOS.');
+      expect(xcode.id, 'XCODE_TOO_OLD');
+      expect(
+          xcode.explanation,
+          'Xcode 14.3 is older than the Xcode 15 the Flutter tool requires '
+          'for iOS builds.');
+      expect(xcode.details, {'required': '15', 'installed': '14.3'});
+      expect(xcode.source!.url, endsWith('lib/src/ios/mac.dart'));
+      expect(
+          single('Cannot find "xcodebuild". Xcode 15 or greater is required '
+                  'to develop for iOS.')
+              .explanation,
+          startsWith('xcodebuild was not found'));
+
+      final pods = single('Warning: CocoaPods minimum required version 1.10.0 '
+          'or greater not installed. Skipping pod install.');
+      expect(pods.id, 'COCOAPODS_TOO_OLD');
+      expect(pods.details, {'required': '1.10.0'});
+      expect(
+          single('Warning: CocoaPods not installed. Skipping pod install.').id,
+          'COCOAPODS_NOT_INSTALLED');
+    });
+
     test('CocoaPods deployment targets name the platform', () {
       const specs = 'Specs satisfying the `url_launcher_macos (from '
           '`Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)` '
@@ -153,6 +178,7 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('DEPENDENCY_DART_SDK_INCOMPATIBLE', subject: 'string_tools'),
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
       finding('ENV_JAVA_CANNOT_RUN_GRADLE'),
+      finding('ENV_XCODE_BELOW_FLUTTER_MINIMUM'),
       finding('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP', subject: 'share_ios'),
       finding('PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP',
           subject: 'share_macos'),
@@ -191,6 +217,10 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       expect(confirmed('Unsupported class file major version 69'),
           ['ENV_JAVA_CANNOT_RUN_GRADLE']);
       expect(confirmed('java.lang.OutOfMemoryError: Java heap space'), isEmpty);
+      expect(
+          confirmed('Found "Xcode 14.3, Build version 14E222b". Xcode 15 or '
+              'greater is required to develop for iOS.'),
+          ['ENV_XCODE_BELOW_FLUTTER_MINIMUM']);
       expect(
           confirmed('[!] CocoaPods could not find compatible versions for pod '
               '"share_ios":\nSpecs satisfying the `share_ios (from '

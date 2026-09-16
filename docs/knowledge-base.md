@@ -20,6 +20,7 @@ since 3.0.0.
 | Imperative Gradle apply support | `packages/flutter_tools/gradle/flutter.gradle` (deprecation and removal messages) |
 | Minimum iOS deployment target | `darwin.dart`, `ios_deployment_target_migration.dart` or `deployment_target_migration.dart` |
 | Minimum macOS deployment target | `darwin.dart`, `macos_deployment_target_migration.dart` (3.7+) or the app template's `project.pbxproj` |
+| Required and recommended Xcode; minimum and recommended CocoaPods | `lib/src/macos/xcode.dart`, `lib/src/macos/cocoapods.dart` |
 | Android project migrations run before every Gradle build | The `<ProjectMigrator>[...]` list in `lib/src/android/gradle.dart` |
 | Whether Flutter applies the Kotlin Gradle plugin itself, and whether the app template applies it | `FlutterPluginUtils.kt`; app template build script |
 

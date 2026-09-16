@@ -47,6 +47,12 @@ Shows the Flutter SDK, the JDK Flutter will most likely use (mirroring
 Flutter's selection order: `flutter config --jdk-dir`, Android Studio's JDK,
 `JAVA_HOME`, `PATH`), Xcode, CocoaPods and Git.
 
+`inspect` and `plan` compare these tools with what the Flutter release
+requires, as its tool checks them: Java for Android builds, Xcode for iOS
+builds (`ENV_XCODE_BELOW_FLUTTER_MINIMUM`, `..._RECOMMENDED`) and CocoaPods
+before `pod install` in projects that use it
+(`ENV_COCOAPODS_BELOW_FLUTTER_MINIMUM`, `..._RECOMMENDED`).
+
 ### `plan`
 
 ```text
@@ -112,8 +118,9 @@ and `reforge rollback` undoes the change too.
 
 Failed checks are explained when the output matches a known failure, for
 example `GRADLE_OUT_OF_MEMORY`, `JETIFIER_TRANSFORM_FAILED`,
-`FLUTTER_DEPENDENCY_BELOW_MINIMUM`, `GRADLE_JDK_TOO_NEW` or
-`DART_COMPILATION_ERROR`, with the recipes that address them. Output that
+`FLUTTER_DEPENDENCY_BELOW_MINIMUM`, `GRADLE_JDK_TOO_NEW`,
+`COCOAPODS_DEPLOYMENT_TARGET`, `XCODE_TOO_OLD` or `DART_COMPILATION_ERROR`,
+with the recipes that address them. Output that
 matches nothing known is shown as is, never guessed at.
 
 ### `diagnose`

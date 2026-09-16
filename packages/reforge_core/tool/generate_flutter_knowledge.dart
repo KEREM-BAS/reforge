@@ -4,8 +4,8 @@
 //  * the Flutter release manifest (versions, revisions, Dart versions, dates)
 //  * flutter/flutter sources at each stable release tag (Gradle/AGP/Kotlin/
 //    Java/minSdk floors, template toolchain and gradle.properties, Android
-//    defaults, Android build migrations, iOS and macOS minimums, imperative
-//    Gradle apply behaviour)
+//    defaults, Android build migrations, iOS and macOS minimums, Xcode and
+//    CocoaPods requirements, imperative Gradle apply behaviour)
 //
 // Usage:
 //   curl -o /tmp/releases_macos.json \
@@ -277,6 +277,39 @@ Future<void> main(List<String> arguments) async {
       ], 'MACOSX_DEPLOYMENT_TARGET'),
     });
 
+    // Apple toolchain versions the Flutter tool checks: Xcode before iOS
+    // builds and in doctor, CocoaPods before pod install.
+    final xcode = await git.read(
+            tag, 'packages/flutter_tools/lib/src/macos/xcode.dart') ??
+        '';
+    String? xcodeVersion(String name) {
+      final match = RegExp('$name\\s*=>\\s*'
+              'Version\\((\\d+),\\s*(null|\\d+),\\s*(null|\\d+)\\)')
+          .firstMatch(xcode);
+      if (match == null) return null;
+      return [
+        match.group(1),
+        if (match.group(2) != 'null') match.group(2),
+        if (match.group(3) != 'null') match.group(3),
+      ].join('.');
+    }
+
+    final xcodeRequired = xcodeVersion('xcodeRequiredVersion') ??
+        (throw StateError('$tag: xcodeRequiredVersion not found.'));
+    final xcodeRecommended = xcodeVersion('xcodeRecommendedVersion') ??
+        (RegExp(r'xcodeRecommendedVersion\s*=>\s*xcodeRequiredVersion')
+                .hasMatch(xcode)
+            ? xcodeRequired
+            : throw StateError('$tag: xcodeRecommendedVersion not found.'));
+    final cocoapods = await git.read(
+            tag, 'packages/flutter_tools/lib/src/macos/cocoapods.dart') ??
+        '';
+    String cocoapodsVersion(String name) =>
+        RegExp("$name\\s*=\\s*Version\\.withText\\([^)]*'([\\d.]+)'\\)")
+            .firstMatch(cocoapods)
+            ?.group(1) ??
+        (throw StateError('$tag: $name not found.'));
+
     final dart = (release['dart_sdk_version']! as String).split(' ').first;
     final date = (release['release_date']! as String).substring(0, 10);
     String quote(String? value) => value == null ? 'null' : "'$value'";
@@ -310,6 +343,8 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     imperativeApply: '$imperativeApply',
     iosMinimum: '$iosMinimum',
     macosMinimum: '$macosMinimum',
+    xcodeFloor: '$xcodeRequired/$xcodeRecommended',
+    cocoapodsFloor: '${cocoapodsVersion('cocoaPodsMinimumVersion')}/${cocoapodsVersion('cocoaPodsRecommendedVersion')}',
   ),''');
   }
   await git.close();

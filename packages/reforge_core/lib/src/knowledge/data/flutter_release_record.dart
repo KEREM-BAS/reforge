@@ -31,6 +31,8 @@ final class FlutterReleaseRecord {
     required this.imperativeApply,
     required this.iosMinimum,
     required this.macosMinimum,
+    required this.xcodeFloor,
+    required this.cocoapodsFloor,
   });
 
   final String version;
@@ -59,4 +61,6 @@ final class FlutterReleaseRecord {
   final String imperativeApply;
   final String iosMinimum;
   final String macosMinimum;
+  final String xcodeFloor;
+  final String cocoapodsFloor;
 }

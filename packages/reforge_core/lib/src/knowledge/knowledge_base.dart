@@ -298,6 +298,10 @@ FlutterRelease _releaseFromRecord(FlutterReleaseRecord record) {
         ImperativeGradleApply.values.byName(record.imperativeApply),
     iosMinimumDeploymentTarget: ToolVersion.parse(record.iosMinimum),
     macosMinimumDeploymentTarget: ToolVersion.parse(record.macosMinimum),
+    darwinRequirements: DarwinRequirements(
+      xcode: floor(record.xcodeFloor)!,
+      cocoapods: floor(record.cocoapodsFloor)!,
+    ),
     androidMigrations: record.androidMigrations,
     appliesKotlinPlugin: record.appliesKotlinPlugin,
   );
