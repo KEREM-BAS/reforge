@@ -17,15 +17,18 @@ const androidApplicationPluginIds = {
   'com.android.application',
   'com.android.library',
 };
-const kotlinAndroidPluginIds = {'org.jetbrains.kotlin.android', 'kotlin-android'};
+const kotlinAndroidPluginIds = {
+  'org.jetbrains.kotlin.android',
+  'kotlin-android'
+};
 const agpClasspathModule = 'com.android.tools.build:gradle';
 const kotlinClasspathModule = 'org.jetbrains.kotlin:kotlin-gradle-plugin';
 
 /// Whether an `apply from:` value loads Flutter's legacy settings loader.
 bool isImperativePluginLoader(GradleApplyStatement apply) =>
     apply.kind == 'from' &&
-    (apply.value?.templateText
-            .endsWith('packages/flutter_tools/gradle/app_plugin_loader.gradle') ??
+    (apply.value?.templateText.endsWith(
+            'packages/flutter_tools/gradle/app_plugin_loader.gradle') ??
         false);
 
 /// Whether an `apply from:` value loads Flutter's legacy Gradle plugin.
@@ -253,8 +256,9 @@ final class AndroidInspector {
       return null;
     }
 
-    final declared = fromPluginsBlocks(settings, DeclarationSite.settingsPlugins) ??
-        fromPluginsBlocks(rootBuild, DeclarationSite.rootBuildPlugins);
+    final declared =
+        fromPluginsBlocks(settings, DeclarationSite.settingsPlugins) ??
+            fromPluginsBlocks(rootBuild, DeclarationSite.rootBuildPlugins);
     if (declared != null) return declared;
     if (rootBuild == null) return null;
 
@@ -378,8 +382,7 @@ final class AndroidInspector {
     if (properties == null || entry == null) return null;
     final url = entry.value;
     final fileName = url.split('/').last;
-    final match =
-        RegExp(r'^gradle-(.+)-(bin|all)\.zip$').firstMatch(fileName);
+    final match = RegExp(r'^gradle-(.+)-(bin|all)\.zip$').firstMatch(fileName);
     return GradleWrapper(
       distributionUrl: url,
       version: match == null ? null : ToolVersion.tryParse(match.group(1)!),
@@ -403,7 +406,8 @@ final class AndroidInspector {
 
     final flavors = <String>[];
     final flavorBlock = android?.findBlock(['productFlavors']);
-    for (final statement in flavorBlock?.statements ?? const <GradleStatement>[]) {
+    for (final statement
+        in flavorBlock?.statements ?? const <GradleStatement>[]) {
       if (statement.blocks.isEmpty) continue;
       final name = _namedContainerElement(statement);
       if (name != null) flavors.add(name);

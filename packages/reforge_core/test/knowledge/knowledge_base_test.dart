@@ -23,8 +23,8 @@ void main() {
     test('never guesses unknown targets', () {
       expect(
         () => kb.resolveFlutterVersion('3.99.0'),
-        throwsA(isA<UnsupportedTargetException>().having(
-            (e) => e.code, 'code', 'TARGET_UNKNOWN_FLUTTER_VERSION')),
+        throwsA(isA<UnsupportedTargetException>()
+            .having((e) => e.code, 'code', 'TARGET_UNKNOWN_FLUTTER_VERSION')),
       );
       expect(
         () => kb.resolveFlutterVersion('three'),
@@ -35,7 +35,8 @@ void main() {
 
     test('maps revisions to releases', () {
       expect(
-          kb.releaseByRevision('559ffa3f75e7402d65a8def9c28389a9b2e6fe42')!
+          kb
+              .releaseByRevision('559ffa3f75e7402d65a8def9c28389a9b2e6fe42')!
               .version,
           Version(3, 44, 0));
     });
@@ -76,7 +77,8 @@ void main() {
 
     test('releases before 3.22 do not enforce Android dependency floors', () {
       expect(release('3.19.0').androidRequirements.androidGradlePlugin, isNull);
-      expect(release('3.22.0').androidRequirements.androidGradlePlugin, isNotNull);
+      expect(
+          release('3.22.0').androidRequirements.androidGradlePlugin, isNotNull);
     });
 
     test('template eras', () {

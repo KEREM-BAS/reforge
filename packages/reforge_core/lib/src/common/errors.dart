@@ -64,8 +64,8 @@ sealed class ReforgeException implements Exception {
   String toString() => '$code: $message';
 }
 
-final class UsageException extends ReforgeException {
-  const UsageException(super.code, super.message, {super.hints});
+final class InvalidUsageException extends ReforgeException {
+  const InvalidUsageException(super.code, super.message, {super.hints});
 
   @override
   ErrorCategory get category => ErrorCategory.usage;

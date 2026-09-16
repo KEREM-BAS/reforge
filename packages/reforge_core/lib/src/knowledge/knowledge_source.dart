@@ -3,7 +3,8 @@ import 'package:meta/meta.dart';
 /// Where a piece of compatibility knowledge comes from.
 @immutable
 final class KnowledgeSource {
-  const KnowledgeSource({required this.title, required this.url, this.retrieved});
+  const KnowledgeSource(
+      {required this.title, required this.url, this.retrieved});
 
   final String title;
   final String url;

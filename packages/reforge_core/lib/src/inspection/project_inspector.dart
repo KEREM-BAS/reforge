@@ -89,7 +89,9 @@ final class ProjectInspector {
       throw InvalidProjectException(
         'PROJECT_NOT_FLUTTER',
         '${rootPubspec.name} does not depend on the Flutter SDK.',
-        hints: const ['Reforge works with Flutter apps, plugins, modules and packages.'],
+        hints: const [
+          'Reforge works with Flutter apps, plugins, modules and packages.'
+        ],
       );
     }
     return Workspace(
@@ -117,7 +119,8 @@ final class ProjectInspector {
   FlutterProject _projectFrom(String projectPath, Pubspec pubspec) {
     final problems = <ParseProblem>[];
 
-    T? optional<T>(String relative, T Function(String path, String content) parse) {
+    T? optional<T>(
+        String relative, T Function(String path, String content) parse) {
       final path = _join(projectPath, relative);
       try {
         final content = files.readString(path);
@@ -213,7 +216,10 @@ final class ProjectInspector {
     for (final directory in searchPaths) {
       final fvmrc = _join(directory, '.fvmrc');
       final legacyFvm = _join(directory, '.fvm/fvm_config.json');
-      for (final (path, key) in [(fvmrc, 'flutter'), (legacyFvm, 'flutterSdkVersion')]) {
+      for (final (path, key) in [
+        (fvmrc, 'flutter'),
+        (legacyFvm, 'flutterSdkVersion')
+      ]) {
         try {
           final content = files.readString(path);
           if (content == null) continue;
@@ -306,7 +312,18 @@ final class ProjectInspector {
   /// Expands Melos package globs of the forms `dir/*` and `dir/**`.
   List<String> _expandPatterns(List<String> patterns) {
     final results = <String>{};
-    const ignored = {'build', '.dart_tool', 'ios', 'android', 'macos', 'linux', 'windows', 'web', 'node_modules', '.git'};
+    const ignored = {
+      'build',
+      '.dart_tool',
+      'ios',
+      'android',
+      'macos',
+      'linux',
+      'windows',
+      'web',
+      'node_modules',
+      '.git'
+    };
     void walk(String directory, int depth, int maxDepth) {
       if (files.fileExists(_join(directory, 'pubspec.yaml')) &&
           directory.isNotEmpty) {
@@ -321,7 +338,9 @@ final class ProjectInspector {
     }
 
     for (final pattern in patterns) {
-      final normalized = pattern.endsWith('/') ? pattern.substring(0, pattern.length - 1) : pattern;
+      final normalized = pattern.endsWith('/')
+          ? pattern.substring(0, pattern.length - 1)
+          : pattern;
       if (normalized.endsWith('/**')) {
         walk(normalized.substring(0, normalized.length - 3), 0, 6);
       } else if (normalized.endsWith('/*')) {

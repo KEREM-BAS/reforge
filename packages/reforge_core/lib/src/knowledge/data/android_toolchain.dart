@@ -7,7 +7,8 @@
 import '../knowledge_source.dart';
 
 const agpGradleSource = KnowledgeSource(
-  title: 'Android Gradle plugin: update Gradle (minimum required Gradle version)',
+  title:
+      'Android Gradle plugin: update Gradle (minimum required Gradle version)',
   url: 'https://developer.android.com/build/releases/about-agp#updating-gradle',
   retrieved: '2026-09-16',
 );
@@ -78,9 +79,11 @@ const gradleJavaSupport = <int, ({String first, String? last})>{
 };
 
 const agpJavaSource = KnowledgeSource(
-  title: 'Flutter tool Java/AGP compatibility list (gradle_utils.dart, 3.47.0), '
+  title:
+      'Flutter tool Java/AGP compatibility list (gradle_utils.dart, 3.47.0), '
       'mirroring the Android Gradle plugin release notes',
-  url: 'https://github.com/flutter/flutter/blob/3.47.0/packages/flutter_tools/lib/src/android/gradle_utils.dart',
+  url:
+      'https://github.com/flutter/flutter/blob/3.47.0/packages/flutter_tools/lib/src/android/gradle_utils.dart',
   retrieved: '2026-09-16',
 );
 
@@ -94,7 +97,8 @@ const agpMinimumJava = <String, int>{
 
 const apiLevelAgpSource = KnowledgeSource(
   title: 'Android Gradle plugin: API level support',
-  url: 'https://developer.android.com/build/releases/about-agp#api-level-support',
+  url:
+      'https://developer.android.com/build/releases/about-agp#api-level-support',
   retrieved: '2026-09-16',
 );
 
@@ -111,7 +115,8 @@ const pluginMarkerSource = KnowledgeSource(
   title: "Flutter breaking change: deprecated imperative apply of Flutter's "
       'Gradle plugins (plugin ids for AGP, Kotlin, Google Services and '
       'Crashlytics)',
-  url: 'https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply',
+  url:
+      'https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply',
   retrieved: '2026-09-16',
 );
 

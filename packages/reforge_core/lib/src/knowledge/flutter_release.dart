@@ -146,8 +146,35 @@ final class FlutterRelease {
         url: 'https://github.com/flutter/flutter/blob/$version/$file',
       );
 
-  static const dependencyCheckerFile =
-      'packages/flutter_tools/gradle/src/main/kotlin/DependencyVersionChecker.kt';
+  /// Flutter's Gradle dependency version checker for this release (the
+  /// source of [androidRequirements]).
+  KnowledgeSource get dependencyCheckerSource {
+    final String file;
+    if (version >= Version(3, 32, 0)) {
+      file =
+          'packages/flutter_tools/gradle/src/main/kotlin/DependencyVersionChecker.kt';
+    } else if (version >= Version(3, 29, 0)) {
+      file =
+          'packages/flutter_tools/gradle/src/main/kotlin_scripts/dependency_version_checker.gradle.kts';
+    } else {
+      file =
+          'packages/flutter_tools/gradle/src/main/kotlin/dependency_version_checker.gradle.kts';
+    }
+    return sourceFor(file);
+  }
+
+  /// The source of [iosMinimumDeploymentTarget].
+  KnowledgeSource get iosMinimumSource => sourceFor(version >= Version(3, 7, 0)
+      ? 'packages/flutter_tools/lib/src/ios/migrations/ios_deployment_target_migration.dart'
+      : 'packages/flutter_tools/lib/src/ios/migrations/deployment_target_migration.dart');
+
+  /// The source of [imperativeGradleApply].
+  KnowledgeSource get gradleApplySource =>
+      sourceFor('packages/flutter_tools/gradle/flutter.gradle');
+
+  /// The source of [template] and [androidDefaults] versions.
+  KnowledgeSource get templateSource =>
+      sourceFor('packages/flutter_tools/lib/src/android/gradle_utils.dart');
 
   @override
   String toString() => 'Flutter $version';

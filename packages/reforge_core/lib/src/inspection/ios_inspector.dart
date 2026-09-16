@@ -50,8 +50,7 @@ final class IosInspector {
         void collect(String owner, bool application,
             List<XcodeBuildConfiguration> configurations) {
           for (final configuration in configurations) {
-            final setting =
-                configuration.setting('IPHONEOS_DEPLOYMENT_TARGET');
+            final setting = configuration.setting('IPHONEOS_DEPLOYMENT_TARGET');
             if (setting == null) continue;
             deploymentTargets.add(DeploymentTargetSetting(
               owner: owner,

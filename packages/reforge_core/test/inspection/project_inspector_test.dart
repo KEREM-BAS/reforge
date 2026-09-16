@@ -64,8 +64,8 @@ void main() {
       final app = project.android!.app!;
       expect(app.namespace, isNull);
       expect(app.compileSdk, isA<FlutterDefaultReference>());
-      expect((app.minSdk! as FlutterDefaultReference).property,
-          'minSdkVersion');
+      expect(
+          (app.minSdk! as FlutterDefaultReference).property, 'minSdkVersion');
       expect((app.applicationId! as LiteralString).value,
           'com.example.legacy_app');
       expect(project.android!.manifests.map((m) => m.sourceSet),
@@ -120,11 +120,13 @@ void main() {
     expect(android.toolchain.androidGradlePlugin!.version,
         ToolVersion.parse('9.0.1'));
     expect(android.toolchain.kotlin!.version, ToolVersion.parse('2.3.20'));
-    expect(android.toolchain.gradleWrapper!.version, ToolVersion.parse('9.1.0'));
+    expect(
+        android.toolchain.gradleWrapper!.version, ToolVersion.parse('9.1.0'));
     expect(android.toolchain.builtInKotlin, isFalse);
     expect(android.toolchain.newDsl, isFalse);
     expect(
-        project.flutterVersionObservations.map((o) => (o.signal, '${o.version}')),
+        project.flutterVersionObservations
+            .map((o) => (o.signal, '${o.version}')),
         containsAll([
           (FlutterVersionSignal.packageConfig, '3.44.0'),
           (FlutterVersionSignal.pluginRegistry, '3.44.0'),
@@ -157,8 +159,8 @@ void main() {
     expect(agp.resolution, ValueResolution.variable);
     expect(agp.version, ToolVersion.parse('7.2.2'));
     expect(editableText('custom_gradle_app', agp.editable!), '7.2.2');
-    expect(project.android!.pluginApplication.style,
-        GradlePluginStyle.imperative);
+    expect(
+        project.android!.pluginApplication.style, GradlePluginStyle.imperative);
   });
 
   test('broken Gradle script degrades gracefully', () {
@@ -177,8 +179,10 @@ void main() {
         .inspectWorkspace();
     expect(workspace.layout, 'pubWorkspace');
     final byPath = {for (final p in workspace.projects) p.path: p};
-    expect(byPath.keys,
-        unorderedEquals(['apps/customer_app', 'apps/driver_app', 'packages/ui_kit']));
+    expect(
+        byPath.keys,
+        unorderedEquals(
+            ['apps/customer_app', 'apps/driver_app', 'packages/ui_kit']));
     expect(byPath['apps/customer_app']!.android!.pluginApplication.style,
         GradlePluginStyle.declarative);
     // driver_app comes from the transitional Flutter 3.13 template.
@@ -220,7 +224,8 @@ void main() {
 
     test('FVM and asdf pins', () {
       final workspace = ProjectInspector(MemoryProjectFileSystem({
-        'pubspec.yaml': 'name: app\ndependencies:\n  flutter:\n    sdk: flutter\n',
+        'pubspec.yaml':
+            'name: app\ndependencies:\n  flutter:\n    sdk: flutter\n',
         '.fvmrc': '{"flutter": "3.29.3"}',
         '.tool-versions': 'java 17\nflutter 3.27.4-stable\n',
       })).inspectWorkspace();

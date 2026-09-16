@@ -66,7 +66,9 @@ final class KnowledgeBase {
         throw UnsupportedTargetException(
           'TARGET_INVALID',
           '"$input" is not a Flutter version.',
-          hints: const ['Use a stable version such as 3.47.4, a line such as 3.47, or "stable".'],
+          hints: const [
+            'Use a stable version such as 3.47.4, a line such as 3.47, or "stable".'
+          ],
         );
       }
     }

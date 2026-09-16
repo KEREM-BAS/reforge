@@ -32,10 +32,12 @@ Future<void> main(List<String> arguments) async {
   final checkout = args['flutter'] as String;
   final minVersion = Version.parse(args['min-version'] as String);
 
-  final manifest = jsonDecode(File(args['manifest'] as String).readAsStringSync())
-      as Map<String, Object?>;
+  final manifest =
+      jsonDecode(File(args['manifest'] as String).readAsStringSync())
+          as Map<String, Object?>;
   final releases = <String, Map<String, Object?>>{};
-  for (final release in (manifest['releases']! as List).cast<Map<String, Object?>>()) {
+  for (final release
+      in (manifest['releases']! as List).cast<Map<String, Object?>>()) {
     if (release['channel'] != 'stable') continue;
     final version = release['version']! as String;
     final Version parsed;
@@ -55,8 +57,8 @@ Future<void> main(List<String> arguments) async {
   for (final version in versions) {
     final release = releases['$version']!;
     final tag = '$version';
-    final gradleUtils =
-        await git.read(tag, 'packages/flutter_tools/lib/src/android/gradle_utils.dart');
+    final gradleUtils = await git.read(
+        tag, 'packages/flutter_tools/lib/src/android/gradle_utils.dart');
     if (gradleUtils == null) {
       warnings.add('Skipping $tag: tag not found in checkout.');
       continue;
@@ -68,10 +70,12 @@ Future<void> main(List<String> arguments) async {
     ]);
     String? floor(String name) {
       if (checker == null) return null;
-      final pattern = RegExp('(error|warn)${name}Version\\s*:\\s*\\w+\\s*=\\s*\\w+\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)');
+      final pattern = RegExp(
+          '(error|warn)${name}Version\\s*:\\s*\\w+\\s*=\\s*\\w+\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)');
       final values = <String, String>{};
       for (final match in pattern.allMatches(checker)) {
-        values[match.group(1)!] = '${match.group(2)}.${match.group(3)}.${match.group(4)}';
+        values[match.group(1)!] =
+            '${match.group(2)}.${match.group(3)}.${match.group(4)}';
       }
       if (values.length != 2) {
         warnings.add('$tag: could not read $name floors.');
@@ -82,7 +86,8 @@ Future<void> main(List<String> arguments) async {
 
     String? javaFloor() {
       if (checker == null) return null;
-      final pattern = RegExp(r'(error|warn)JavaVersion\s*:\s*JavaVersion\s*=\s*JavaVersion\.VERSION_(\d+)(?:_(\d+))?');
+      final pattern = RegExp(
+          r'(error|warn)JavaVersion\s*:\s*JavaVersion\s*=\s*JavaVersion\.VERSION_(\d+)(?:_(\d+))?');
       final values = <String, String>{};
       for (final match in pattern.allMatches(checker)) {
         final major = match.group(2)!;
@@ -94,15 +99,18 @@ Future<void> main(List<String> arguments) async {
 
     String? minSdkFloor() {
       if (checker == null) return null;
-      final pattern = RegExp(r'(error|warn)MinSdkVersion\s*:\s*Int\s*=\s*(\d+)');
+      final pattern =
+          RegExp(r'(error|warn)MinSdkVersion\s*:\s*Int\s*=\s*(\d+)');
       final values = <String, String>{
-        for (final match in pattern.allMatches(checker)) match.group(1)!: match.group(2)!,
+        for (final match in pattern.allMatches(checker))
+          match.group(1)!: match.group(2)!,
       };
       return values.length == 2 ? '${values['error']}/${values['warn']}' : null;
     }
 
     String templateConstant(String name) {
-      final match = RegExp("const (?:String )?$name = '([^']+)'").firstMatch(gradleUtils);
+      final match =
+          RegExp("const (?:String )?$name = '([^']+)'").firstMatch(gradleUtils);
       if (match == null) throw StateError('$tag: $name not found.');
       return match.group(1)!;
     }
@@ -113,16 +121,21 @@ Future<void> main(List<String> arguments) async {
       'packages/flutter_tools/gradle/flutter.gradle',
     ]);
     int sdkDefault(String name) {
-      final match = RegExp('$name(?::\\s*Int)?\\s*=\\s*(\\d+)').firstMatch(defaultsSource ?? '');
+      final match = RegExp('$name(?::\\s*Int)?\\s*=\\s*(\\d+)')
+          .firstMatch(defaultsSource ?? '');
       if (match == null) throw StateError('$tag: default $name not found.');
       return int.parse(match.group(1)!);
     }
 
-    final ndkMatch = RegExp(r'ndkVersion(?::\s*String)?\s*=\s*"([^"]+)"').firstMatch(defaultsSource ?? '');
+    final ndkMatch = RegExp(r'ndkVersion(?::\s*String)?\s*=\s*"([^"]+)"')
+        .firstMatch(defaultsSource ?? '');
     if (ndkMatch == null) throw StateError('$tag: ndkVersion not found.');
 
-    final flutterGradle = await git.read(tag, 'packages/flutter_tools/gradle/flutter.gradle') ?? '';
-    final ktsSettings = await git.read(tag, 'packages/flutter_tools/templates/app/android.tmpl/settings.gradle.kts.tmpl');
+    final flutterGradle =
+        await git.read(tag, 'packages/flutter_tools/gradle/flutter.gradle') ??
+            '';
+    final ktsSettings = await git.read(tag,
+        'packages/flutter_tools/templates/app/android.tmpl/settings.gradle.kts.tmpl');
     final groovySettings = ktsSettings != null
         ? null
         : await git.firstOf(tag, const [
@@ -142,7 +155,8 @@ Future<void> main(List<String> arguments) async {
     // implementation also throws GradleExceptions for unrelated reasons.
     if (flutterGradle.contains('which is not possible anymore')) {
       imperativeApply = 'removed';
-    } else if (flutterGradle.contains('apply script method, which is deprecated')) {
+    } else if (flutterGradle
+        .contains('apply script method, which is deprecated')) {
       imperativeApply = 'deprecated';
     } else if (declarative) {
       imperativeApply = 'supportedAlongsideDeclarative';
@@ -151,13 +165,17 @@ Future<void> main(List<String> arguments) async {
     }
 
     String iosMinimum() {
-      return _iosFromDarwin ?? _iosFromMigration ?? (throw StateError('$tag: iOS minimum not found.'));
+      return _iosFromDarwin ??
+          _iosFromMigration ??
+          (throw StateError('$tag: iOS minimum not found.'));
     }
 
-    final darwin = await git.read(tag, 'packages/flutter_tools/lib/src/darwin/darwin.dart');
+    final darwin = await git.read(
+        tag, 'packages/flutter_tools/lib/src/darwin/darwin.dart');
     _iosFromDarwin = null;
     if (darwin != null) {
-      final match = RegExp(r'ios\s*=>\s*Version\((\d+),\s*(\d+)').firstMatch(darwin);
+      final match =
+          RegExp(r'ios\s*=>\s*Version\((\d+),\s*(\d+)').firstMatch(darwin);
       if (match != null) _iosFromDarwin = '${match.group(1)}.${match.group(2)}';
     }
     final migration = await git.firstOf(tag, const [
@@ -166,11 +184,16 @@ Future<void> main(List<String> arguments) async {
     ]);
     _iosFromMigration = null;
     if (migration != null) {
-      final match = RegExp(r"deploymentTargetReplacement\s*=\s*'IPHONEOS_DEPLOYMENT_TARGET = ([\d.]+);'").firstMatch(migration);
+      final match = RegExp(
+              r"deploymentTargetReplacement\s*=\s*'IPHONEOS_DEPLOYMENT_TARGET = ([\d.]+);'")
+          .firstMatch(migration);
       if (match != null) _iosFromMigration = match.group(1);
     }
-    if (_iosFromDarwin != null && _iosFromMigration != null && _iosFromDarwin != _iosFromMigration) {
-      warnings.add('$tag: darwin.dart says iOS $_iosFromDarwin, migration says $_iosFromMigration.');
+    if (_iosFromDarwin != null &&
+        _iosFromMigration != null &&
+        _iosFromDarwin != _iosFromMigration) {
+      warnings.add(
+          '$tag: darwin.dart says iOS $_iosFromDarwin, migration says $_iosFromMigration.');
     }
 
     final dart = (release['dart_sdk_version']! as String).split(' ').first;
@@ -204,19 +227,26 @@ Future<void> main(List<String> arguments) async {
   }
   await git.close();
 
-  final checkoutHead = Process.runSync('git', ['-C', checkout, 'rev-parse', 'HEAD']).stdout.toString().trim();
+  final checkoutHead =
+      Process.runSync('git', ['-C', checkout, 'rev-parse', 'HEAD'])
+          .stdout
+          .toString()
+          .trim();
   final output = StringBuffer()
-    ..writeln('// GENERATED by tool/generate_flutter_knowledge.dart. Do not edit by hand.')
+    ..writeln(
+        '// GENERATED by tool/generate_flutter_knowledge.dart. Do not edit by hand.')
     ..writeln('//')
     ..writeln('// Sources:')
-    ..writeln('//  * https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json')
+    ..writeln(
+        '//  * https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json')
     ..writeln('//  * https://github.com/flutter/flutter at each release tag')
     ..writeln('//    (checkout HEAD $checkoutHead)')
     ..writeln()
     ..writeln("import 'flutter_release_record.dart';")
     ..writeln()
     ..writeln('/// Date the knowledge below was generated.')
-    ..writeln("const flutterKnowledgeGeneratedOn = '${DateTime.now().toUtc().toIso8601String().substring(0, 10)}';")
+    ..writeln(
+        "const flutterKnowledgeGeneratedOn = '${DateTime.now().toUtc().toIso8601String().substring(0, 10)}';")
     ..writeln()
     ..writeln('/// Stable Flutter releases, ascending.')
     ..writeln('const flutterReleaseRecords = <FlutterReleaseRecord>[')
@@ -240,7 +270,8 @@ final class _GitObjectReader {
   }
 
   static Future<_GitObjectReader> start(String checkout) async {
-    final process = await Process.start('git', ['-C', checkout, 'cat-file', '--batch']);
+    final process =
+        await Process.start('git', ['-C', checkout, 'cat-file', '--batch']);
     return _GitObjectReader(process);
   }
 
