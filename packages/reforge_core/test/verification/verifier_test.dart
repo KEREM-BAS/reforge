@@ -156,6 +156,10 @@ Execution failed for task ':app:checkDebugDuplicateClasses'.
         // Regenerated files and build output are not project changes.
         File(p.join(project.path, 'android', 'local.properties'))
             .writeAsStringSync('flutter.sdk=/sdk\n');
+        File(p.join(project.path, 'android', 'gradlew'))
+            .writeAsStringSync('#!/bin/sh\n');
+        File(p.join(project.path, 'android', 'key.properties'))
+            .writeAsStringSync('storePassword=secret\n');
         File(p.join(project.path, 'android', 'app', 'build', 'out.txt'))
           ..createSync(recursive: true)
           ..writeAsStringSync('output');

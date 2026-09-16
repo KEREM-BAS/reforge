@@ -12,9 +12,10 @@ import 'package:path/path.dart' as p;
 ///   `analysis_options.yaml`;
 /// - every file below `android`, `ios`, `macos`, `linux`, `windows` and
 ///   `web`, except build output, dependency caches and files the Flutter tool
-///   regenerates on every build (for example `local.properties` or
-///   `Generated.xcconfig`).
+///   generates, which Flutter's app templates list in `.gitignore` (for
+///   example `local.properties`, `gradlew` or `Generated.xcconfig`).
 ///
+/// Signing secrets (`key.properties`, `*.keystore`, `*.jks`) are never read.
 /// Symbolic links are not followed and files larger than 4 MiB are skipped.
 final class ProjectSnapshot {
   ProjectSnapshot._(this.root, this._files);
@@ -90,23 +91,42 @@ final class ProjectSnapshot {
     '.gradle',
     '.cxx',
     '.kotlin',
+    'captures',
     '.idea',
     '.dart_tool',
     'Pods',
     '.symlinks',
     'ephemeral',
+    '.generated',
     'DerivedData',
     'xcuserdata',
+    'dgph',
+    'App.framework',
+    'Flutter.framework',
+    'flutter_assets',
     '.build',
     '.swiftpm',
   };
 
+  /// Generated files (from the `.gitignore` files of Flutter's app templates)
+  /// and signing secrets.
   static bool _isRegenerated(String name) =>
-      name == 'local.properties' ||
-      name == 'Generated.xcconfig' ||
-      name == 'flutter_export_environment.sh' ||
-      name == 'generated_plugins.cmake' ||
-      name == '.DS_Store' ||
+      const {
+        'local.properties',
+        'gradlew',
+        'gradlew.bat',
+        'gradle-wrapper.jar',
+        'key.properties',
+        'Generated.xcconfig',
+        'flutter_export_environment.sh',
+        'Flutter.podspec',
+        'app.flx',
+        'app.zip',
+        'generated_plugins.cmake',
+        '.DS_Store',
+      }.contains(name) ||
+      name.endsWith('.keystore') ||
+      name.endsWith('.jks') ||
       name.startsWith('GeneratedPluginRegistrant.') ||
       name.startsWith('generated_plugin_registrant.');
 

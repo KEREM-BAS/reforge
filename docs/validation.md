@@ -98,6 +98,26 @@ recoverable instead:
 - `IOS_DEPLOYMENT_TARGET` also updates the commented-out Podfile platform line,
   as the tool does.
 
+### Run 4: rollback after real builds (Reforge 36d7843)
+
+Same migration, `dart fix`, then `reforge verify --check ios --check android`
+and `reforge rollback`:
+
+- Both builds succeeded. The Android build created `gradlew`, `gradlew.bat` and
+  `gradle-wrapper.jar` (absent from the repository, as Flutter's template
+  `.gitignore` excludes them). The iOS build changed `.gitignore`,
+  `project.pbxproj`, `Runner.xcscheme`, `AppDelegate.swift` and `Info.plist`.
+  The Podfile was not changed: the migration had already updated its
+  commented-out platform line.
+- `reforge rollback` undid the tool changes and the migration: `android/`,
+  `ios/` and `.gitignore` were byte-identical to the original commit. Only
+  `lib/main.dart` (`dart fix`) and `pubspec.lock` (created by `pub get` before
+  verification) remained, as they were changed outside Reforge.
+
+Follow-up: files that Flutter's app templates ignore (`gradlew`,
+`gradle-wrapper.jar`, `Flutter.podspec`, ...) are no longer reported as tool
+changes, and signing secrets are never read.
+
 ### Caveat
 
 The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The
