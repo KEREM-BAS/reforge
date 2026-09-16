@@ -21,6 +21,12 @@ MigrationPlan planFor(Map<String, String> files,
 PlanStep step(MigrationPlan plan, String id) =>
     plan.steps.singleWhere((s) => s.recipe.id == id);
 
+String fileAfter(MigrationPlan plan, String path) =>
+    plan.fileChanges.singleWhere((c) => c.path == path).after;
+
+String skipReason(MigrationPlan plan, String id) =>
+    plan.skipped.singleWhere((s) => s.recipe.id == id).reason;
+
 String pubspec(String sdk) => '''
 name: app
 environment:
@@ -168,6 +174,183 @@ void main() {
       expect(step(plan, RecipeIds.androidNamespace).status, StepStatus.manual);
     });
 
+    group('Flutter tool migrations', () {
+      test('AGP 9 opt-outs are added as Flutter would, keeping line endings',
+          () {
+        final plan = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/gradle.properties':
+              'org.gradle.jvmargs=-Xmx8G\r\nandroid.useAndroidX=true',
+        });
+        final optOuts = step(plan, RecipeIds.androidAgp9OptOuts);
+        expect(optOuts.status, StepStatus.auto);
+        expect(optOuts.proposal.necessity, Necessity.flutterMigration);
+        expect(optOuts.proposal.impact, contains('LF line endings'));
+        expect(
+            fileAfter(plan, 'android/gradle.properties'),
+            'org.gradle.jvmargs=-Xmx8G\r\nandroid.useAndroidX=true\r\n'
+            "# Added by Reforge, as Flutter's DisableBuiltInKotlinMigration does\r\n"
+            'android.builtInKotlin=false\r\n'
+            "# Added by Reforge, as Flutter's DisableNewDslMigration does\r\n"
+            'android.newDsl=false\r\n');
+      });
+
+      test('AGP 9 opt-outs respect existing values and older releases', () {
+        final partial = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/gradle.properties': 'android.newDsl=true\n',
+        });
+        expect(fileAfter(partial, 'android/gradle.properties'),
+            isNot(contains('android.newDsl=false')));
+        expect(step(partial, RecipeIds.androidAgp9OptOuts).proposal.summary,
+            'Add android.builtInKotlin=false to android/gradle.properties.');
+
+        final older = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/gradle.properties': '\n',
+        }, target: '3.41.0');
+        expect(skipReason(older, RecipeIds.androidAgp9OptOuts),
+            contains('does not add'));
+
+        final missing = planFor(declarativeApp(agp: '8.11.1'));
+        final manual = step(missing, RecipeIds.androidAgp9OptOuts);
+        expect(manual.status, StepStatus.manual);
+        expect(missing.isComplete, isTrue,
+            reason: 'Flutter creates the file itself; not a blocker.');
+      });
+
+      const eager =
+          'task clean(type: Delete) {\n    delete rootProject.buildDir\n}\n';
+
+      test('the eager clean task is registered lazily', () {
+        final plan = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/build.gradle': 'allprojects {}\n\n$eager',
+        });
+        final clean = step(plan, RecipeIds.androidCleanTask);
+        expect(clean.status, StepStatus.auto);
+        expect(clean.proposal.necessity, Necessity.flutterMigration);
+        expect(
+            fileAfter(plan, 'android/build.gradle'),
+            'allprojects {}\n\ntasks.register("clean", Delete) {\n'
+            '    delete rootProject.layout.buildDirectory\n}\n');
+
+        final crlf = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/build.gradle':
+              eager.replaceAll('\n', '\r\n').replaceFirst(RegExp(r'\r\n$'), ''),
+        });
+        expect(
+            fileAfter(crlf, 'android/build.gradle'),
+            'tasks.register("clean", Delete) {\r\n'
+            '    delete rootProject.layout.buildDirectory\r\n}');
+      });
+
+      test('only the form Flutter migrates is changed', () {
+        final indented = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/build.gradle':
+              'task clean(type: Delete) {\n  delete rootProject.buildDir\n}\n',
+        });
+        expect(skipReason(indented, RecipeIds.androidCleanTask),
+            contains('no clean task in the form'));
+
+        final older = planFor({
+          ...declarativeApp(agp: '8.11.1'),
+          'android/build.gradle': eager,
+        }, target: '3.7.0');
+        expect(skipReason(older, RecipeIds.androidCleanTask),
+            contains('does not migrate the clean task'));
+      });
+    });
+
+    group('minSdk', () {
+      String groovyApp(String minSdk) =>
+          'plugins {\n    id "com.android.application"\n'
+          '    id "dev.flutter.flutter-gradle-plugin"\n}\n\n'
+          'android {\n    namespace "com.example.app"\n'
+          '    defaultConfig {\n        $minSdk\n    }\n}\n';
+
+      test('a literal below the Flutter minimum is raised after review', () {
+        final files =
+            declarativeApp(agp: '8.11.1', app: groovyApp('minSdkVersion 21'));
+        final pending = planFor(files, options: const PlanOptions());
+        final minSdk = step(pending, RecipeIds.androidMinSdk);
+        expect(minSdk.status, StepStatus.review);
+        expect(minSdk.proposal.necessity, Necessity.required);
+        expect(minSdk.applied, isFalse);
+        expect(pending.isComplete, isFalse);
+        expect(minSdk.proposal.summary,
+            'Raise minSdk from 21 to flutter.minSdkVersion, API level 24 (Android 7.0).');
+        expect(minSdk.proposal.notes.first,
+            contains('Android 5.0 to 6.0 (API levels 21 to 23)'));
+        expect(minSdk.proposal.evidence.map((e) => e.source?.url),
+            contains(endsWith('min_sdk_version_migration.dart')));
+
+        final accepted = planFor(files,
+            options:
+                const PlanOptions(acceptedReviews: {RecipeIds.androidMinSdk}));
+        expect(fileAfter(accepted, 'android/app/build.gradle'),
+            contains('        minSdkVersion flutter.minSdkVersion\n'));
+      });
+
+      test('Kotlin DSL and flavor overrides are raised together', () {
+        final files = declarativeApp(agp: '8.11.1', app: '')
+          ..remove('android/app/build.gradle')
+          ..['android/app/build.gradle.kts'] = 'plugins {\n'
+              '    id("com.android.application")\n'
+              '    id("dev.flutter.flutter-gradle-plugin")\n}\n\n'
+              'android {\n    namespace = "com.example.app"\n'
+              '    defaultConfig {\n        minSdk = 19\n    }\n'
+              '    productFlavors {\n'
+              '        create("dev") {\n            minSdk = 21\n        }\n'
+              '        create("prod") {\n            minSdkVersion(26)\n        }\n'
+              '    }\n}\n';
+        final plan = planFor(files);
+        final minSdk = step(plan, RecipeIds.androidMinSdk);
+        expect(minSdk.proposal.summary, startsWith('Raise 2 minSdk values'));
+        expect(minSdk.proposal.evidence.first.description,
+            'defaultConfig minSdk is 19');
+        final after = fileAfter(plan, 'android/app/build.gradle.kts');
+        expect(
+            'minSdk = flutter.minSdkVersion'.allMatches(after), hasLength(2));
+        expect(after, contains('minSdkVersion(26)'));
+      });
+
+      test('expressions and older releases', () {
+        final expression = planFor(declarativeApp(
+            agp: '8.11.1',
+            app:
+                groovyApp('minSdkVersion localProperties.minSdk.toInteger()')));
+        expect(skipReason(expression, RecipeIds.androidMinSdk),
+            contains('does not evaluate'));
+
+        final older = planFor(
+            declarativeApp(agp: '8.11.1', app: groovyApp('minSdkVersion 15')),
+            target: '3.10.0');
+        final minSdk = step(older, RecipeIds.androidMinSdk);
+        expect(minSdk.proposal.necessity, Necessity.required);
+        expect(minSdk.proposal.summary, contains('API level 16'));
+        expect(minSdk.proposal.evidence.map((e) => e.source?.url),
+            isNot(contains(endsWith('min_sdk_version_migration.dart'))));
+      });
+
+      test('analysis reports minSdk below the minimum', () {
+        final project = ProjectInspector(
+                MemoryProjectFileSystem(declarativeApp(
+                    agp: '8.11.1', app: groovyApp('minSdkVersion 21'))),
+                knowledge: knowledge)
+            .inspectProject('');
+        Finding? finding(String target) => CompatibilityAnalyzer(knowledge)
+            .analyze(project, release: knowledge.resolveFlutterVersion(target))
+            .where((f) => f.code == 'ANDROID_MIN_SDK_BELOW_FLUTTER_MINIMUM')
+            .firstOrNull;
+        expect(finding('3.47.4')!.severity, Severity.error);
+        expect(finding('3.47.4')!.relatedRecipes, [RecipeIds.androidMinSdk]);
+        expect(finding('3.29.0'), isNull);
+      });
+    });
+
     group('gradle.properties', () {
       const legacyProperties = 'org.gradle.jvmargs=-Xmx1536M\n'
           'android.useAndroidX=true\n'
@@ -199,7 +382,8 @@ void main() {
         final plan = planFor(appWith(legacyProperties),
             options: const PlanOptions(
                 acceptAllReviews: true,
-                includedRecipes: {RecipeIds.androidGradleJvmArgs}));
+                includedRecipes: {RecipeIds.androidGradleJvmArgs},
+                skippedRecipes: {RecipeIds.androidAgp9OptOuts}));
         final jvm = step(plan, RecipeIds.androidGradleJvmArgs);
         expect(jvm.status, StepStatus.auto);
         expect(jvm.proposal.necessity, Necessity.recommended);
@@ -224,7 +408,8 @@ void main() {
             appWith('org.gradle.jvmargs = -Xmx4G   '
                 '-XX:+HeapDumpOnOutOfMemoryError\n'),
             options: const PlanOptions(
-                includedRecipes: {RecipeIds.androidGradleJvmArgs}));
+                includedRecipes: {RecipeIds.androidGradleJvmArgs},
+                skippedRecipes: {RecipeIds.androidAgp9OptOuts}));
         expect(
             step(plan, RecipeIds.androidGradleJvmArgs)
                 .proposal
@@ -254,7 +439,8 @@ void main() {
       test('Jetifier removal is reviewed and needs a target without it', () {
         const options = PlanOptions(
             acceptAllReviews: true,
-            includedRecipes: {RecipeIds.androidJetifier});
+            includedRecipes: {RecipeIds.androidJetifier},
+            skippedRecipes: {RecipeIds.androidAgp9OptOuts});
         final plan = planFor(appWith(legacyProperties), options: options);
         final jetifier = step(plan, RecipeIds.androidJetifier);
         expect(jetifier.status, StepStatus.review);
@@ -283,8 +469,9 @@ void main() {
                   'dependencies {\n'
                   "    implementation 'com.android.support:appcompat-v7:28.0.0'\n"
                   '}\n'),
-          options:
-              const PlanOptions(includedRecipes: {RecipeIds.androidJetifier}),
+          options: const PlanOptions(
+              includedRecipes: {RecipeIds.androidJetifier},
+              skippedRecipes: {RecipeIds.androidAgp9OptOuts}),
         );
         final jetifier = step(plan, RecipeIds.androidJetifier);
         expect(jetifier.status, StepStatus.manual);

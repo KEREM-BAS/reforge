@@ -14,6 +14,11 @@ Upgrade the Gradle wrapper from 7.4 to 8.14.
 - note: Only the distribution is changed. The wrapper JAR and gradlew scripts keep working; `./gradlew wrapper` can refresh them later.
 - files: android/gradle/wrapper/gradle-wrapper.properties
 
+## ANDROID_AGP9_OPT_OUTS (auto, flutterMigration, applied)
+
+Add android.builtInKotlin=false and android.newDsl=false to android/gradle.properties.
+- files: android/gradle.properties
+
 ## ANDROID_AGP_VERSION (review, required, applied)
 
 Upgrade the Android Gradle Plugin from 7.1.2 to 8.11.1.
@@ -34,6 +39,11 @@ Upgrade the Kotlin Gradle plugin from 1.6.10 to 2.2.20.
 
 Declare namespace "com.example.legacy_app" and remove the package attribute from 3 manifest(s).
 - files: android/app/build.gradle, android/app/src/debug/AndroidManifest.xml, android/app/src/main/AndroidManifest.xml, android/app/src/profile/AndroidManifest.xml
+
+## ANDROID_CLEAN_TASK (auto, flutterMigration, applied)
+
+Register the clean task lazily in android/build.gradle.
+- files: android/build.gradle
 
 ## ANDROID_GRADLE_JVM_ARGS (auto, recommended, applied)
 
@@ -56,6 +66,7 @@ Raise the iOS deployment target to 15.0.
 ## Skipped
 
 - DART_SDK_CONSTRAINT: environment.sdk ">=2.18.0 <3.0.0" allows Dart 3.13.3 (pub reads the <3.0.0 upper bound as <4.0.0).
+- ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.
 
 ## Remaining findings
 

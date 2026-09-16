@@ -105,9 +105,12 @@ sealed class ScriptValue {
 }
 
 final class LiteralInt extends ScriptValue {
-  const LiteralInt(this.value, super.text, super.location);
+  const LiteralInt(this.value, super.text, super.location, {this.editable});
 
   final int value;
+
+  /// The range of the number, for edits.
+  final EditableValue? editable;
 
   @override
   Map<String, Object?> toJson() =>

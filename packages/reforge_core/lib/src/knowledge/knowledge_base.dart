@@ -153,6 +153,17 @@ final class KnowledgeBase {
     return Fact(ToolVersion.parse(minimum), android.apiLevelAgpSource);
   }
 
+  static const agp9ReleaseNotesSource = android.agp9ReleaseNotesSource;
+
+  /// The Android platform version of [apiLevel] (for example `7.0` for 24),
+  /// or `null` when unknown.
+  Fact<String>? androidVersionOf(int apiLevel) {
+    final version = android.androidApiLevelVersions[apiLevel];
+    return version == null
+        ? null
+        : Fact(version, android.androidApiLevelsSource);
+  }
+
   static const jetifierTemplateRemovalSource =
       android.jetifierTemplateRemovalSource;
   static const buildAnalyzerJetifierSource =
@@ -276,5 +287,6 @@ FlutterRelease _releaseFromRecord(FlutterReleaseRecord record) {
     imperativeGradleApply:
         ImperativeGradleApply.values.byName(record.imperativeApply),
     iosMinimumDeploymentTarget: ToolVersion.parse(record.iosMinimum),
+    androidMigrations: record.androidMigrations,
   );
 }

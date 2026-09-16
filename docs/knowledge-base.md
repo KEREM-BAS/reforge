@@ -19,6 +19,7 @@ since 3.0.0.
 | Template `gradle.properties` (JVM arguments, Jetifier, AGP 9 opt-outs) | `templates/app_shared/android.tmpl/gradle.properties.tmpl` (before 3.29), `templates/app/android.tmpl/gradle.properties.tmpl` |
 | Imperative Gradle apply support | `packages/flutter_tools/gradle/flutter.gradle` (deprecation and removal messages) |
 | Minimum iOS deployment target | `darwin.dart`, `ios_deployment_target_migration.dart` or `deployment_target_migration.dart` |
+| Android project migrations run before every Gradle build | The `<ProjectMigrator>[...]` list in `lib/src/android/gradle.dart` |
 
 Refresh:
 
@@ -58,6 +59,8 @@ Recipes only select versions from these lists.
 | Compile API level to minimum AGP | developer.android.com, "API level support" |
 | Buildscript classpath artifact to plugin id | Flutter's imperative apply migration guide |
 | Why Flutter templates stopped enabling Jetifier | flutter/flutter#173430 |
+| AGP 9 defaults for `android.newDsl` and `android.builtInKotlin` | developer.android.com, "AGP 9.0.0 release notes" |
+| Android version of each API level | developer.android.com, "uses-sdk: API levels" |
 | Checking whether Jetifier is still needed | developer.android.com, "Build Analyzer" |
 
 ## Facts, observations, inferences

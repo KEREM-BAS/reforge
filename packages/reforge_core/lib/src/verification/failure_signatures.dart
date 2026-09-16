@@ -155,6 +155,9 @@ final List<_Signature> _signatures = [
         'Gradle' => RecipeIds.androidGradleWrapper,
         'Android Gradle Plugin' => RecipeIds.androidAgpVersion,
         'Kotlin' => RecipeIds.androidKotlinVersion,
+        // "minimum Android SDK" or "minimum Android SDK (flavor='dev')".
+        _ when name.startsWith('minimum Android SDK') =>
+          RecipeIds.androidMinSdk,
         _ => null,
       };
       return FailureDiagnosis(

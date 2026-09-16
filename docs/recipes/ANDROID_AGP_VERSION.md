@@ -27,10 +27,10 @@ and the [published AGP releases](https://dl.google.com/dl/android/maven2/com/and
 ## What it changes
 
 The version literal at its definition is replaced by the **earliest published
-AGP release** that satisfies the requirement. When that crosses to AGP 9,
-`android.newDsl=false` and `android.builtInKotlin=false` are added to
-`gradle.properties`, which the Flutter Gradle plugin requires (Flutter 3.44+
-adds them itself during builds; Reforge makes the change explicit).
+AGP release** that satisfies the requirement. Upgrades to AGP 9 run after
+[ANDROID_AGP9_OPT_OUTS](ANDROID_AGP9_OPT_OUTS.md), which sets
+`android.builtInKotlin=false` and `android.newDsl=false` as Flutter 3.44+
+does; when those properties are missing, the step's notes say so.
 
 ## Status
 

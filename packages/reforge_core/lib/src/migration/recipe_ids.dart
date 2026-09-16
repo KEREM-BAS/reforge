@@ -11,6 +11,9 @@ abstract final class RecipeIds {
   static const androidNamespace = 'ANDROID_NAMESPACE';
   static const androidGradleJvmArgs = 'ANDROID_GRADLE_JVM_ARGS';
   static const androidJetifier = 'ANDROID_JETIFIER';
+  static const androidMinSdk = 'ANDROID_MIN_SDK';
+  static const androidAgp9OptOuts = 'ANDROID_AGP9_OPT_OUTS';
+  static const androidCleanTask = 'ANDROID_CLEAN_TASK';
   static const iosDeploymentTarget = 'IOS_DEPLOYMENT_TARGET';
   static const dartSdkConstraint = 'DART_SDK_CONSTRAINT';
 }

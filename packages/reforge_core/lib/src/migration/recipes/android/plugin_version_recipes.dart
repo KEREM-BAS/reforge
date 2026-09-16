@@ -26,6 +26,7 @@ final class AgpVersionRecipe extends MigrationRecipe {
         runsAfter: [
           RecipeIds.androidFlutterGradlePluginDsl,
           RecipeIds.androidGradleWrapper,
+          RecipeIds.androidAgp9OptOuts,
         ],
         requires: [RecipeIds.androidGradleWrapper],
       );
@@ -58,60 +59,20 @@ final class AgpVersionRecipe extends MigrationRecipe {
               'and makes R classes non-transitive by default.',
           ..._buildConfigUsage(context.files, android),
         ],
-        if (from.major < 9 && to.major >= 9)
+        if (from.major < 9 && to.major >= 9) ...[
           'Android Gradle Plugin 9 enables built-in Kotlin and the new DSL by '
-              "default. Flutter's Gradle plugin requires both to be disabled "
-              '(android.builtInKotlin=false, android.newDsl=false), and '
-              'plugins that use removed Android Gradle Plugin APIs fail to '
-              'build.',
+              'default, and plugins that use removed Android Gradle Plugin '
+              'APIs fail to build.',
+          if (android.gradleProperties?.containsKey('android.builtInKotlin') !=
+                  true ||
+              android.gradleProperties?.containsKey('android.newDsl') != true)
+            'android.builtInKotlin and android.newDsl are not both set, so '
+                'the Android Gradle Plugin 9 defaults apply (see '
+                '${RecipeIds.androidAgp9OptOuts}).',
+        ],
       ],
     );
-    return _disableAgp9Defaults(android, result);
-  }
-
-  /// Flutter apps built with Android Gradle Plugin 9 must disable built-in
-  /// Kotlin and the new DSL. Flutter 3.44+ adds these properties during the
-  /// build (DisableBuiltInKotlinMigration, DisableNewDslMigration); Reforge
-  /// adds them explicitly so the change is part of the reviewed plan.
-  static RecipeResult _disableAgp9Defaults(
-      AndroidProject android, RecipeResult result) {
-    final to = result is Proposal ? result.details['to'] : null;
-    final from = result is Proposal ? result.details['from'] : null;
-    if (result is! Proposal || to is! String || from is! String) return result;
-    final toVersion = ToolVersion.tryParse(to);
-    final fromVersion = ToolVersion.tryParse(from);
-    if (toVersion == null ||
-        fromVersion == null ||
-        toVersion.major < 9 ||
-        fromVersion.major >= 9) {
-      return result;
-    }
-    final properties = android.gradleProperties;
-    if (properties == null) {
-      return result.withStatus(StepStatus.manual, extraManualSteps: [
-        'Create ${android.directory}/gradle.properties with '
-            'android.newDsl=false and android.builtInKotlin=false, then '
-            'upgrade the Android Gradle Plugin to $to.',
-      ]);
-    }
-    final source = properties.source;
-    final eol = eolOf(source);
-    final lines = StringBuffer();
-    if (source.isNotEmpty && !source.endsWith('\n')) lines.write(eol);
-    for (final key in const ['android.newDsl', 'android.builtInKotlin']) {
-      if (properties.containsKey(key)) continue;
-      lines
-        ..write('# Required by the Flutter Gradle plugin with Android Gradle '
-            'Plugin 9 (added by Reforge)$eol')
-        ..write('$key=false$eol');
-    }
-    if (lines.isEmpty) return result;
-    return result.withEdits([
-      FileEdit(properties.path, [TextEdit.insert(source.length, '$lines')]),
-    ], extraNotes: [
-      'android.newDsl=false and android.builtInKotlin=false are added to '
-          '${properties.path}.',
-    ]);
+    return result;
   }
 
   /// Lists Kotlin and Java sources of the app module that mention BuildConfig.

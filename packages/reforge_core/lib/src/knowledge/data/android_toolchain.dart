@@ -156,3 +156,42 @@ const androidxMigrationSource = KnowledgeSource(
   url: 'https://developer.android.com/jetpack/androidx/migrate',
   retrieved: '2026-09-16',
 );
+
+const agp9ReleaseNotesSource = KnowledgeSource(
+  title: 'Android Gradle plugin 9.0.0 release notes: behavior changes '
+      '(android.newDsl and android.builtInKotlin default to true)',
+  url: 'https://developer.android.com/build/releases/agp-9-0-0-release-notes',
+  retrieved: '2026-09-16',
+);
+
+const androidApiLevelsSource = KnowledgeSource(
+  title: 'Android API levels and platform versions',
+  url:
+      'https://developer.android.com/guide/topics/manifest/uses-sdk-element#api-level-table',
+  retrieved: '2026-09-16',
+);
+
+/// The Android platform version of each API level.
+const androidApiLevelVersions = <int, String>{
+  16: '4.1',
+  17: '4.2',
+  18: '4.3',
+  19: '4.4',
+  20: '4.4W',
+  21: '5.0',
+  22: '5.1',
+  23: '6.0',
+  24: '7.0',
+  25: '7.1',
+  26: '8.0',
+  27: '8.1',
+  28: '9',
+  29: '10',
+  30: '11',
+  31: '12',
+  32: '12L',
+  33: '13',
+  34: '14',
+  35: '15',
+  36: '16',
+};

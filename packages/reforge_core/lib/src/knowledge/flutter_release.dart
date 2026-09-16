@@ -127,6 +127,7 @@ final class FlutterRelease {
     required this.template,
     required this.imperativeGradleApply,
     required this.iosMinimumDeploymentTarget,
+    required this.androidMigrations,
   });
 
   final Version version;
@@ -143,6 +144,16 @@ final class FlutterRelease {
 
   /// The minimum iOS deployment target supported by the release.
   final ToolVersion iosMinimumDeploymentTarget;
+
+  /// Class names of the project migrations `flutter build` and `flutter run`
+  /// apply to the Android host project before every Gradle build, for
+  /// example `DisableNewDslMigration`. They change project files without
+  /// asking.
+  final List<String> androidMigrations;
+
+  /// Whether the Flutter tool of this release runs the Android project
+  /// migration [name].
+  bool runsAndroidMigration(String name) => androidMigrations.contains(name);
 
   /// The source of versions, revisions, Dart versions and release dates.
   static const releaseManifestSource = KnowledgeSource(
@@ -186,6 +197,29 @@ final class FlutterRelease {
   /// The source of [template] and [androidDefaults] versions.
   KnowledgeSource get templateSource =>
       sourceFor('packages/flutter_tools/lib/src/android/gradle_utils.dart');
+
+  /// The source of [androidDefaults] (Flutter's Gradle plugin).
+  KnowledgeSource get androidDefaultsSource =>
+      sourceFor(version >= Version(3, 32, 0)
+          ? 'packages/flutter_tools/gradle/src/main/kotlin/FlutterExtension.kt'
+          : version >= Version(3, 13, 0)
+              ? 'packages/flutter_tools/gradle/src/main/groovy/flutter.groovy'
+              : 'packages/flutter_tools/gradle/flutter.gradle');
+
+  /// The source of [androidMigrations].
+  KnowledgeSource get androidMigrationsSource =>
+      sourceFor('packages/flutter_tools/lib/src/android/gradle.dart');
+
+  /// The implementation of the Android project migration [name], e.g.
+  /// `DisableNewDslMigration` in `disable_new_dsl_migration.dart`.
+  KnowledgeSource androidMigrationSource(String name) {
+    final file = name
+        .replaceAllMapped(
+            RegExp('(?<=[a-z0-9])(?=[A-Z])|(?<=[a-z])(?=[0-9])'), (_) => '_')
+        .toLowerCase();
+    return sourceFor(
+        'packages/flutter_tools/lib/src/android/migrations/$file.dart');
+  }
 
   /// The source of [TemplateToolchain.gradleProperties].
   KnowledgeSource get templateGradlePropertiesSource => sourceFor(version >=

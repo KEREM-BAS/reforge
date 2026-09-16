@@ -26,10 +26,18 @@ enum StepStatus {
 
 /// Whether the target release needs the step.
 enum Necessity {
-  /// The target release fails to build or run without it.
+  /// The target release fails to build or run without it, or does not
+  /// support the project without it.
   required,
 
-  /// Deprecations and warning thresholds; applied only when requested.
+  /// The Flutter tool of the target release makes the same change itself
+  /// when it next builds the app. Planned by default, so the change is
+  /// reviewed, journaled and reversible instead of happening during a build;
+  /// skipping it does not make a plan incomplete.
+  flutterMigration,
+
+  /// Deprecations, warning thresholds and template modernizations; applied
+  /// only when requested.
   recommended,
 }
 

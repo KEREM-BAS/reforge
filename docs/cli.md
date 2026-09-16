@@ -42,8 +42,11 @@ reforge plan --to <version> [--accept RECIPE_ID,...] [--accept-all]
 
 `--to` accepts `3.47.4`, `3.47` (latest known patch) or `stable`.
 
-Steps are **required** (the target release fails without them) or
-**recommended** (Flutter warning thresholds, template modernizations).
+Steps are **required** (the target release fails without them or does not
+support the project), **flutterMigration** (the Flutter tool would make the
+same change during the next build; planned by default so it is reviewed and
+reversible) or **recommended** (Flutter warning thresholds, template
+modernizations).
 Recommended steps are listed under "Recommended, not planned" until they are
 requested: `--include RECIPE_ID` plans those of one recipe,
 `--include-recommended` plans all of them. Including a toolchain recipe (for

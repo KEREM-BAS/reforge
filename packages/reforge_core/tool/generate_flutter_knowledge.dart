@@ -4,7 +4,8 @@
 //  * the Flutter release manifest (versions, revisions, Dart versions, dates)
 //  * flutter/flutter sources at each stable release tag (Gradle/AGP/Kotlin/
 //    Java/minSdk floors, template toolchain and gradle.properties, Android
-//    defaults, iOS minimum, imperative Gradle apply behaviour)
+//    defaults, Android build migrations, iOS minimum, imperative Gradle
+//    apply behaviour)
 //
 // Usage:
 //   curl -o /tmp/releases_macos.json \
@@ -168,6 +169,20 @@ Future<void> main(List<String> arguments) async {
         entry.key: entry.value,
     };
 
+    // Project migrations the tool runs before every Android Gradle build.
+    final gradleDart = await git.read(
+            tag, 'packages/flutter_tools/lib/src/android/gradle.dart') ??
+        '';
+    final migratorsStart = gradleDart.indexOf('<ProjectMigrator>[');
+    final androidMigrations = migratorsStart == -1
+        ? const <String>[]
+        : [
+            for (final match in RegExp(r'\b(\w+Migration)\(').allMatches(
+                gradleDart.substring(
+                    migratorsStart, gradleDart.indexOf('];', migratorsStart))))
+              match.group(1)!,
+          ];
+
     final String imperativeApply;
     // Match Flutter's own messages, not incidental code: the pre-3.16 plugin
     // implementation also throws GradleExceptions for unrelated reasons.
@@ -235,6 +250,7 @@ Future<void> main(List<String> arguments) async {
     templateDsl: '${ktsSettings != null ? 'kotlin' : 'groovy'}',
     templateDeclarativePlugins: $declarative,
     templateNamespace: ${appBuild?.contains('namespace') ?? false},
+    androidMigrations: [${androidMigrations.map((m) => "'$m'").join(', ')}],
     templateGradleProperties: {
 ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartString(e.value)},\n').join()}    },
     compileSdk: ${sdkDefault('compileSdkVersion')},
@@ -274,6 +290,11 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     ..writeln()
     ..writeln('];');
   File(args['out'] as String).writeAsStringSync(output.toString());
+  // Format like the rest of the repository so regenerating is reproducible.
+  final format = Process.runSync('dart', ['format', args['out'] as String]);
+  if (format.exitCode != 0) {
+    warnings.add('dart format failed: ${format.stderr}');
+  }
   for (final warning in warnings) {
     stderr.writeln('warning: $warning');
   }

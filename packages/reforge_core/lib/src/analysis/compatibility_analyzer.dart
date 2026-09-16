@@ -364,6 +364,52 @@ final class CompatibilityAnalyzer {
       ),
     ];
     yield* results.whereType<Finding>();
+
+    final minSdk = _minSdkFinding(android, release);
+    if (minSdk != null) yield minSdk;
+  }
+
+  Finding? _minSdkFinding(AndroidProject android, FlutterRelease release) {
+    final app = android.app;
+    if (app == null) return null;
+    final minimum = release.androidDefaults.minSdk;
+    final below = [
+      for (final (label, value) in app.minSdkDeclarations)
+        if (value is LiteralInt && value.value < minimum) (label, value),
+    ];
+    if (below.isEmpty) return null;
+    final lowest = below.map((d) => d.$2.value).reduce((a, b) => a < b ? a : b);
+    final floor = release.androidRequirements.minSdk;
+    final failsCheck = floor != null && lowest < floor.error.major;
+    final migrates = release.runsAndroidMigration('MinSdkVersionMigration');
+    return Finding(
+      code: 'ANDROID_MIN_SDK_BELOW_FLUTTER_MINIMUM',
+      severity: failsCheck ? Severity.error : Severity.warning,
+      title:
+          'minSdk $lowest is below the minimum of Flutter ${release.version}',
+      message: 'Flutter ${release.version} supports Android API level '
+          '$minimum and newer (flutter.minSdkVersion).',
+      why: 'Flutter raises its minimum Android API level over time; '
+          'flutter.minSdkVersion is $minimum in this release.',
+      impact: [
+        if (floor != null)
+          "Flutter's Gradle plugin fails builds below API level "
+              '${floor.error.major} and warns below ${floor.warn.major}.',
+        if (migrates)
+          'Before every Android build, the Flutter tool replaces too-low '
+              'literal minSdk values with flutter.minSdkVersion.',
+      ].join(' '),
+      suggestedAction: 'Raise minSdk to flutter.minSdkVersion or $minimum. '
+          'Devices below API level $minimum can no longer install the app.',
+      evidence: [
+        for (final (label, value) in below)
+          Evidence.file('$label minSdk ${value.value}', value.location),
+        Evidence.knowledge(
+            'flutter.minSdkVersion is $minimum in Flutter ${release.version}',
+            release.androidDefaultsSource),
+      ],
+      relatedRecipes: const [RecipeIds.androidMinSdk],
+    );
   }
 
   Iterable<Finding> _androidEnvironment(AndroidProject android,

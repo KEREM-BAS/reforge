@@ -123,9 +123,23 @@ checks that prove success:
 | `manual` | Reforge can explain what to do but cannot safely do it. |
 | `blocked` | The migration cannot proceed until something outside the project changes (unsupported package, missing prerequisite). |
 
-`necessity` is `required` (the target release fails without it) or
-`recommended` (deprecations, warning thresholds). Recommended steps are listed
-but not applied unless requested.
+`necessity` is one of:
+
+| Necessity | Meaning | Planned by default | Blocks completion when not applied |
+| --- | --- | --- | --- |
+| `required` | The target release fails without it or does not support the project. | yes | yes |
+| `flutterMigration` | The Flutter tool of the target release makes the same change itself before the next build. | yes | no |
+| `recommended` | Deprecations, warning thresholds, template modernizations. | only with `--include` | no |
+
+`flutterMigration` exists because `flutter build` and `flutter run` migrate
+Android host projects before every Gradle build (for example
+`DisableNewDslMigration`, `TopLevelGradleBuildFileMigration`,
+`MinSdkVersionMigration`). Without mirroring them, the first build after a
+migration changes files outside the reviewed plan, rewrites them with LF line
+endings, and makes a clean rollback impossible. The knowledge base records,
+for every release, which migrations its tool runs; recipes that mirror one
+cite its source and change exactly what it would, while keeping the file's
+formatting. `reforge verify` still reports any file a tool modifies.
 
 Recipes are:
 

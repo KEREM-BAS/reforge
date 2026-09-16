@@ -102,6 +102,12 @@ Execution failed for task ':app:checkDebugDuplicateClasses'.
           [RecipeIds.androidGradleWrapper]);
       expect(
           diagnoseFailure(
+                  "Error: Your project's minimum Android SDK (flavor='dev') version (21) is lower than Flutter's minimum supported version of 23. Please upgrade")
+              .single
+              .relatedRecipes,
+          [RecipeIds.androidMinSdk]);
+      expect(
+          diagnoseFailure(
                   'Minimum supported Gradle version is 8.13. Current version is 8.7.')
               .single
               .id,

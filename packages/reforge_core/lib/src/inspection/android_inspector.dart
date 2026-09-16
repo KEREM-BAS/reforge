@@ -408,12 +408,17 @@ final class AndroidInspector {
     }
 
     final flavors = <String>[];
+    final flavorMinSdk = <String, ScriptValue>{};
     final flavorBlock = android?.findBlock(['productFlavors']);
     for (final statement
         in flavorBlock?.statements ?? const <GradleStatement>[]) {
       if (statement.blocks.isEmpty) continue;
       final name = _namedContainerElement(statement);
-      if (name != null) flavors.add(name);
+      if (name == null) continue;
+      flavors.add(name);
+      final minSdk =
+          property(statement.blocks.first, const ['minSdk', 'minSdkVersion']);
+      if (minSdk != null) flavorMinSdk[name] = minSdk;
     }
     var releaseSigning = false;
     final signing = android?.findBlock(['signingConfigs']);
@@ -434,6 +439,7 @@ final class AndroidInspector {
           property(defaultConfig, const ['targetSdk', 'targetSdkVersion']),
       ndkVersion: property(android, const ['ndkVersion']),
       productFlavors: flavors,
+      flavorMinSdk: flavorMinSdk,
       hasReleaseSigningConfig: releaseSigning,
     );
   }

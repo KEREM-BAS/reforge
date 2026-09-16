@@ -12,7 +12,10 @@ ScriptValue? interpretScriptValue(
     final token = tokens.single;
     if (token.kind == GradleTokenKind.number) {
       final value = int.tryParse(token.text);
-      if (value != null) return LiteralInt(value, text, location);
+      if (value != null) {
+        return LiteralInt(value, text, location,
+            editable: EditableValue(script.path, token.range));
+      }
     }
     final literal = token.string;
     if (literal != null && literal.constantValue != null) {

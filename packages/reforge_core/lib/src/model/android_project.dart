@@ -134,6 +134,7 @@ final class AndroidAppModule {
     this.targetSdk,
     this.ndkVersion,
     this.productFlavors = const [],
+    this.flavorMinSdk = const {},
     this.hasReleaseSigningConfig = false,
   });
 
@@ -145,6 +146,18 @@ final class AndroidAppModule {
   final ScriptValue? targetSdk;
   final ScriptValue? ndkVersion;
   final List<String> productFlavors;
+
+  /// `minSdk` overrides of product flavors, by flavor name.
+  final Map<String, ScriptValue> flavorMinSdk;
+
+  /// Every `minSdk` declaration: `defaultConfig` first, then product flavor
+  /// overrides, each with a label such as `defaultConfig` or `flavor dev`.
+  List<(String, ScriptValue)> get minSdkDeclarations => [
+        if (minSdk case final value?) ('defaultConfig', value),
+        for (final entry in flavorMinSdk.entries)
+          ('flavor ${entry.key}', entry.value),
+      ];
+
   final bool hasReleaseSigningConfig;
 
   Map<String, Object?> toJson() => {
@@ -157,6 +170,11 @@ final class AndroidAppModule {
         'targetSdk': targetSdk?.toJson(),
         'ndkVersion': ndkVersion?.toJson(),
         'productFlavors': productFlavors,
+        if (flavorMinSdk.isNotEmpty)
+          'flavorMinSdk': {
+            for (final entry in flavorMinSdk.entries)
+              entry.key: entry.value.toJson(),
+          },
         'hasReleaseSigningConfig': hasReleaseSigningConfig,
       };
 }

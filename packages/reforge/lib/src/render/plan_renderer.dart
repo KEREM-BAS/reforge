@@ -163,9 +163,11 @@ void _renderStep(Terminal t, PlanStep step, {required bool verbose}) {
     StepStatus.manual => (t.yellow(t.warn), t.yellow('manual')),
     StepStatus.blocked => (t.red(t.fail), t.red('blocked')),
   };
-  final necessity = step.proposal.necessity == Necessity.recommended
-      ? t.dim(' recommended')
-      : '';
+  final necessity = switch (step.proposal.necessity) {
+    Necessity.required => '',
+    Necessity.flutterMigration => t.dim(' ${t.dot} also done by flutter build'),
+    Necessity.recommended => t.dim(' ${t.dot} recommended'),
+  };
   t.line('  $symbol ${t.bold(step.recipe.id)}  $label$necessity');
   t.paragraph(step.proposal.summary);
   if (verbose) {

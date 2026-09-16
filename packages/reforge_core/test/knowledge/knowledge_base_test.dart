@@ -122,6 +122,34 @@ void main() {
           contains('/templates/app/android.tmpl/'));
     });
 
+    test('Android project migrations of the Flutter tool', () {
+      expect(release('3.7.0').androidMigrations, isEmpty);
+      expect(release('3.10.0').androidMigrations,
+          ['TopLevelGradleBuildFileMigration']);
+      expect(release('3.16.0').runsAndroidMigration('MinSdkVersionMigration'),
+          isTrue);
+      expect(release('3.41.0').runsAndroidMigration('DisableNewDslMigration'),
+          isFalse);
+      expect(
+          release('3.44.0').androidMigrations,
+          containsAll(
+              ['DisableBuiltInKotlinMigration', 'DisableNewDslMigration']));
+      expect(
+          release('3.47.4')
+              .androidMigrationSource('CmakeAndroid16kPagesMigration')
+              .url,
+          endsWith(
+              '/android/migrations/cmake_android_16k_pages_migration.dart'));
+      expect(release('3.13.0').androidDefaults.minSdk, 19);
+      expect(release('3.35.0').androidDefaults.minSdk, 24);
+      expect(release('3.10.0').androidDefaultsSource.url,
+          endsWith('/gradle/flutter.gradle'));
+      expect(release('3.13.0').androidDefaultsSource.url,
+          endsWith('/groovy/flutter.groovy'));
+      expect(KnowledgeBase.bundled.androidVersionOf(24)!.value, '7.0');
+      expect(KnowledgeBase.bundled.androidVersionOf(99), isNull);
+    });
+
     test('floor status', () {
       final floor = release('3.47.0').androidRequirements.androidGradlePlugin!;
       expect(floor.statusOf(v('8.7.0')), FloorStatus.belowError);
