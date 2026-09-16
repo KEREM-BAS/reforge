@@ -19,6 +19,12 @@ Upgrade the Gradle wrapper from 7.6.1 to 8.14.
 Add android.builtInKotlin=false and android.newDsl=false to android/gradle.properties.
 - files: android/gradle.properties
 
+## ANDROID_COMPILE_SDK (review, required, applied)
+
+Raise compileSdk from 33 to flutter.compileSdkVersion (36).
+- note: compileSdk only selects the Android APIs available when compiling; targetSdk and the runtime behavior of the app do not change. New deprecation warnings can appear in Java and Kotlin sources.
+- files: android/app/build.gradle
+
 ## ANDROID_AGP_VERSION (review, required, applied)
 
 Upgrade the Android Gradle Plugin from 7.4.2 to 8.11.1.
@@ -51,7 +57,6 @@ Raise the iOS deployment target to 15.0.
 ## Skipped
 
 - DART_SDK_CONSTRAINT: environment.sdk ">=3.1.0 <4.0.0" allows Dart 3.13.3.
-- ANDROID_COMPILE_SDK: Recommended but not required for Flutter 3.47.4: Raise compileSdk from 33 to flutter.compileSdkVersion (36).
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.47.4 only warns about apps applying the Kotlin Gradle plugin with Android Gradle Plugin 9 or later; this project uses 8.11.1.
 - ANDROID_NAMESPACE: android.namespace is declared and no manifest declares a package attribute.
 - ANDROID_CLEAN_TASK: android/build.gradle has no clean task in the form the Flutter tool migrates.

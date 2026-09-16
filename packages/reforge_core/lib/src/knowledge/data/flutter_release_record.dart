@@ -33,6 +33,8 @@ final class FlutterReleaseRecord {
     required this.macosMinimum,
     required this.xcodeFloor,
     required this.cocoapodsFloor,
+    required this.embeddingMinCompileSdk,
+    required this.embeddingMinCompileSdkLibraries,
   });
 
   final String version;
@@ -63,4 +65,6 @@ final class FlutterReleaseRecord {
   final String macosMinimum;
   final String xcodeFloor;
   final String cocoapodsFloor;
+  final int? embeddingMinCompileSdk;
+  final List<String> embeddingMinCompileSdkLibraries;
 }

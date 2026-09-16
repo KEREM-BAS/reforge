@@ -91,6 +91,18 @@ void main() {
       expect(release('3.3.0').iosMinimumDeploymentTarget, v('11.0'));
     });
 
+    test('compileSdk required by the Android embedding', () {
+      final current = release('3.47.4');
+      expect(current.embeddingMinCompileSdk, 34);
+      expect(current.embeddingMinCompileSdkLibraries,
+          contains('androidx.fragment:fragment:1.7.1'));
+      expect(current.embeddingDependenciesSource.url,
+          endsWith('/3.47.4/engine/src/flutter/tools/androidx/files.json'));
+      expect(release('3.29.0').embeddingMinCompileSdk, 34);
+      // The engine sources are not part of flutter/flutter before 3.29.
+      expect(release('3.27.4').embeddingMinCompileSdk, isNull);
+    });
+
     test('Xcode and CocoaPods requirements', () {
       String floor(VersionFloor floor) => '${floor.error}/${floor.warn}';
       DarwinRequirements apple(String version) =>

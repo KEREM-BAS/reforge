@@ -633,6 +633,41 @@ final class CompatibilityAnalyzer {
     final minSdk = _minSdkFinding(android, release);
     if (minSdk != null) yield minSdk;
 
+    // The AndroidX libraries of the Android embedding need a minimum
+    // compileSdk; AGP's AAR metadata check fails builds below it.
+    final embeddingFloor = release.embeddingMinCompileSdk;
+    final compileSdk = android.app?.compileSdk;
+    if (embeddingFloor != null &&
+        compileSdk is LiteralInt &&
+        compileSdk.value < embeddingFloor) {
+      final libraries = release.embeddingMinCompileSdkLibraries;
+      yield Finding(
+        code: 'ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
+        severity: Severity.error,
+        title: 'compileSdk ${compileSdk.value} is below the minimum of Flutter '
+            '${release.version}',
+        message: "Flutter ${release.version}'s Android embedding depends on "
+            'AndroidX libraries that require compileSdk $embeddingFloor or '
+            'higher.',
+        impact: 'Android builds fail in the AAR metadata check: '
+            '"Dependency \'${libraries.first}\' requires libraries and '
+            'applications that depend on it to compile against version '
+            '$embeddingFloor or later of the Android APIs."',
+        suggestedAction: 'Raise compileSdk to flutter.compileSdkVersion '
+            '(${release.androidDefaults.compileSdk}). compileSdk does not '
+            'change which devices can install the app.',
+        evidence: [
+          Evidence.file('compileSdk ${compileSdk.text}', compileSdk.location),
+          Evidence.knowledge(
+              "Flutter ${release.version}'s Android embedding depends on "
+              '${_list(libraries)}, which require compileSdk $embeddingFloor '
+              '(AAR metadata)',
+              release.embeddingDependenciesSource),
+        ],
+        relatedRecipes: const [RecipeIds.androidCompileSdk],
+      );
+    }
+
     final agpVersion = android.toolchain.androidGradlePlugin?.version;
     final app = android.app;
     if (release.appliesKotlinPlugin &&

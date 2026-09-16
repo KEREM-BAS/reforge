@@ -302,6 +302,8 @@ FlutterRelease _releaseFromRecord(FlutterReleaseRecord record) {
         ImperativeGradleApply.values.byName(record.imperativeApply),
     iosMinimumDeploymentTarget: ToolVersion.parse(record.iosMinimum),
     macosMinimumDeploymentTarget: ToolVersion.parse(record.macosMinimum),
+    embeddingMinCompileSdk: record.embeddingMinCompileSdk,
+    embeddingMinCompileSdkLibraries: record.embeddingMinCompileSdkLibraries,
     darwinRequirements: DarwinRequirements(
       xcode: floor(record.xcodeFloor)!,
       cocoapods: floor(record.cocoapodsFloor)!,

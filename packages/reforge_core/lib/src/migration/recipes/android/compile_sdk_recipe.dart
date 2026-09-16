@@ -11,8 +11,10 @@ import '../../recipe_ids.dart';
 ///
 /// Flutter's Gradle plugin warns when plugins compile against a higher
 /// Android SDK than the app, and Android libraries fail the build when they
-/// require a higher compileSdk. compileSdk only selects the APIs available at
-/// compile time; targetSdk, which changes runtime behavior, is not touched.
+/// require a higher compileSdk; the step is required below the compileSdk the
+/// AndroidX libraries of Flutter's Android embedding require. compileSdk only
+/// selects the APIs available at compile time; targetSdk, which changes
+/// runtime behavior, is not touched.
 final class CompileSdkRecipe extends MigrationRecipe {
   const CompileSdkRecipe();
 
@@ -80,6 +82,10 @@ final class CompileSdkRecipe extends MigrationRecipe {
           '($flutterDefault) and the plugins\' compileSdk.');
     }
     final replacement = required == flutterDefault ? _replacement : '$required';
+    // Below the compileSdk the embedding's AndroidX libraries require, builds
+    // fail.
+    final embeddingFloor = release.embeddingMinCompileSdk;
+    final failsBuild = embeddingFloor != null && current < embeddingFloor;
     final higherPlugins = [
       for (final (package, sdk) in plugins)
         if (sdk > current) (package, sdk),
@@ -99,11 +105,20 @@ final class CompileSdkRecipe extends MigrationRecipe {
             "Flutter's Gradle plugin warns when plugins compile against a "
             'higher Android SDK than the app',
             release.pluginCompileSdkCheckSource),
+      if (failsBuild)
+        Evidence.knowledge(
+            "Flutter ${release.version}'s Android embedding depends on "
+            '${release.embeddingMinCompileSdkLibraries.join(', ')}, which '
+            'require compileSdk $embeddingFloor (AAR metadata)',
+            release.embeddingDependenciesSource),
     ];
     final rationale = [
       'The app compiles against Android SDK $current; Flutter '
           '${release.version} projects compile against $_replacement '
           '($flutterDefault).',
+      if (failsBuild)
+        "The AndroidX libraries of Flutter ${release.version}'s Android "
+            'embedding require compileSdk $embeddingFloor or higher.',
       if (higherPlugins.isNotEmpty)
         '${higherPlugins.map((p) => '${p.$1.name} (${p.$2})').join(', ')} '
             'compile against a higher Android SDK, which Flutter\'s Gradle '
@@ -112,12 +127,15 @@ final class CompileSdkRecipe extends MigrationRecipe {
 
     return Proposal(
       status: editable == null ? StepStatus.manual : StepStatus.review,
-      necessity: Necessity.recommended,
+      necessity: failsBuild ? Necessity.required : Necessity.recommended,
       summary: 'Raise compileSdk from $current to $replacement'
           '${replacement == _replacement ? ' ($flutterDefault)' : ''}.',
       rationale: rationale,
-      impact: 'Builds print warnings, and fail when an Android library the '
-          'app or its plugins use requires a higher compileSdk.',
+      impact: failsBuild
+          ? 'Android builds fail in the AAR metadata check: the Android '
+              'embedding requires compileSdk $embeddingFloor.'
+          : 'Builds print warnings, and fail when an Android library the app '
+              'or its plugins use requires a higher compileSdk.',
       evidence: evidence,
       edits: [
         if (editable != null)

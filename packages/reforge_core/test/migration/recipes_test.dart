@@ -452,13 +452,51 @@ void main() {
       }
 
       test('a literal below the Flutter default becomes the default', () {
-        final plan = planWithPlugin('compileSdkVersion 33');
+        final plan = planWithPlugin('compileSdkVersion 35');
         final compileSdk = step(plan, RecipeIds.androidCompileSdk);
         expect(compileSdk.status, StepStatus.review);
+        expect(compileSdk.proposal.necessity, Necessity.recommended);
         expect(compileSdk.proposal.summary,
-            'Raise compileSdk from 33 to flutter.compileSdkVersion (36).');
+            'Raise compileSdk from 35 to flutter.compileSdkVersion (36).');
         expect(fileAfter(plan, 'android/app/build.gradle'),
             contains('    compileSdkVersion flutter.compileSdkVersion\n'));
+      });
+
+      test('below what the Android embedding requires, it is required', () {
+        final plan = planWithPlugin('compileSdkVersion 30');
+        final compileSdk = step(plan, RecipeIds.androidCompileSdk);
+        expect(compileSdk.proposal.necessity, Necessity.required);
+        expect(compileSdk.proposal.impact,
+            contains('the Android embedding requires compileSdk 34'));
+        expect(compileSdk.proposal.evidence.map((e) => e.source?.url),
+            contains(endsWith('engine/src/flutter/tools/androidx/files.json')));
+
+        final pending = planFor(
+            declarativeApp(
+                agp: '8.11.1',
+                app: 'plugins {\n    id "com.android.application"\n'
+                    '    id "dev.flutter.flutter-gradle-plugin"\n}\n\n'
+                    'android {\n    namespace "com.example.app"\n'
+                    '    compileSdkVersion 30\n}\n'),
+            options: const PlanOptions());
+        final finding = pending.remainingFindings.singleWhere(
+            (f) => f.code == 'ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM');
+        expect(finding.severity, Severity.error);
+        expect(finding.impact, contains("'androidx.core:core:1.13.1'"));
+        expect(pending.isComplete, isFalse);
+
+        final older = planFor(
+            declarativeApp(
+                agp: '8.11.1',
+                app: 'plugins {\n    id "com.android.application"\n'
+                    '    id "dev.flutter.flutter-gradle-plugin"\n}\n\n'
+                    'android {\n    namespace "com.example.app"\n'
+                    '    compileSdkVersion 30\n}\n'),
+            target: '3.27.4',
+            options: const PlanOptions());
+        expect(older.remainingFindings.map((f) => f.code),
+            isNot(contains('ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM')),
+            reason: 'unknown before Flutter 3.29');
       });
 
       test('plugins that need more than the default get a literal', () {

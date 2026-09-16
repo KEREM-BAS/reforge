@@ -6,13 +6,20 @@
 //    Java/minSdk floors, template toolchain and gradle.properties, Android
 //    defaults, Android build migrations, iOS and macOS minimums, Xcode and
 //    CocoaPods requirements, imperative Gradle apply behaviour)
+//  * the AAR metadata (minCompileSdk) of the AndroidX libraries the Android
+//    embedding depends on, read from the local Gradle cache (Flutter 3.29+,
+//    whose engine sources are part of flutter/flutter)
 //
 // Usage:
 //   curl -o /tmp/releases_macos.json \
 //     https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json
 //   dart run tool/generate_flutter_knowledge.dart \
 //     --flutter <flutter git checkout with tags> \
-//     --manifest /tmp/releases_macos.json
+//     --manifest /tmp/releases_macos.json \
+//     [--gradle-cache ~/.gradle/caches/modules-2/files-2.1]
+//
+// The AndroidX AARs are in the Gradle cache after building any app with the
+// release; the generator lists the ones it cannot find.
 //
 // Review the diff of the generated file before committing it.
 
@@ -29,7 +36,11 @@ Future<void> main(List<String> arguments) async {
     ..addOption('manifest', mandatory: true, help: 'releases_*.json path.')
     ..addOption('out',
         defaultsTo: 'lib/src/knowledge/data/flutter_releases.g.dart')
-    ..addOption('min-version', defaultsTo: '3.0.0');
+    ..addOption('min-version', defaultsTo: '3.0.0')
+    ..addOption('gradle-cache',
+        defaultsTo: '${Platform.environment['HOME']}/.gradle/caches/modules-2/'
+            'files-2.1',
+        help: 'Gradle module cache holding the AndroidX AARs.');
   final args = parser.parse(arguments);
   final checkout = args['flutter'] as String;
   final minVersion = Version.parse(args['min-version'] as String);
@@ -54,6 +65,8 @@ Future<void> main(List<String> arguments) async {
   final versions = releases.keys.map(Version.parse).toList()..sort();
 
   final git = await _GitObjectReader.start(checkout);
+  final gradleCache = args['gradle-cache'] as String;
+  final missingAars = <String>{};
   final records = <String>[];
   final warnings = <String>[];
   for (final version in versions) {
@@ -310,6 +323,40 @@ Future<void> main(List<String> arguments) async {
             ?.group(1) ??
         (throw StateError('$tag: $name not found.'));
 
+    // The compileSdk the Android embedding's AndroidX libraries require
+    // (AGP fails builds that compile against less).
+    final androidx =
+        await git.read(tag, 'engine/src/flutter/tools/androidx/files.json');
+    int? embeddingMinCompileSdk;
+    var embeddingLibraries = const <String>[];
+    if (androidx != null) {
+      final requirements = <String, int>{};
+      for (final entry
+          in (jsonDecode(androidx) as List).cast<Map<String, Object?>>()) {
+        if (!(entry['url']! as String).endsWith('.aar')) continue;
+        final coordinate = entry['maven_dependency']! as String;
+        final metadata = _aarMetadata(gradleCache, coordinate);
+        if (metadata == null) {
+          missingAars.add('$coordinate (${entry['url']})');
+          continue;
+        }
+        final minCompileSdk = RegExp(r'^minCompileSdk=(\d+)', multiLine: true)
+            .firstMatch(metadata)
+            ?.group(1);
+        if (minCompileSdk != null) {
+          requirements[coordinate] = int.parse(minCompileSdk);
+        }
+      }
+      if (requirements.isNotEmpty) {
+        final maximum = requirements.values.reduce((a, b) => a > b ? a : b);
+        embeddingMinCompileSdk = maximum;
+        embeddingLibraries = [
+          for (final entry in requirements.entries)
+            if (entry.value == maximum) entry.key,
+        ]..sort();
+      }
+    }
+
     final dart = (release['dart_sdk_version']! as String).split(' ').first;
     final date = (release['release_date']! as String).substring(0, 10);
     String quote(String? value) => value == null ? 'null' : "'$value'";
@@ -345,9 +392,20 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     macosMinimum: '$macosMinimum',
     xcodeFloor: '$xcodeRequired/$xcodeRecommended',
     cocoapodsFloor: '${cocoapodsVersion('cocoaPodsMinimumVersion')}/${cocoapodsVersion('cocoaPodsRecommendedVersion')}',
+    embeddingMinCompileSdk: $embeddingMinCompileSdk,
+    embeddingMinCompileSdkLibraries: [${embeddingLibraries.map((l) => "'$l'").join(', ')}],
   ),''');
   }
   await git.close();
+  if (missingAars.isNotEmpty) {
+    stderr.writeln('AndroidX AARs of the Android embedding are missing from '
+        '$gradleCache. Build an app with the releases once, or download:');
+    for (final missing in missingAars.toList()..sort()) {
+      stderr.writeln('  $missing');
+    }
+    exitCode = 1;
+    return;
+  }
 
   final checkoutHead =
       Process.runSync('git', ['-C', checkout, 'rev-parse', 'HEAD'])
@@ -385,6 +443,27 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     stderr.writeln('warning: $warning');
   }
   stdout.writeln('Wrote ${records.length} releases to ${args['out']}.');
+}
+
+/// `META-INF/com/android/build/gradle/aar-metadata.properties` of the AAR
+/// [coordinate] (`group:artifact:version`) in the Gradle module cache, or
+/// `null` when the AAR is not cached. An AAR without metadata yields `''`.
+String? _aarMetadata(String gradleCache, String coordinate) {
+  final [group, artifact, version] = coordinate.split(':');
+  final directory = Directory('$gradleCache/$group/$artifact/$version');
+  if (!directory.existsSync()) return null;
+  final aar = directory
+      .listSync(recursive: true)
+      .whereType<File>()
+      .where((f) => f.path.endsWith('/$artifact-$version.aar'))
+      .firstOrNull;
+  if (aar == null) return null;
+  final result = Process.runSync('unzip', [
+    '-p',
+    aar.path,
+    'META-INF/com/android/build/gradle/aar-metadata.properties'
+  ]);
+  return result.exitCode == 0 ? result.stdout as String : '';
 }
 
 /// A single-quoted Dart string literal with the value of [value].

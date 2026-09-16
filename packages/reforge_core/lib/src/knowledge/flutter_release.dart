@@ -148,6 +148,8 @@ final class FlutterRelease {
     required this.iosMinimumDeploymentTarget,
     required this.macosMinimumDeploymentTarget,
     required this.darwinRequirements,
+    required this.embeddingMinCompileSdk,
+    required this.embeddingMinCompileSdkLibraries,
     required this.androidMigrations,
     required this.appliesKotlinPlugin,
   });
@@ -172,6 +174,20 @@ final class FlutterRelease {
 
   /// The Xcode and CocoaPods versions the Flutter tool checks.
   final DarwinRequirements darwinRequirements;
+
+  /// The lowest compileSdk the AndroidX libraries of the Android embedding
+  /// allow: the Android Gradle Plugin fails builds of apps that compile
+  /// against less. `null` before Flutter 3.29, whose engine sources are not
+  /// part of flutter/flutter.
+  final int? embeddingMinCompileSdk;
+
+  /// The embedding's AndroidX libraries that require
+  /// [embeddingMinCompileSdk], as `group:artifact:version`.
+  final List<String> embeddingMinCompileSdkLibraries;
+
+  /// The source of the Android embedding's AndroidX dependencies.
+  KnowledgeSource get embeddingDependenciesSource =>
+      sourceFor('engine/src/flutter/tools/androidx/files.json');
 
   /// The source of [DarwinRequirements.xcode].
   KnowledgeSource get xcodeRequirementsSource =>

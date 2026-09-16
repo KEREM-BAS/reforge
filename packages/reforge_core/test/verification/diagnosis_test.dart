@@ -193,6 +193,7 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
       finding('ENV_JAVA_CANNOT_RUN_GRADLE'),
       finding('ENV_XCODE_BELOW_FLUTTER_MINIMUM'),
+      finding('ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM'),
       finding('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP', subject: 'share_ios'),
       finding('PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP',
           subject: 'share_macos'),
@@ -240,6 +241,21 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
           confirmed('Found "Xcode 14.3, Build version 14E222b". Xcode 15 or '
               'greater is required to develop for iOS.'),
           ['ENV_XCODE_BELOW_FLUTTER_MINIMUM']);
+      // From a Flutter 2.2 app built with Flutter 3.44 and compileSdk 30.
+      expect(
+          confirmed('   > 21 issues were found when checking AAR metadata:\n\n'
+              "       1.  Dependency 'androidx.fragment:fragment:1.7.1' "
+              'requires libraries and applications that\n'
+              '           depend on it to compile against version 34 or later '
+              'of the\n'
+              '           Android APIs.\n\n'
+              '           :app is currently compiled against android-30.\n\n'
+              "       2.  Dependency 'androidx.window:window:1.2.0' requires "
+              'libraries and applications that\n'
+              '           depend on it to compile against version 34 or later '
+              'of the\n'
+              '           Android APIs.'),
+          ['ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM']);
       expect(
           confirmed('[!] CocoaPods could not find compatible versions for pod '
               '"share_ios":\nSpecs satisfying the `share_ios (from '

@@ -62,12 +62,11 @@ Future<void> main(List<String> arguments) async {
     'show',
     '$tag:packages/flutter_tools/lib/src/android/gradle_utils.dart'
   ]);
-  String constant(String name) {
-    final match =
-        RegExp("const (?:String )?$name = '([^']+)'").firstMatch(gradleUtils);
-    if (match == null) throw StateError('Constant $name not found at $tag');
-    return match.group(1)!;
-  }
+  // Templates before Flutter 2.5 hard-code the toolchain versions; rendering
+  // fails only when a template uses a variable that is not known.
+  String? constant(String name) => RegExp("const (?:String )?$name = '([^']+)'")
+      .firstMatch(gradleUtils)
+      ?.group(1);
 
   final camelName = name
       .split('_')
@@ -90,9 +89,12 @@ Future<void> main(List<String> arguments) async {
     'year': year,
     'dartSdk': r'$FLUTTER_ROOT/bin/cache/dart-sdk',
     'dartSdkVersionBounds': args['sdk-bounds'] as String,
-    'agpVersion': constant('templateAndroidGradlePluginVersion'),
-    'kotlinVersion': constant('templateKotlinGradlePluginVersion'),
-    'gradleVersion': constant('templateDefaultGradleVersion'),
+    if (constant('templateAndroidGradlePluginVersion') case final version?)
+      'agpVersion': version,
+    if (constant('templateKotlinGradlePluginVersion') case final version?)
+      'kotlinVersion': version,
+    if (constant('templateDefaultGradleVersion') case final version?)
+      'gradleVersion': version,
     'flutterRevision': revision,
     'flutterChannel': 'stable',
     'withPlatformChannelPluginHook': false,

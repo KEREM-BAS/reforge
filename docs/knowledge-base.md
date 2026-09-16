@@ -21,6 +21,7 @@ since 3.0.0.
 | Minimum iOS deployment target | `darwin.dart`, `ios_deployment_target_migration.dart` or `deployment_target_migration.dart` |
 | Minimum macOS deployment target | `darwin.dart`, `macos_deployment_target_migration.dart` (3.7+) or the app template's `project.pbxproj` |
 | Required and recommended Xcode; minimum and recommended CocoaPods | `lib/src/macos/xcode.dart`, `lib/src/macos/cocoapods.dart` |
+| compileSdk the Android embedding requires (3.29+) | `engine/src/flutter/tools/androidx/files.json`, and `minCompileSdk` in the AAR metadata of each listed AndroidX library |
 | Android project migrations run before every Gradle build | The `<ProjectMigrator>[...]` list in `lib/src/android/gradle.dart` |
 | Whether Flutter applies the Kotlin Gradle plugin itself, and whether the app template applies it | `FlutterPluginUtils.kt`; app template build script |
 
@@ -31,8 +32,13 @@ curl -o /tmp/releases_macos.json \
   https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json
 cd packages/reforge_core
 dart run tool/generate_flutter_knowledge.dart --flutter <flutter checkout with tags> \
-  --manifest /tmp/releases_macos.json
+  --manifest /tmp/releases_macos.json [--gradle-cache ~/.gradle/caches/modules-2/files-2.1]
 ```
+
+The compileSdk the Android embedding requires comes from the AAR metadata of
+its AndroidX libraries, read from the Gradle module cache. Building any app
+with a release puts them there; the generator lists missing AARs with their
+Google Maven URLs.
 
 The generator reports every value it cannot extract. Review the diff; the
 tests in `test/knowledge/knowledge_base_test.dart` pin values verified by hand.
