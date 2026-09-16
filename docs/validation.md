@@ -168,6 +168,57 @@ The same run with `--to 3.44.0`, the installed SDK, set 10.15, the value the
 3.44 tool's `MacOSDeploymentTargetMigration` writes; the build succeeded in
 10 s and again left the deployment target unchanged.
 
+### Run 7: Flutter 3.22-era app (Reforge c0fef96, then c3c1391)
+
+`fixtures/projects/flutter_3_22_app` (declarative plugins, AGP 7.3.0, Gradle
+7.6.3, Kotlin 1.7.10, `compileOptions` Java 8 and no Kotlin `jvmTarget`, as
+Flutter 3.22 templates generated), with launcher icons added:
+
+```bash
+reforge apply --to 3.47.4 --accept-all --yes
+reforge verify --check android
+```
+
+- With c0fef96 the plan had 5 steps and reported itself complete, but
+  `flutter build apk --debug` failed: `Inconsistent JVM-target compatibility
+  detected for tasks 'compileDebugJavaWithJavac' (1.8) and 'compileDebugKotlin'
+  (21)`. The Kotlin Gradle plugin, now 2.2.20, compiled to the JVM Gradle ran
+  on. Reforge explained the failure (`JVM_TARGET_MISMATCH`) but had not
+  predicted it. Flutter's 3.22 templates had dropped the Kotlin target
+  (flutter/flutter#142146) and 3.24 restored it after the same failure was
+  reported (#147185).
+- With c3c1391, `ANDROID_KOTLIN_JVM_TARGET` added
+  `kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_1_8 } }` (Groovy DSL,
+  Gradle 8.14) and the build succeeded in 15 s.
+
+### Run 8: Flutter 2.2-era app (Reforge ffeb848 to c3c1391)
+
+An app rendered from the Flutter 2.2.0 templates (now
+`fixtures/projects/flutter_2_2_app`): `jcenter()`, AGP 4.1.0, Gradle 6.7,
+Kotlin 1.3.50, `compileSdkVersion 30`, `minSdkVersion 16`, no
+`compileOptions`. The migration to 3.47.4 was built with Flutter 3.44.0 after
+`flutter pub get` and `dart fix --apply`:
+
+1. ffeb848 planned 9 steps, "complete". The build failed in AGP's AAR metadata
+   check: 21 issues, starting with `androidx.fragment:fragment:1.7.1 requires
+   libraries and applications that depend on it to compile against version 34
+   or later`. Reforge's diagnosis pointed to `ANDROID_COMPILE_SDK`, which the
+   plan had only recommended. The AndroidX libraries of Flutter's Android
+   embedding (`engine/src/flutter/tools/androidx/files.json`) declare
+   `minCompileSdk=34` for every release from 3.29 to 3.47.4; c0fef96 records
+   that in the knowledge base and makes the step required below it.
+2. With c0fef96 the build failed on the JVM targets (1.8 and 21), as in run 7.
+3. With c3c1391 (11 steps: Gradle plugin DSL, wrapper 6.7 to 8.14, AGP 4.1.0
+   to 8.11.1, Kotlin 1.3.50 to 2.2.20, compileSdk, minSdk, namespace, Java and
+   Kotlin targets, clean task, AGP 9 opt-outs, iOS 15.0),
+   `flutter build apk --debug` succeeded in 15 s.
+
+`jcenter()` stayed in `android/build.gradle` (a recommended step with Gradle
+8.14). Its Gradle 9 errors were checked separately with Gradle 9.1.0 on
+minimal Groovy and Kotlin DSL scripts: `Could not find method jcenter() for
+arguments []` and `Unresolved reference 'jcenter'`; with `mavenCentral()`
+both configured (ffeb848).
+
 ### Caveat
 
 The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The
