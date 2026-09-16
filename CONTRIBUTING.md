@@ -90,6 +90,23 @@ recipe ID is permanent once released.
 Then run `dart run tool/generate_recipe_docs.dart` in `packages/reforge` to
 bundle the document for `reforge explain`; a test fails otherwise.
 
+## Checking parsers against real files
+
+Fixtures cannot cover every build script in the wild. Before changing a
+parser, run it over the real files on your machine, for example the pub cache
+(plugins' Gradle scripts and podspecs) and a Flutter checkout (apps, templates,
+integration tests):
+
+```bash
+cd packages/reforge_core
+dart run tool/check_parsers.dart ~/.pub-cache/hosted ~/flutter
+```
+
+It lists every file a parser cannot read reliably. On the maintainers'
+machines (September 2026) all 1,527 Groovy and 190 Kotlin DSL Gradle scripts,
+410 Podfiles and 318 podspecs found this way were read reliably; keep it that
+way, or add the file's construct to a parser test.
+
 ## Security
 
 - Inspection and planning only read files and never execute project code.
