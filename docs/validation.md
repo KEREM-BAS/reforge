@@ -203,6 +203,12 @@ a text search:
   (`s.osx.deployment_target`, `s.platform = :osx`, ...), matching a text
   search. The others are app-facing packages, Dart-only implementations or
   Swift Package Manager-only releases without a podspec (2cf4735);
+- minSdk: 171 of the 197 plugin build scripts set a literal `minSdk` in
+  `defaultConfig`, and Reforge read all of them like a text search. `jni`
+  declares `defaultConfig` twice, the second time with `minSdk 21`; the first
+  implementation only read the first block (e5d2703 merges them, as Gradle does).
+  The other scripts use `project.ext` values, `safeExtGet(...)` or
+  `flutter.minSdkVersion`, which are not the plugin's own requirement;
 - v1 embedding: the five flagged plugin versions (`awesome_notifications`
   0.9.3+1, `device_info` 2.0.3, `flutter_inappwebview` 5.8.0,
   `flutter_native_image` 0.0.6+1, `uni_links` 0.5.1) all really use
