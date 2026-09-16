@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Fixture repositories must be stored byte-for-byte: line endings, BOMs and
+# trailing whitespace are part of what Reforge is tested against.
+fixtures/** -text
+packages/*/test/**/golden/** -text
