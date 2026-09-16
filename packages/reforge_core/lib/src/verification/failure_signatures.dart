@@ -563,15 +563,27 @@ final List<_Signature> _signatures = [
     'GRADLE_JCENTER_REMOVED',
     RegExp(r'Could not find method jcenter\(\)|'
         r"Unresolved reference:? '?jcenter\b"),
-    (match, line, context) => FailureDiagnosis(
-      id: 'GRADLE_JCENTER_REMOVED',
-      explanation: 'A build script declares jcenter(), which Gradle 9 '
-          'removed.',
-      suggestion: 'Replace jcenter() with mavenCentral() in the app, and use '
-          'plugin versions that no longer declare it.',
-      evidence: line,
-      relatedRecipes: const [RecipeIds.androidJcenter],
-    ),
+    (match, line, context) {
+      final module = failingGradleModule(context.output);
+      final plugin =
+          module == null || module == ':' || module == ':app' ? null : module;
+      final name = plugin?.substring(1);
+      return FailureDiagnosis(
+        id: 'GRADLE_JCENTER_REMOVED',
+        explanation: name == null
+            ? 'A build script declares jcenter(), which Gradle 9 removed.'
+            : 'The build script of $name declares jcenter(), which Gradle 9 '
+                'removed.',
+        suggestion: name == null
+            ? 'Replace jcenter() with mavenCentral() in the app, and use '
+                'plugin versions that no longer declare it.'
+            : 'Upgrade $name to a version that declares mavenCentral(), or '
+                'replace it. Until then, stay on Gradle 8.',
+        evidence: line,
+        relatedRecipes: const [RecipeIds.androidJcenter],
+        details: {if (name != null) 'module': name},
+      );
+    },
   ),
   _Signature(
     'XCODE_TOO_OLD',
@@ -681,7 +693,9 @@ final List<_Signature> _signatures = [
   ),
 ];
 
-final _failedTask = RegExp(r"Execution failed for task '(:[^']+)'");
+final _failedModule = RegExp(r"Execution failed for task '(:[^']+)'|"
+    r'A problem occurred (?:evaluating|configuring) '
+    r"(?:project '(:[^']+)'|root project)");
 
 final _dartError = RegExp(r'^(\S+\.dart):(\d+):(\d+): Error: (.+)$');
 
@@ -733,13 +747,16 @@ List<FailureDiagnosis> diagnoseFailure(String output,
   return primary.isEmpty ? secondary : primary;
 }
 
-/// The Gradle project path of the first failing task, e.g. `:app` or
-/// `:camera_android`, which identifies the module (often a plugin) that
-/// failed.
+/// The Gradle project path of the module that failed first, e.g. `:app` or
+/// `:camera_android` (often a plugin): from the first failing task, or from a
+/// failure while Gradle evaluated or configured a project. `:` is the root
+/// project.
 String? failingGradleModule(String output) {
-  final match = _failedTask.firstMatch(output);
+  final match = _failedModule.firstMatch(output);
   if (match == null) return null;
-  final task = match.group(1)!;
-  final lastColon = task.lastIndexOf(':');
-  return lastColon <= 0 ? ':' : task.substring(0, lastColon);
+  if (match.group(1) case final task?) {
+    final lastColon = task.lastIndexOf(':');
+    return lastColon <= 0 ? ':' : task.substring(0, lastColon);
+  }
+  return match.group(2) ?? ':';
 }

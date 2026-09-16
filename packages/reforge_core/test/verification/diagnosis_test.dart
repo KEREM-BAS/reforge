@@ -189,6 +189,8 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('ANDROID_NAMESPACE_MISSING'),
       finding('PLUGIN_ANDROID_V1_EMBEDDING', subject: 'old_share'),
       finding('PLUGIN_MIN_SDK_ABOVE_APP', subject: 'camera_android'),
+      finding('PLUGIN_GRADLE_JCENTER', subject: 'speech_to_text'),
+      finding('ANDROID_JCENTER_REPOSITORY'),
       finding('DEPENDENCY_DART_SDK_INCOMPATIBLE', subject: 'string_tools'),
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
       finding('ENV_JAVA_CANNOT_RUN_GRADLE'),
@@ -207,6 +209,35 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
             .confirmedBy
             .map((f) => f.subject ?? f.code)
             .toList();
+
+    test('jcenter() failures are confirmed for the failing module', () {
+      const output = '* Where:\n'
+          "Build file '/Users/me/.pub-cache/hosted/pub.dev/"
+          "speech_to_text-7.0.0/android/build.gradle' line: 7\n\n"
+          '* What went wrong:\n'
+          "A problem occurred evaluating project ':speech_to_text'.\n"
+          '> Could not find method jcenter() for arguments [] on repository '
+          'container of type '
+          'org.gradle.api.internal.artifacts.dsl.DefaultRepositoryHandler.';
+      final failure = diagnoseFailure(output).single;
+      expect(
+          failure.explanation,
+          'The build script of speech_to_text declares jcenter(), which '
+          'Gradle 9 removed.');
+      expect(
+          correlateFailures([failure], findings,
+                  failingModule: failingGradleModule(output))
+              .single
+              .confirmedBy
+              .map((f) => f.subject ?? f.code),
+          ['speech_to_text']);
+      expect(
+          confirmed(
+              "A problem occurred evaluating root project 'android'.\n"
+              '> Could not find method jcenter() for arguments []',
+              module: ':'),
+          ['ANDROID_JCENTER_REPOSITORY']);
+    });
 
     test('namespace failures are confirmed for the failing module', () {
       expect(confirmed('Namespace not specified', module: ':old_camera'),

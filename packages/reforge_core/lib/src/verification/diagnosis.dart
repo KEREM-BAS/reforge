@@ -33,10 +33,6 @@ const _findingCodes = <String, List<String>>{
   'COMPILE_SDK_BELOW_DEPENDENCY_MINIMUM': [
     'ANDROID_COMPILE_SDK_BELOW_FLUTTER_MINIMUM',
   ],
-  'GRADLE_JCENTER_REMOVED': [
-    'ANDROID_JCENTER_REPOSITORY',
-    'PLUGIN_GRADLE_JCENTER',
-  ],
   'COCOAPODS_TOO_OLD': ['ENV_COCOAPODS_BELOW_FLUTTER_MINIMUM'],
 };
 
@@ -69,6 +65,14 @@ List<Diagnosis> correlateFailures(
                   ]
                 : withCode('PLUGIN_ANDROID_NAMESPACE_MISSING',
                     subjects: {module}),
+          'GRADLE_JCENTER_REMOVED' => module == null
+              ? [
+                  ...withCode('ANDROID_JCENTER_REPOSITORY'),
+                  ...withCode('PLUGIN_GRADLE_JCENTER'),
+                ]
+              : module.isEmpty || module == 'app'
+                  ? withCode('ANDROID_JCENTER_REPOSITORY')
+                  : withCode('PLUGIN_GRADLE_JCENTER', subjects: {module}),
           'JVM_TARGET_MISMATCH' => module == null || module == 'app'
               ? withCode('ANDROID_KOTLIN_JVM_TARGET_UNSET')
               : const <Finding>[],

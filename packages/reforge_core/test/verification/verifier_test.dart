@@ -121,6 +121,16 @@ Execution failed for task ':app:checkDebugDuplicateClasses'.
           failingGradleModule(
               "Execution failed for task ':camera_android:compileDebugKotlin'."),
           ':camera_android');
+      // Gradle 9.1 evaluating speech_to_text 7.0.0.
+      expect(
+          failingGradleModule(
+              "A problem occurred evaluating project ':speech_to_text'.\n"
+              '> Could not find method jcenter() for arguments []'),
+          ':speech_to_text');
+      expect(
+          failingGradleModule('A problem occurred evaluating root project '
+              "'android'."),
+          ':');
       expect(diagnoseFailure('BUILD SUCCESSFUL'), isEmpty);
     });
   });
