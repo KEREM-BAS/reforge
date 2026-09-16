@@ -269,6 +269,11 @@ final class FlutterRelease {
               ? 'packages/flutter_tools/gradle/src/main/groovy/flutter.groovy'
               : 'packages/flutter_tools/gradle/flutter.gradle');
 
+  /// Flutter's explanations of Gradle build failures, such as a plugin that
+  /// requires a higher minSdk than the app.
+  KnowledgeSource get gradleErrorsSource =>
+      sourceFor('packages/flutter_tools/lib/src/android/gradle_errors.dart');
+
   /// The source of [androidMigrations].
   KnowledgeSource get androidMigrationsSource =>
       sourceFor('packages/flutter_tools/lib/src/android/gradle.dart');

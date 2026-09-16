@@ -59,6 +59,8 @@ List<Diagnosis> correlateFailures(
                   ]
                 : withCode('PLUGIN_ANDROID_NAMESPACE_MISSING',
                     subjects: {module}),
+          'PLUGIN_MIN_SDK_HIGHER' => withCode('PLUGIN_MIN_SDK_ABOVE_APP',
+              subjects: {failure.details['library']!}),
           'PLUGIN_V1_EMBEDDING' => withCode('PLUGIN_ANDROID_V1_EMBEDDING',
               subjects: failure.details['plugins']?.split(',').toSet()),
           'COCOAPODS_DEPLOYMENT_TARGET' => [

@@ -162,6 +162,7 @@ final class DependencyInspector {
           kotlinPlugin:
               script.isReliable ? kotlinPluginApplication(script) : null,
           compileSdk: _literalCompileSdk(script),
+          minSdk: _literalMinSdk(script),
           v1EmbeddingReferences: _v1EmbeddingReferences(package, files),
         );
       }
@@ -230,6 +231,29 @@ final class DependencyInspector {
     if (!script.isReliable) return null;
     final found = findProperty(script.findBlock(const ['android']),
         const ['compileSdk', 'compileSdkVersion']);
+    if (found == null) return null;
+    return switch (interpretScriptValue(script, found.$1, found.$2)) {
+      LiteralInt(:final value) => value,
+      _ => null,
+    };
+  }
+
+  /// `minSdk` / `minSdkVersion` of `android { defaultConfig {} }` when it is
+  /// an integer literal. Values from the app project (`project.ext`,
+  /// `flutter.minSdkVersion`) are not the plugin's own requirement.
+  static int? _literalMinSdk(GradleScript script) {
+    if (!script.isReliable) return null;
+    // Gradle merges repeated `android` and `defaultConfig` blocks; the last
+    // assignment wins.
+    (GradleStatement, List<GradleToken>)? found;
+    for (final android in script.blocksNamed('android')) {
+      for (final defaultConfig
+          in android.blocks.first.blocksNamed('defaultConfig')) {
+        found = findProperty(defaultConfig.blocks.first,
+                const ['minSdk', 'minSdkVersion']) ??
+            found;
+      }
+    }
     if (found == null) return null;
     return switch (interpretScriptValue(script, found.$1, found.$2)) {
       LiteralInt(:final value) => value,

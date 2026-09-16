@@ -556,6 +556,103 @@ void main() {
             isNot(contains(endsWith('min_sdk_version_migration.dart'))));
       });
 
+      group('plugins that declare a higher minSdk', () {
+        MigrationPlan planWithPlugin(String minSdk,
+            {int pluginMinSdk = 26,
+            PlanOptions options = const PlanOptions(acceptAllReviews: true)}) {
+          final files = {
+            ...declarativeApp(agp: '8.11.1', app: groovyApp(minSdk)),
+            '.dart_tool/package_config.json':
+                '{"configVersion": 2, "packages": [{"name": "scanner", '
+                    '"rootUri": "file:///cache/scanner-2.0.0", '
+                    '"packageUri": "lib/"}]}',
+          };
+          return MigrationPlanner(
+                  knowledge: knowledge,
+                  recipes: builtInRecipes(),
+                  reforgeVersion: reforgeVersion)
+              .plan(
+            files: MemoryProjectFileSystem(files, rootPath: '/work'),
+            target: knowledge.resolveFlutterVersion('3.47.4'),
+            options: options,
+            packageSources: MemoryPackageSources({
+              '/cache/scanner-2.0.0': {
+                'pubspec.yaml': 'name: scanner\nversion: 2.0.0\n'
+                    'flutter:\n  plugin:\n    platforms:\n      android:\n'
+                    '        pluginClass: Scanner\n',
+                'android/build.gradle': 'android {\n'
+                    '    namespace "com.example.scanner"\n    compileSdk 34\n'
+                    '    defaultConfig {\n        minSdkVersion $pluginMinSdk\n'
+                    '    }\n}\n',
+              },
+            }),
+          );
+        }
+
+        test('are reported before the build fails', () {
+          final pending =
+              planWithPlugin('minSdkVersion 24', options: const PlanOptions());
+          final finding = pending.remainingFindings
+              .singleWhere((f) => f.code == 'PLUGIN_MIN_SDK_ABOVE_APP');
+          expect(finding.severity, Severity.error);
+          expect(finding.subject, 'scanner');
+          expect(finding.message,
+              'scanner declares minSdk 26, but the app declares 24.');
+          expect(
+              finding.impact,
+              contains('cannot be smaller than version 26 declared in library '
+                  '[:scanner]'));
+          expect(finding.evidence.first.location!.display,
+              'scanner 2.0.0/android/build.gradle');
+          expect(pending.isComplete, isFalse);
+        });
+
+        test('raise a literal minSdk to the plugin minimum', () {
+          final plan = planWithPlugin('minSdkVersion 21');
+          final minSdk = step(plan, RecipeIds.androidMinSdk);
+          expect(minSdk.status, StepStatus.review);
+          expect(minSdk.proposal.summary,
+              'Raise minSdk from 21 to API level 26 (Android 8.0).');
+          expect(
+              minSdk.proposal.rationale,
+              allOf(startsWith('Flutter 3.47.4 supports API level 24'),
+                  endsWith('scanner declares minSdk 26.')));
+          expect(minSdk.proposal.impact, contains('manifest merger'));
+          expect(minSdk.proposal.notes.last,
+              contains('the highest minSdk of the plugins'));
+          expect(fileAfter(plan, 'android/app/build.gradle'),
+              contains('        minSdkVersion 26\n'));
+          expect(plan.remainingFindings.map((f) => f.code),
+              isNot(contains('PLUGIN_MIN_SDK_ABOVE_APP')));
+          expect(plan.isComplete, isTrue);
+        });
+
+        test('flutter.minSdkVersion below the plugin minimum is manual', () {
+          final plan = planWithPlugin('minSdkVersion flutter.minSdkVersion');
+          final minSdk = step(plan, RecipeIds.androidMinSdk);
+          expect(minSdk.status, StepStatus.manual);
+          expect(
+              minSdk.proposal.summary,
+              'Raise minSdk from flutter.minSdkVersion (24) to API level 26 '
+              '(Android 8.0).');
+          expect(
+              minSdk.proposal.manualSteps.single,
+              'Set minSdk in android/app/build.gradle to 26: '
+              'flutter.minSdkVersion is 24 in Flutter 3.47.4, lower than '
+              'scanner requires.');
+        });
+
+        test('plugin minimums at or below the Flutter minimum change nothing',
+            () {
+          final plan = planWithPlugin('minSdkVersion flutter.minSdkVersion',
+              pluginMinSdk: 21);
+          expect(skipReason(plan, RecipeIds.androidMinSdk),
+              'minSdk uses flutter.minSdkVersion.');
+          expect(plan.remainingFindings.map((f) => f.code),
+              isNot(contains('PLUGIN_MIN_SDK_ABOVE_APP')));
+        });
+      });
+
       test('analysis reports minSdk below the minimum', () {
         final project = ProjectInspector(
                 MemoryProjectFileSystem(declarativeApp(

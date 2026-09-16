@@ -88,9 +88,10 @@ exact literal that defines it.
   build script of plugins (does it set `namespace`?) and plugin Java/Kotlin
   sources (tokenized, so comments and strings do not count) for uses of the
   removed v1 embedding, whether it applies the Kotlin Gradle plugin (always or
-  only conditionally), its literal `compileSdk`, and the iOS and macOS minimums
-  of its podspecs (for the platforms its pubspec declares). Facts describe the locked versions; a later `pub get` with a new
-  SDK may select others, and findings say so.
+  only conditionally), its literal `compileSdk` and `minSdk`, and the iOS and
+  macOS minimums of its podspecs (for the platforms its pubspec declares).
+  Facts describe the locked versions; a later `pub get` with a new SDK may
+  select others, and findings say so.
 - **Evidence-derived confidence.** `certain` (literal in a project file),
   `high` (resolved through a variable or a generated file), `medium`
   (heuristic, e.g. which JDK Flutter will pick), `low` (weak signal).

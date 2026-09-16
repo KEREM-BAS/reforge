@@ -175,6 +175,7 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('PLUGIN_ANDROID_NAMESPACE_MISSING', subject: 'other_plugin'),
       finding('ANDROID_NAMESPACE_MISSING'),
       finding('PLUGIN_ANDROID_V1_EMBEDDING', subject: 'old_share'),
+      finding('PLUGIN_MIN_SDK_ABOVE_APP', subject: 'camera_android'),
       finding('DEPENDENCY_DART_SDK_INCOMPATIBLE', subject: 'string_tools'),
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
       finding('ENV_JAVA_CANNOT_RUN_GRADLE'),
@@ -217,6 +218,11 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       expect(confirmed('Unsupported class file major version 69'),
           ['ENV_JAVA_CANNOT_RUN_GRADLE']);
       expect(confirmed('java.lang.OutOfMemoryError: Java heap space'), isEmpty);
+      expect(
+          confirmed('uses-sdk:minSdkVersion 21 cannot be smaller than version '
+              '24 declared in library [:camera_android] '
+              '/tmp/AndroidManifest.xml'),
+          ['camera_android']);
       expect(
           confirmed('Found "Xcode 14.3, Build version 14E222b". Xcode 15 or '
               'greater is required to develop for iOS.'),

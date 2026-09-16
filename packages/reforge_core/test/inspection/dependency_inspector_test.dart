@@ -62,7 +62,12 @@ MemoryPackageSources _sources() => MemoryPackageSources({
         'pubspec.yaml': _pluginPubspec('kts_plugin'),
         'android/build.gradle.kts':
             'plugins {\n    id("com.android.library")\n}\n\n'
-                'android {\n    namespace = "com.example.kts"\n}\n',
+                'android {\n    namespace = "com.example.kts"\n'
+                // Repeated blocks are merged, as in package:jni.
+                '    defaultConfig {\n'
+                '        consumerProguardFiles("consumer-rules.pro")\n'
+                '    }\n'
+                '    defaultConfig {\n        minSdk = 23\n    }\n}\n',
         'android/src/main/kotlin/Plugin.kt':
             '// PluginRegistry.Registrar was removed.\n'
                 'val text = "PluginRegistry.Registrar"\n',
@@ -108,6 +113,8 @@ void main() {
       expect(modern.android!.v1EmbeddingReferences, isEmpty,
           reason: 'mentions in comments do not count');
       expect(modern.android!.kotlinPlugin, KotlinPluginApplication.always);
+      expect(legacy.android!.minSdk, 16);
+      expect(modern.android!.minSdk, 21);
       expect(legacy.android!.kotlinPlugin, KotlinPluginApplication.none);
 
       expect(legacy.ios!.minimumVersion, '9.0');
@@ -136,10 +143,12 @@ void main() {
       expect(report.unavailable, ['missing']);
       final kts = report.package('kts_plugin')!;
       expect(kts.android!.declaresNamespace, isTrue);
+      expect(kts.android!.minSdk, 23);
       expect(kts.android!.v1EmbeddingReferences, isEmpty,
           reason: 'comments and strings do not count');
       expect(
           report.package('broken_plugin')!.android!.declaresNamespace, isNull);
+      expect(report.package('broken_plugin')!.android!.minSdk, isNull);
     });
 
     test('pub workspace members use the workspace package config', () {

@@ -30,7 +30,8 @@ without a `namespace` under Android Gradle Plugin 8
 removed in Flutter 3.29 (`PLUGIN_ANDROID_V1_EMBEDDING`), plugins that still
 apply the Kotlin Gradle plugin under Android Gradle Plugin 9
 (`PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN`), plugins that compile against a higher
-Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`), pods whose podspec
+Android SDK than the app (`PLUGIN_COMPILE_SDK_ABOVE_APP`), plugins that declare
+a higher `minSdk` than the app (`PLUGIN_MIN_SDK_ABOVE_APP`), pods whose podspec
 requires a newer iOS or macOS than the platform CocoaPods resolves for
 (`PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP`,
 `PLUGIN_MACOS_DEPLOYMENT_TARGET_ABOVE_APP`: the Podfile platform, or the app's

@@ -75,6 +75,7 @@ final class DependencyReport {
                 'kotlinPlugin': android.kotlinPlugin?.name,
                 if (android.compileSdk != null)
                   'compileSdk': android.compileSdk,
+                if (android.minSdk != null) 'minSdk': android.minSdk,
                 if (android.v1EmbeddingReferences.isNotEmpty)
                   'v1EmbeddingReferences': [
                     for (final ref in android.v1EmbeddingReferences)
@@ -143,6 +144,7 @@ final class AndroidPluginFacts {
     required this.declaresNamespace,
     required this.kotlinPlugin,
     this.compileSdk,
+    this.minSdk,
     this.v1EmbeddingReferences = const [],
   });
 
@@ -160,6 +162,11 @@ final class AndroidPluginFacts {
   /// The Android SDK the plugin compiles against, when its build script sets
   /// `compileSdk` to a literal.
   final int? compileSdk;
+
+  /// The minimum Android API level the plugin declares, when its build
+  /// script sets `minSdk` in `defaultConfig` to a literal. Android's manifest
+  /// merger rejects apps with a lower minSdk.
+  final int? minSdk;
 
   /// Uses of `PluginRegistry.Registrar`, the Android v1 embedding API, in
   /// Java and Kotlin sources.

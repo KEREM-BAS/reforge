@@ -779,8 +779,67 @@ final class CompatibilityAnalyzer {
       }
     }
 
-    // Plugins compiling against a newer Android SDK than the app.
+    // Plugins that require a higher minSdk than the app declares.
     final appModule = project.android?.app;
+    int? levelOf(ScriptValue value) => switch (value) {
+          LiteralInt(value: final level) => level,
+          FlutterDefaultReference(property: 'minSdkVersion') =>
+            release.androidDefaults.minSdk,
+          _ => null,
+        };
+    final appMinSdks = [
+      for (final (label, value)
+          in appModule?.minSdkDeclarations ?? const <(String, ScriptValue)>[])
+        if (levelOf(value) case final level?) (label, value, level),
+    ];
+    for (final package in report.packages) {
+      final required = package.android?.minSdk;
+      if (appModule == null || required == null) continue;
+      final lower = [
+        for (final declaration in appMinSdks)
+          if (declaration.$3 < required) declaration,
+      ];
+      if (lower.isEmpty) continue;
+      final lowest = lower.map((d) => d.$3).reduce((a, b) => a < b ? a : b);
+      final label =
+          '${package.name}${package.version == null ? '' : ' ${package.version}'}';
+      yield Finding(
+        code: 'PLUGIN_MIN_SDK_ABOVE_APP',
+        severity: Severity.error,
+        title: 'Plugin $label requires minSdk $required',
+        message: '${package.name} declares minSdk $required, but the app '
+            'declares $lowest'
+            '${lower.length == 1 && lower.single.$1 == 'defaultConfig' ? '' : ' (${lower.map((d) => d.$1).join(', ')})'}.',
+        impact: "Android builds fail in Android's manifest merger: "
+            '"uses-sdk:minSdkVersion $lowest cannot be smaller than version '
+            '$required declared in library [:${package.name}]".',
+        suggestedAction: 'Raise minSdk in ${appModule.script.path} to '
+            '$required (devices below API level $required can then no '
+            'longer install the app), or use a version of ${package.name} '
+            'that supports API level $lowest.',
+        evidence: [
+          Evidence(EvidenceKind.dependencyFile,
+              '${package.name} declares minSdk $required',
+              location: package.android!.buildFile),
+          for (final (label, value, level) in lower)
+            Evidence.file(
+                value is FlutterDefaultReference
+                    ? '$label minSdk is flutter.minSdkVersion ($level in '
+                        'Flutter ${release.version})'
+                    : '$label minSdk is $level',
+                value.location),
+          Evidence.knowledge(
+              "Flutter's tool explains the manifest merger failure and asks "
+              "for the plugin's minSdk in the app module",
+              release.gradleErrorsSource),
+        ],
+        relatedRecipes: const [RecipeIds.androidMinSdk],
+        project: project.path,
+        subject: package.name,
+      );
+    }
+
+    // Plugins compiling against a newer Android SDK than the app.
     final appCompileSdk = switch (appModule?.compileSdk) {
       LiteralInt(:final value) => value,
       FlutterDefaultReference(property: 'compileSdkVersion') =>

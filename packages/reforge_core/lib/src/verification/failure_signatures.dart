@@ -215,6 +215,7 @@ final List<_Signature> _signatures = [
             'install the app), or use a version of $library that supports '
             'API level ${match.group(1)}.',
         evidence: line,
+        relatedRecipes: const [RecipeIds.androidMinSdk],
         details: {
           'library': library,
           'declared': match.group(1)!,
