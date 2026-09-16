@@ -57,7 +57,9 @@ final class PlanCommand extends ReforgeCommand with PlanningCommand {
       writeJson(plan.toJson());
     } else {
       renderPlan(terminal, plan,
-          verbose: verbose, diff: argResults!['diff'] as bool);
+          verbose: verbose,
+          diff: argResults!['diff'] as bool,
+          notes: targetNotes(plan));
       if (!plan.isComplete) {
         final reviews = plan.outstandingSteps
             .where((s) => s.status == StepStatus.review)

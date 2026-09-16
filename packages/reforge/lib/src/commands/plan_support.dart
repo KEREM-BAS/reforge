@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:reforge_core/reforge_core.dart';
 
+import '../render/plan_renderer.dart';
 import 'reforge_command.dart';
 
 /// Options shared by commands that compute a migration plan.
@@ -64,6 +65,28 @@ mixin PlanningCommand on ReforgeCommand {
       );
     }
     return context.knowledge.resolveFlutterVersion(value);
+  }
+
+  /// Notes about the target for text output: the release `stable` or `latest`
+  /// resolved to, and whether the knowledge base may have missed newer
+  /// releases.
+  List<PlanNote> targetNotes(MigrationPlan plan) {
+    final requested = (argResults!['to'] as String?)?.trim();
+    final knowledge = context.knowledge;
+    final symbolic = requested == 'stable' || requested == 'latest';
+    final age = knowledge.ageInDays(context.clock());
+    return [
+      if (symbolic)
+        PlanNote('$requested is Flutter ${plan.target.version}, the latest '
+            'stable release this Reforge knows (knowledge base '
+            '${knowledge.version}).'),
+      if (age > KnowledgeBase.staleAfterDays &&
+          plan.target.version == knowledge.latestStable.version)
+        PlanNote(
+            'The knowledge base is $age days old; newer Flutter releases may '
+            'exist. Upgrade Reforge to plan for them.',
+            warning: true),
+    ];
   }
 
   PlanOptions planOptions() {

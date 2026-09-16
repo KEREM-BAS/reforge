@@ -3,10 +3,24 @@ import 'package:reforge_core/reforge_core.dart';
 import '../output/terminal.dart';
 import 'findings_renderer.dart';
 
+/// A line shown under the plan header.
+final class PlanNote {
+  const PlanNote(this.text, {this.warning = false});
+
+  final String text;
+  final bool warning;
+}
+
 void renderPlan(Terminal t, MigrationPlan plan,
-    {required bool verbose, required bool diff}) {
+    {required bool verbose,
+    required bool diff,
+    List<PlanNote> notes = const []}) {
   t.line(t.bold('Migration plan to Flutter ${plan.target.version}') +
       t.dim('  (Dart ${plan.target.dartVersion})'));
+  for (final note in notes) {
+    t.line(
+        note.warning ? t.yellow('${t.warn} ${note.text}') : t.dim(note.text));
+  }
   for (final entry in plan.currentFlutter.entries) {
     final project = entry.key.isEmpty ? '' : '${entry.key}: ';
     final current = entry.value;

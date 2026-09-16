@@ -58,6 +58,55 @@ final class CompatibilityAnalyzer {
         findings.addAll(_darwinEnvironment(project, environment, release));
       }
     }
+    // Flutter versions newer than the knowledge base: Reforge must be upgraded
+    // to know their requirements.
+    final newer = <(Version, Evidence)>[
+      if (environment?.flutter?.version case final version?
+          when knowledge.isNewerThanKnown(version))
+        (
+          version,
+          Evidence(
+              EvidenceKind.environment, '`flutter --version` reports $version'),
+        ),
+      for (final observation in project.flutterVersionObservations)
+        if (observation.version case final version?
+            when knowledge.isNewerThanKnown(version))
+          (
+            version,
+            Evidence(
+                observation.signal == FlutterVersionSignal.fvm ||
+                        observation.signal == FlutterVersionSignal.toolVersions
+                    ? EvidenceKind.projectFile
+                    : EvidenceKind.generatedFile,
+                '${observation.location.path} records Flutter '
+                '${observation.value}',
+                location: observation.location),
+          ),
+    ];
+    if (newer.isNotEmpty) {
+      final newest = newer.map((n) => n.$1).reduce((a, b) => a > b ? a : b);
+      final latest = knowledge.latestStable.version;
+      findings.add(Finding(
+        code: 'REFORGE_KNOWLEDGE_OUTDATED',
+        severity: Severity.warning,
+        title: 'This Reforge does not know Flutter $newest',
+        message: 'Flutter $newest is newer than the releases this Reforge '
+            'knows: the latest is $latest (knowledge base '
+            '${knowledge.version}).',
+        impact: 'Findings about Flutter $newest are missing, the current '
+            'Flutter version falls back to older evidence, and $newest cannot '
+            'be a migration target.',
+        suggestedAction: 'Upgrade Reforge to a version whose knowledge base '
+            'includes Flutter $newest.',
+        evidence: [
+          for (final (_, evidence) in newer) evidence,
+          Evidence.knowledge(
+              'Reforge knowledge base ${knowledge.version}: latest stable '
+              'Flutter $latest',
+              FlutterRelease.releaseManifestSource),
+        ],
+      ));
+    }
     if (environment?.flutter?.version != null &&
         project.pinnedFlutterVersion != null &&
         project.pinnedFlutterVersion!.version !=

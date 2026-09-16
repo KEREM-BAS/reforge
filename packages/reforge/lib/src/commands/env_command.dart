@@ -39,13 +39,21 @@ void renderEnvironment(
   if (flutter == null) {
     t.field('Flutter', t.red('not available (${environment.flutterError})'));
   } else {
-    final known = flutter.version == null
-        ? null
-        : context.knowledge.release(flutter.version!);
-    t.field(
-        'Flutter',
-        '${flutter.version ?? 'unknown'} ${t.dim('(${flutter.channel ?? '?'})')}'
-            '${known == null && flutter.version != null ? t.yellow('  not a stable release known to Reforge') : ''}');
+    final knowledge = context.knowledge;
+    final version = flutter.version;
+    final String note;
+    if (version == null || knowledge.release(version) != null) {
+      note = '';
+    } else if (knowledge.isNewerThanKnown(version)) {
+      note = t.yellow('  newer than the releases this Reforge knows; upgrade '
+          'Reforge');
+    } else if (version.isPreRelease) {
+      note = t.yellow('  not a stable release');
+    } else {
+      note = t.yellow('  not a stable release known to Reforge');
+    }
+    t.field('Flutter',
+        '${version ?? 'unknown'} ${t.dim('(${flutter.channel ?? '?'})')}$note');
     t.field('Dart', '${flutter.dartVersion ?? 'unknown'}');
     if (flutter.root != null) t.field('Flutter root', t.dim(flutter.root!));
   }
@@ -74,6 +82,13 @@ void renderEnvironment(
     t.field('Xcode', t.dim('not applicable on ${environment.operatingSystem}'));
   }
   t.field('Git', environment.git?.version ?? t.yellow('not available'));
+  final knowledge = context.knowledge;
+  final age = knowledge.ageInDays(context.clock());
+  t.field(
+      'Reforge',
+      '$reforgeVersion ${t.dim('knowledge base ${knowledge.version}, latest '
+              'Flutter ${knowledge.latestStable.version}')}'
+          '${age > KnowledgeBase.staleAfterDays ? t.yellow('  $age days old; newer Flutter releases may exist') : ''}');
 }
 
 String _javaSource(JavaSource source) => switch (source) {

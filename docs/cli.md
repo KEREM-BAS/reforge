@@ -66,7 +66,13 @@ reforge plan --to <version> [--accept RECIPE_ID,...] [--accept-all]
              [--diff] [--out plan.json] [--fail-on never|blocked|incomplete|changes]
 ```
 
-`--to` accepts `3.47.4`, `3.47` (latest known patch) or `stable`.
+`--to` accepts `3.47.4`, `3.47` (latest known patch) or `stable`. `stable`
+means the latest stable release this Reforge knows; the plan says which one,
+and warns when the knowledge base is more than 90 days old, since Flutter
+publishes a stable release about every three months. A target newer than the
+knowledge base is refused (`TARGET_UNKNOWN_FLUTTER_VERSION`), and `inspect`,
+`plan` and `env` report a Flutter on PATH, pinned or recorded by `pub get`
+that is newer than the knowledge base (`REFORGE_KNOWLEDGE_OUTDATED`).
 
 Steps are **required** (the target release fails without them or does not
 support the project), **flutterMigration** (the Flutter tool would make the

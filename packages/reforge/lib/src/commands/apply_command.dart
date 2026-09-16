@@ -47,7 +47,8 @@ final class ApplyCommand extends ReforgeCommand with PlanningCommand {
       if (format == OutputFormat.json) {
         writeJson({'applied': false, 'plan': plan.toJson(includeDiffs: false)});
       } else {
-        renderPlan(terminal, plan, verbose: verbose, diff: false);
+        renderPlan(terminal, plan,
+            verbose: verbose, diff: false, notes: targetNotes(plan));
         terminal.line();
         terminal.line('Nothing to apply.');
       }
@@ -94,7 +95,8 @@ final class ApplyCommand extends ReforgeCommand with PlanningCommand {
     }
 
     if (format == OutputFormat.text) {
-      renderPlan(terminal, plan, verbose: verbose, diff: false);
+      renderPlan(terminal, plan,
+          verbose: verbose, diff: false, notes: targetNotes(plan));
       terminal.line();
       if (git == null) {
         terminal.line(terminal.dim('Not a Git repository: the Reforge journal '

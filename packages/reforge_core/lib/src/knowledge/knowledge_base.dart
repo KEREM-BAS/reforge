@@ -31,10 +31,25 @@ final class KnowledgeBase {
 
   String get version => knowledgeBaseVersion;
 
+  /// The day the knowledge about Flutter releases was generated (UTC).
+  DateTime get generatedOn => DateTime.parse('${version}T00:00:00Z');
+
+  /// Flutter publishes a stable release about every three months; a knowledge
+  /// base older than this has probably missed one.
+  static const staleAfterDays = 90;
+
+  /// Whole days between [generatedOn] and [now].
+  int ageInDays(DateTime now) => now.toUtc().difference(generatedOn).inDays;
+
   /// Stable Flutter releases, ascending.
   final List<FlutterRelease> releases;
 
   FlutterRelease get latestStable => releases.last;
+
+  /// Whether [version] is a stable release newer than every release this
+  /// knowledge base describes, so that Reforge has to be upgraded to know it.
+  bool isNewerThanKnown(Version version) =>
+      !version.isPreRelease && version > latestStable.version;
 
   late final Map<Version, FlutterRelease> _byVersion = {
     for (final release in releases) release.version: release,

@@ -78,7 +78,8 @@ final class CliRun {
 Future<CliRun> runCli(List<String> arguments,
     {Environment? environment,
     String? workingDirectory,
-    ProcessRunner? processRunner}) async {
+    ProcessRunner? processRunner,
+    DateTime Function()? clock}) async {
   final out = StringBuffer();
   final err = StringBuffer();
   final code = await runReforge(
@@ -90,6 +91,7 @@ Future<CliRun> runCli(List<String> arguments,
       color: false,
       probeEnvironment: () async => environment ?? fakeEnvironment(),
       processRunner: processRunner,
+      clock: clock,
     ),
   );
   return CliRun(code, out.toString(), err.toString());
