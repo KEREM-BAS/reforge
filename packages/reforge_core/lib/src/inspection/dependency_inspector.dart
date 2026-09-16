@@ -12,6 +12,7 @@ import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/parse_diagnostic.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
+import '../parsing/ruby/podspec.dart';
 
 /// Opens the directories of resolved packages for reading.
 abstract interface class PackageSources {
@@ -162,13 +163,45 @@ final class DependencyInspector {
         );
       }
     }
+    IosPluginFacts? ios;
+    if (pubspec?.plugin != null) {
+      final podspecPath = _podspecPath(files, name);
+      final podspecSource = podspecPath == null ? null : read(podspecPath);
+      if (podspecPath != null && podspecSource != null) {
+        final podspec =
+            Podspec.parse(package.displayPath(podspecPath), podspecSource);
+        final platform = podspec.platforms['ios'];
+        ios = IosPluginFacts(
+          podspec:
+              platform?.location ?? SourceRef(package.displayPath(podspecPath)),
+          minimumIos: platform?.version,
+        );
+      }
+    }
     return ResolvedPackage(
       name: name,
       rootPath: rootPath,
       locked: locked,
       pubspec: pubspec,
       android: android,
+      ios: ios,
     );
+  }
+
+  /// The podspec of a plugin: `ios/<name>.podspec`, `darwin/<name>.podspec`
+  /// (shared iOS and macOS sources), or the only podspec in those
+  /// directories.
+  static String? _podspecPath(ProjectFileSystem files, String name) {
+    for (final directory in const ['ios', 'darwin']) {
+      final named = '$directory/$name.podspec';
+      if (files.fileExists(named)) return named;
+      final podspecs = files
+          .listDirectory(directory)
+          .where((entry) => entry.endsWith('.podspec'))
+          .toList();
+      if (podspecs.length == 1) return podspecs.single;
+    }
+    return null;
   }
 
   /// Whether the script sets `namespace` inside an `android {}` block (at

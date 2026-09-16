@@ -107,6 +107,8 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       finding('DEPENDENCY_DART_SDK_INCOMPATIBLE', subject: 'string_tools'),
       finding('ANDROID_KOTLIN_BELOW_FLUTTER_MINIMUM'),
       finding('ENV_JAVA_CANNOT_RUN_GRADLE'),
+      finding('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP', subject: 'share_ios'),
+      finding('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP', subject: 'other_pod'),
     ];
 
     List<String?> confirmed(String output, {String? module}) =>
@@ -141,6 +143,12 @@ Because app depends on string_tools >=1.2.0 which requires SDK version >=3.0.0 <
       expect(confirmed('Unsupported class file major version 69'),
           ['ENV_JAVA_CANNOT_RUN_GRADLE']);
       expect(confirmed('java.lang.OutOfMemoryError: Java heap space'), isEmpty);
+      expect(
+          confirmed('[!] CocoaPods could not find compatible versions for pod '
+              '"share_ios":\nSpecs satisfying the `share_ios (from '
+              '`.symlinks/plugins/share_ios/ios`)` dependency were found, but '
+              'they required a higher minimum deployment target.'),
+          ['share_ios']);
     });
   });
 }

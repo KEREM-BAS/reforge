@@ -16,3 +16,5 @@ flutter:
       android:
         package: com.example.modernshare
         pluginClass: ModernSharePlugin
+      ios:
+        pluginClass: ModernSharePlugin

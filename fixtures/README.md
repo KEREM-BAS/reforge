@@ -15,7 +15,7 @@ Flutter projects from specific eras, including their quirks.
 | `custom_gradle_app` | 3.3 base, customized | `ext {}` version variables, an unmapped classpath plugin (Huawei AGConnect), conditional plugin apply, extra `settings.gradle` modules, other uses of `$kotlin_version` |
 | `broken_gradle_app` | 3.22 base, damaged | An `android/app/build.gradle` with an unbalanced brace |
 | `melos_workspace` | Hand-written | A pub workspace with two apps from different template eras and a shared package |
-| `plugins_app` | Flutter **3.22.0** templates plus hand-written resolution files | `pubspec.lock` and `.dart_tool/package_config.json` pointing at `fixtures/pub_cache` (relative `rootUri`s, so it works from any checkout): a 2021-style plugin without `namespace` that still registers with the v1 embedding, a current plugin with a conditional namespace, and a pure Dart package with a pinned SDK upper bound. The lockfile omits the hosted packages Flutter itself depends on. |
+| `plugins_app` | Flutter **3.22.0** templates plus hand-written resolution files | `pubspec.lock` and `.dart_tool/package_config.json` pointing at `fixtures/pub_cache` (relative `rootUri`s, so it works from any checkout): a 2021-style plugin without `namespace` that still registers with the v1 embedding, a current plugin with a conditional namespace whose podspec requires iOS 17, and a pure Dart package with a pinned SDK upper bound. The lockfile omits the hosted packages Flutter itself depends on. |
 
 Generated files that contained machine-specific absolute paths were sanitized
 (`/home/developer/...`, `/opt/flutter`).
@@ -28,7 +28,7 @@ committed files are ignored by those rules (for example
 
 Package directories in the layout of `~/.pub-cache/hosted/pub.dev`, used by
 `plugins_app`. The packages are fictional and small: only the files Reforge
-reads (pubspec, Android build script, manifest, plugin sources).
+reads (pubspec, Android build script, manifest, plugin sources, podspec).
 
 ## Regenerating template fixtures
 

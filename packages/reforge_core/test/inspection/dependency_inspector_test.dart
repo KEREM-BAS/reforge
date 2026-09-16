@@ -110,6 +110,11 @@ void main() {
       expect(modern.android!.appliesKotlinPlugin, isTrue);
       expect(legacy.android!.appliesKotlinPlugin, isFalse);
 
+      expect(legacy.ios!.minimumIos, '9.0');
+      expect(modern.ios!.minimumIos, '17.0');
+      expect(modern.ios!.podspec.display,
+          'modern_share_plugin 2.1.0/ios/modern_share_plugin.podspec:11');
+      expect(report.package('string_tools')!.ios, isNull);
       expect(report.package('string_tools')!.android, isNull);
       expect(report.dependentsOf('string_tools').map((p) => p.name),
           ['legacy_camera_plugin']);
@@ -263,6 +268,52 @@ void main() {
           analyze('3.47.4', applies: false)
               .where((f) => f.code == 'PLUGINS_APPLY_KOTLIN_GRADLE_PLUGIN'),
           isEmpty);
+    });
+
+    test('pods that need a newer iOS than CocoaPods resolves for', () {
+      DependencyReport report(String minimumIos) => DependencyReport(
+            configPath: '.dart_tool/package_config.json',
+            packages: [
+              ResolvedPackage(
+                name: 'share_ios',
+                rootPath: '/cache/share_ios-1.0.0',
+                ios: IosPluginFacts(
+                  podspec: const SourceRef(
+                      'share_ios 1.0.0/ios/share_ios.podspec',
+                      line: 3),
+                  minimumIos: minimumIos,
+                ),
+              ),
+            ],
+          );
+      final pbxproj =
+          readFixture('plugins_app', 'ios/Runner.xcodeproj/project.pbxproj');
+      List<Finding> analyze(String minimumIos, {String? podfile}) {
+        final files = MemoryProjectFileSystem({
+          'pubspec.yaml': 'name: app\nenvironment:\n  sdk: ^3.4.0\n',
+          'ios/Runner.xcodeproj/project.pbxproj': pbxproj,
+          if (podfile != null) 'ios/Podfile': podfile,
+        });
+        final project = _inspect(files);
+        return CompatibilityAnalyzer(knowledge)
+            .analyze(project,
+                release: knowledge.resolveFlutterVersion('3.22.0'),
+                dependencies: report(minimumIos))
+            .where((f) => f.code == 'PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP')
+            .toList();
+      }
+
+      final fromTarget = analyze('13.0').single;
+      expect(fromTarget.severity, Severity.error);
+      expect(
+          fromTarget.message, contains('iOS 12.0 (the app deployment target)'));
+      expect(fromTarget.subject, 'share_ios');
+      expect(analyze('12.0'), isEmpty);
+
+      final fromPodfile = analyze('13.0', podfile: "platform :ios, '14.0'\n");
+      expect(fromPodfile, isEmpty, reason: 'the Podfile platform wins');
+      expect(analyze('16.0', podfile: "platform :ios, '14.0'\n").single.message,
+          contains('the Podfile platform'));
     });
 
     test('unresolved projects are reported, not guessed', () {

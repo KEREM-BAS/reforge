@@ -484,26 +484,40 @@ final List<_Signature> _signatures = [
   _Signature(
     'COCOAPODS_DEPLOYMENT_TARGET',
     RegExp(r'required a higher minimum deployment target'),
-    (match, line, context) => FailureDiagnosis(
-      id: 'COCOAPODS_DEPLOYMENT_TARGET',
-      explanation: 'A pod requires a newer iOS deployment target than the '
-          'Podfile platform.',
-      suggestion: 'Raise the iOS deployment target and the Podfile platform.',
-      evidence: line,
-      relatedRecipes: const [RecipeIds.iosDeploymentTarget],
-    ),
+    (match, line, context) {
+      final pod = RegExp(r'Specs satisfying the `([^\s`]+)').firstMatch(line) ??
+          RegExp(r'compatible versions for pod "([^"]+)"')
+              .firstMatch(context.output);
+      return FailureDiagnosis(
+        id: 'COCOAPODS_DEPLOYMENT_TARGET',
+        explanation: '${pod == null ? 'A pod' : 'Pod ${pod.group(1)}'} '
+            'requires a newer iOS deployment target than the platform '
+            'CocoaPods resolves for.',
+        suggestion: 'Raise the iOS deployment target and the Podfile '
+            'platform, or use a version of the pod that supports the '
+            "app's deployment target.",
+        evidence: line,
+        relatedRecipes: const [RecipeIds.iosDeploymentTarget],
+        details: {if (pod != null) 'pod': pod.group(1)!},
+      );
+    },
   ),
   _Signature(
     'COCOAPODS_INCOMPATIBLE',
     RegExp(r'CocoaPods could not find compatible versions for pod "([^"]+)"'),
-    (match, line, context) => FailureDiagnosis(
-      id: 'COCOAPODS_INCOMPATIBLE',
-      explanation: 'CocoaPods could not resolve pod ${match.group(1)}.',
-      suggestion: 'Run `pod repo update` and check the pod deployment target '
-          'and version constraints.',
-      evidence: line,
-      details: {'pod': match.group(1)!},
-    ),
+    (match, line, context) => context.output
+            .contains('required a higher minimum deployment target')
+        // COCOAPODS_DEPLOYMENT_TARGET explains this failure more precisely.
+        ? null
+        : FailureDiagnosis(
+            id: 'COCOAPODS_INCOMPATIBLE',
+            explanation: 'CocoaPods could not resolve pod ${match.group(1)}.',
+            suggestion:
+                'Run `pod repo update` and check the pod deployment target '
+                'and version constraints.',
+            evidence: line,
+            details: {'pod': match.group(1)!},
+          ),
   ),
   _Signature(
     'GRADLE_NETWORK_ERROR',

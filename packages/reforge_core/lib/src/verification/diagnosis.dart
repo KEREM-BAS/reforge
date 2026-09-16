@@ -26,9 +26,6 @@ const _findingCodes = <String, List<String>>{
   'GRADLE_TOO_OLD_FOR_AGP': ['ANDROID_GRADLE_TOO_OLD_FOR_AGP'],
   'IMPERATIVE_GRADLE_APPLY': ['ANDROID_IMPERATIVE_GRADLE_APPLY'],
   'COMPILE_SDK_REQUIRES_NEWER_AGP': ['ANDROID_COMPILE_SDK_REQUIRES_NEWER_AGP'],
-  'COCOAPODS_DEPLOYMENT_TARGET': [
-    'IOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM',
-  ],
 };
 
 /// Links [failures] recognized in the output of a build to [findings] from
@@ -62,6 +59,13 @@ List<Diagnosis> correlateFailures(
                     subjects: {module}),
           'PLUGIN_V1_EMBEDDING' => withCode('PLUGIN_ANDROID_V1_EMBEDDING',
               subjects: failure.details['plugins']?.split(',').toSet()),
+          'COCOAPODS_DEPLOYMENT_TARGET' => [
+              ...withCode('PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP',
+                  subjects: failure.details['pod'] == null
+                      ? null
+                      : {failure.details['pod']!}),
+              ...withCode('IOS_DEPLOYMENT_TARGET_BELOW_FLUTTER_MINIMUM'),
+            ],
           'DART_SDK_CONSTRAINT' => withCode('DEPENDENCY_DART_SDK_INCOMPATIBLE',
               subjects: failure.details['package'] == null
                   ? null

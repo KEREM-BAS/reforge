@@ -43,6 +43,15 @@ final class DependencyReport {
         if (configPath != null) 'packageConfig': configPath,
         'packages': packages.length,
         if (unavailable.isNotEmpty) 'unavailable': unavailable,
+        'iosPlugins': [
+          for (final package in packages)
+            if (package.ios case final ios?)
+              {
+                'name': package.name,
+                if (package.version != null) 'version': package.version,
+                'minimumIos': ios.minimumIos,
+              },
+        ],
         'androidPlugins': [
           for (final package in packages)
             if (package.android case final android?)
@@ -70,6 +79,7 @@ final class ResolvedPackage {
     this.locked,
     this.pubspec,
     this.android,
+    this.ios,
   });
 
   final String name;
@@ -86,6 +96,10 @@ final class ResolvedPackage {
 
   /// Facts about the package's Android implementation, when it has one.
   final AndroidPluginFacts? android;
+
+  /// Facts about the package's iOS (CocoaPods) implementation, when it has
+  /// one.
+  final IosPluginFacts? ios;
 
   String? get version => locked?.version ?? pubspec?.version;
 
@@ -119,4 +133,18 @@ final class AndroidPluginFacts {
   /// Uses of `PluginRegistry.Registrar`, the Android v1 embedding API, in
   /// Java and Kotlin sources.
   final List<SourceRef> v1EmbeddingReferences;
+}
+
+/// What Reforge read from a plugin's podspec (`ios/` or `darwin/`).
+@immutable
+final class IosPluginFacts {
+  const IosPluginFacts({required this.podspec, required this.minimumIos});
+
+  /// Where the podspec is, as a display path, with the line of the iOS
+  /// platform declaration when there is one.
+  final SourceRef podspec;
+
+  /// The minimum iOS version the pod declares, as written, or `null` when it
+  /// declares none or it could not be read.
+  final String? minimumIos;
 }

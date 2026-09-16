@@ -10,6 +10,7 @@ import '../model/declarations.dart';
 import '../model/dependencies.dart';
 import '../model/finding.dart';
 import '../model/flutter_project.dart';
+import '../model/ios_project.dart';
 import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/sdk_constraint.dart';
@@ -559,6 +560,67 @@ final class CompatibilityAnalyzer {
             Evidence.knowledge(
                 'Flutter ${v1Removal.value} removed PluginRegistry.Registrar',
                 v1Removal.source),
+          ],
+          project: project.path,
+          subject: package.name,
+        );
+      }
+    }
+
+    // Pods that need a newer iOS than the platform CocoaPods resolves for.
+    final ios = project.ios;
+    if (ios != null &&
+        ios.dependencyManager != IosDependencyManager.swiftPackageManager) {
+      final platform = ios.podfile?.platform;
+      final platformVersion =
+          platform != null && platform.name == 'ios' && platform.version != null
+              ? ToolVersion.tryParse(platform.version!)
+              : null;
+      final appTarget = platformVersion ?? ios.effectiveDeploymentTarget;
+      final Evidence? appEvidence;
+      if (platformVersion != null) {
+        appEvidence = Evidence.file(
+            "Podfile platform :ios, '${platform!.version}'", platform.location);
+      } else {
+        final setting = ios.deploymentTargets
+            .where((s) => s.isApplicationTarget && s.version == appTarget)
+            .firstOrNull;
+        appEvidence = setting == null
+            ? null
+            : Evidence.file(
+                '${setting.owner} ${setting.configuration}: '
+                'IPHONEOS_DEPLOYMENT_TARGET = ${setting.value} (CocoaPods '
+                'uses it when the Podfile sets no platform)',
+                setting.location);
+      }
+      for (final package in report.packages) {
+        final minimum = package.ios?.minimumIos == null
+            ? null
+            : ToolVersion.tryParse(package.ios!.minimumIos!);
+        if (appTarget == null || minimum == null || minimum <= appTarget) {
+          continue;
+        }
+        final label =
+            '${package.name}${package.version == null ? '' : ' ${package.version}'}';
+        yield Finding(
+          code: 'PLUGIN_IOS_DEPLOYMENT_TARGET_ABOVE_APP',
+          severity: Severity.error,
+          title: 'Plugin $label requires iOS $minimum',
+          message: 'Its podspec declares iOS $minimum, but CocoaPods resolves '
+              'pods for iOS $appTarget '
+              '(${platformVersion != null ? 'the Podfile platform' : 'the app deployment target'}).',
+          impact: '`pod install` fails: the pod requires a higher minimum '
+              'deployment target.',
+          suggestedAction: 'Raise the iOS deployment target'
+              '${platformVersion != null ? ' and the Podfile platform' : ''} '
+              'to $minimum (devices below iOS $minimum can then no longer '
+              'install the app), or use a version of ${package.name} that '
+              'supports iOS $appTarget.',
+          evidence: [
+            Evidence(EvidenceKind.dependencyFile,
+                'The podspec declares iOS ${package.ios!.minimumIos}',
+                location: package.ios!.podspec),
+            if (appEvidence != null) appEvidence,
           ],
           project: project.path,
           subject: package.name,
