@@ -48,6 +48,46 @@ void main() {
       expect(failingGradleModule(realBuildOutput), ':app');
     });
 
+    test('explain out-of-memory builds', () {
+      // From a real `flutter build apk --debug` of a migrated Flutter 3.3 app
+      // that kept org.gradle.jvmargs=-Xmx1536M and Jetifier.
+      const output = '''
+* What went wrong:
+Execution failed for task ':app:checkDebugDuplicateClasses'.
+> Could not resolve all files for configuration ':app:debugRuntimeClasspath'.
+   > Failed to transform armeabi_v7a_debug-1.0.0-4c525dac5ebe5971c5708ef73558ed8edcf4a362.jar (io.flutter:armeabi_v7a_debug:1.0.0-4c525dac5ebe5971c5708ef73558ed8edcf4a362) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Execution failed for JetifyTransform: /Users/me/.gradle/caches/modules-2/files-2.1/io.flutter/armeabi_v7a_debug/1.0.0-4c525dac5ebe5971c5708ef73558ed8edcf4a362/e58de901a43edecd39227f2ae43bb56beb36fb7c/armeabi_v7a_debug-1.0.0-4c525dac5ebe5971c5708ef73558ed8edcf4a362.jar.
+         > Java heap space
+''';
+      final diagnosis = diagnoseFailure(output,
+              target: KnowledgeBase.bundled.resolveFlutterVersion('3.47.4'))
+          .single;
+      expect(diagnosis.id, 'GRADLE_OUT_OF_MEMORY');
+      expect(diagnosis.explanation, contains('Jetifier'));
+      expect(diagnosis.suggestion, contains('"-Xmx8G'));
+      expect(diagnosis.relatedRecipes,
+          [RecipeIds.androidGradleJvmArgs, RecipeIds.androidJetifier]);
+      expect(
+          diagnoseFailure(
+              'Starting a Gradle Daemon (-XX:+HeapDumpOnOutOfMemoryError)'),
+          isEmpty);
+    });
+
+    test('Jetifier class file failures are not JDK problems', () {
+      // From flutter/flutter#173430.
+      const output = '''
+   > Failed to transform byte-buddy-1.17.5.jar (net.bytebuddy:byte-buddy:1.17.5) to match attributes {artifactType=android-classes-jar, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-api}.
+      > Execution failed for JetifyTransform: /b/s/w/ir/cache/gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.17.5/88450f120903b7e72470462cdbd2b75a3842223c/byte-buddy-1.17.5.jar.
+         > Jetifier failed to transform: /b/s/w/ir/cache/gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.17.5/88450f120903b7e72470462cdbd2b75a3842223c/byte-buddy-1.17.5.jar
+           The error was: java.lang.IllegalArgumentException - Unsupported class file major version 68
+''';
+      final diagnosis = diagnoseFailure(output).single;
+      expect(diagnosis.id, 'JETIFIER_TRANSFORM_FAILED');
+      expect(diagnosis.explanation, contains('byte-buddy-1.17.5.jar'));
+      expect(diagnosis.explanation, contains('Java 24'));
+      expect(diagnosis.relatedRecipes, [RecipeIds.androidJetifier]);
+    });
+
     test('recognize toolchain failures', () {
       expect(
           diagnoseFailure('> Unsupported class file major version 65')

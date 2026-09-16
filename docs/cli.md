@@ -35,11 +35,20 @@ Flutter's selection order: `flutter config --jdk-dir`, Android Studio's JDK,
 
 ```text
 reforge plan --to <version> [--accept RECIPE_ID,...] [--accept-all]
-             [--include-recommended] [--skip RECIPE_ID] [--workspace-project <path>]
+             [--include RECIPE_ID,...] [--include-recommended]
+             [--skip RECIPE_ID] [--workspace-project <path>]
              [--diff] [--out plan.json] [--fail-on never|blocked|incomplete|changes]
 ```
 
 `--to` accepts `3.47.4`, `3.47` (latest known patch) or `stable`.
+
+Steps are **required** (the target release fails without them) or
+**recommended** (Flutter warning thresholds, template modernizations).
+Recommended steps are listed under "Recommended, not planned" until they are
+requested: `--include RECIPE_ID` plans those of one recipe,
+`--include-recommended` plans all of them. Including a toolchain recipe (for
+example `ANDROID_AGP_VERSION`) also upgrades the tools it depends on as
+required.
 
 Review steps are not applied unless accepted, and steps that depend on them
 are blocked. A plan is **complete** when no required step is left unapplied,
@@ -74,6 +83,12 @@ Android and iOS builds run the project's Gradle and CocoaPods build logic.
 When checks run with a Flutter version other than the migration target, the
 results are marked as not being evidence for the target. Files modified by the
 tools while they run are reported and recorded.
+
+Failed checks are explained when the output matches a known failure, for
+example `GRADLE_OUT_OF_MEMORY`, `JETIFIER_TRANSFORM_FAILED`,
+`FLUTTER_DEPENDENCY_BELOW_MINIMUM`, `GRADLE_JDK_TOO_NEW` or
+`DART_COMPILATION_ERROR`, with the recipes that address them. Output that
+matches nothing known is shown as is, never guessed at.
 
 ### `rollback [session]`
 

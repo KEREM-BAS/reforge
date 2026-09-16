@@ -59,7 +59,7 @@ final class GradleWrapperRecipe extends MigrationRecipe {
       android: android,
       release: release,
       knowledge: context.knowledge,
-      includeRecommended: context.options.includeRecommended,
+      options: context.options,
     );
     final target = targets.gradle;
     if (target == null) {

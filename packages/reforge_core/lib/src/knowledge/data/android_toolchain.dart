@@ -136,3 +136,23 @@ const pluginIdAliases = <String, String>{
   'kotlin-android': 'org.jetbrains.kotlin.android',
   'com.android.application': 'com.android.application',
 };
+
+const jetifierTemplateRemovalSource = KnowledgeSource(
+  title: 'flutter/flutter#173430: Remove jetifier usage from Android templates '
+      '(Flutter no longer uses the Support Library; Jetifier fails on class '
+      'files of newer Java versions)',
+  url: 'https://github.com/flutter/flutter/issues/173430',
+  retrieved: '2026-09-16',
+);
+
+const buildAnalyzerJetifierSource = KnowledgeSource(
+  title: 'Android Studio Build Analyzer: Check Jetifier',
+  url: 'https://developer.android.com/build/build-analyzer',
+  retrieved: '2026-09-16',
+);
+
+const androidxMigrationSource = KnowledgeSource(
+  title: 'Migrate to AndroidX',
+  url: 'https://developer.android.com/jetpack/androidx/migrate',
+  retrieved: '2026-09-16',
+);

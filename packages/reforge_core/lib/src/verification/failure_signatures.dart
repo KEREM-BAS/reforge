@@ -1,3 +1,6 @@
+import 'package:path/path.dart' as p;
+
+import '../knowledge/flutter_release.dart';
 import '../migration/recipe_ids.dart';
 
 /// A recognized failure in tool output, with an explanation.
@@ -34,8 +37,23 @@ final class _Signature {
 
   final String id;
   final RegExp pattern;
-  final FailureDiagnosis Function(RegExpMatch match, String line) describe;
+
+  /// Explains a matching [line]; `null` when the whole [output] shows that
+  /// the line means something else.
+  final FailureDiagnosis? Function(
+      RegExpMatch match, String line, _FailureContext context) describe;
 }
+
+final class _FailureContext {
+  const _FailureContext(this.output, this.target);
+
+  final String output;
+
+  /// The Flutter release the project was migrated to, when known.
+  final FlutterRelease? target;
+}
+
+const _jetifierFailure = 'Jetifier failed to transform';
 
 /// Known failure messages of Flutter, Gradle, the Android Gradle Plugin, pub
 /// and CocoaPods.
@@ -46,7 +64,9 @@ final List<_Signature> _signatures = [
   _Signature(
     'GRADLE_JDK_TOO_NEW',
     RegExp(r'Unsupported class file major version (\d+)'),
-    (match, line) {
+    (match, line, context) {
+      // Jetifier reports class files it cannot read with the same message.
+      if (context.output.contains(_jetifierFailure)) return null;
       final java = int.parse(match.group(1)!) - 44;
       return FailureDiagnosis(
         id: 'GRADLE_JDK_TOO_NEW',
@@ -60,10 +80,63 @@ final List<_Signature> _signatures = [
     },
   ),
   _Signature(
+    'JETIFIER_TRANSFORM_FAILED',
+    RegExp('$_jetifierFailure: (.+)'),
+    (match, line, context) {
+      final classFile = RegExp(r'Unsupported class file major version (\d+)')
+          .firstMatch(context.output);
+      final file =
+          p.posix.basename(match.group(1)!.trim().replaceAll(r'\', '/'));
+      return FailureDiagnosis(
+        id: 'JETIFIER_TRANSFORM_FAILED',
+        explanation: classFile == null
+            ? 'Jetifier could not rewrite $file.'
+            : 'Jetifier could not rewrite $file: it cannot read classes '
+                'compiled for Java ${int.parse(classFile.group(1)!) - 44}.',
+        suggestion: 'Jetifier (android.enableJetifier=true) is only needed '
+            'for dependencies that use the Android Support Library. Stop '
+            'using Jetifier if no dependency needs it; Flutter templates no '
+            'longer enable it.',
+        evidence: line,
+        relatedRecipes: const [RecipeIds.androidJetifier],
+      );
+    },
+  ),
+  _Signature(
+    'GRADLE_OUT_OF_MEMORY',
+    // Not a bare "OutOfMemoryError": JVM options such as
+    // -XX:+HeapDumpOnOutOfMemoryError are echoed in build output.
+    RegExp(r'java\.lang\.OutOfMemoryError|Java heap space|'
+        r'GC overhead limit exceeded|^\s*>\s*Metaspace\s*$'),
+    (match, line, context) {
+      final jetifier = context.output.contains('JetifyTransform');
+      final template =
+          context.target?.template.gradleProperties['org.gradle.jvmargs'];
+      return FailureDiagnosis(
+        id: 'GRADLE_OUT_OF_MEMORY',
+        explanation: 'The Gradle build ran out of memory'
+            '${jetifier ? ' while Jetifier rewrote a dependency' : ''}.',
+        suggestion: [
+          'Raise the memory limits in org.gradle.jvmargs '
+              '(android/gradle.properties)'
+              '${template == null ? '.' : '; Flutter ${context.target!.version} generates "$template".'}',
+          if (jetifier)
+            'Jetifier needs a lot of memory; if no dependency uses the Android '
+                'Support Library, stop using it.',
+        ].join(' '),
+        evidence: line,
+        relatedRecipes: [
+          RecipeIds.androidGradleJvmArgs,
+          if (jetifier) RecipeIds.androidJetifier,
+        ],
+      );
+    },
+  ),
+  _Signature(
     'AGP_JDK_TOO_OLD',
     RegExp(
         r'Android Gradle plugin requires Java (\d+) to run\. You are currently using Java (\d+)'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'AGP_JDK_TOO_OLD',
       explanation: 'The Android Gradle Plugin requires Java ${match.group(1)}, '
           'but the build ran with Java ${match.group(2)}.',
@@ -76,7 +149,7 @@ final List<_Signature> _signatures = [
     'FLUTTER_DEPENDENCY_BELOW_MINIMUM',
     RegExp(
         r"Your project's (.+?) version \(([^)]+)\) is lower than Flutter's minimum supported version of ([\w.]+)"),
-    (match, line) {
+    (match, line, context) {
       final name = match.group(1)!;
       final recipe = switch (name) {
         'Gradle' => RecipeIds.androidGradleWrapper,
@@ -98,7 +171,7 @@ final List<_Signature> _signatures = [
     'GRADLE_TOO_OLD_FOR_AGP',
     RegExp(
         r'Minimum supported Gradle version is ([\w.]+)\. Current version is ([\w.]+)'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'GRADLE_TOO_OLD_FOR_AGP',
       explanation: 'The Android Gradle Plugin needs Gradle ${match.group(1)}, '
           'but the wrapper provides ${match.group(2)}.',
@@ -111,7 +184,7 @@ final List<_Signature> _signatures = [
     'IMPERATIVE_GRADLE_APPLY',
     RegExp(
         r"You are applying Flutter's (main|app_plugin_loader) Gradle plugin\s+imperatively"),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'IMPERATIVE_GRADLE_APPLY',
       explanation: "Flutter's Gradle plugins are applied with the removed "
           'imperative `apply from:` mechanism.',
@@ -123,7 +196,7 @@ final List<_Signature> _signatures = [
   _Signature(
     'ANDROID_NAMESPACE_MISSING',
     RegExp(r'Namespace not specified'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'ANDROID_NAMESPACE_MISSING',
       explanation: 'A module does not declare android.namespace, which Android '
           'Gradle Plugin 8 requires.',
@@ -136,7 +209,7 @@ final List<_Signature> _signatures = [
   _Signature(
     'ANDROID_MANIFEST_PACKAGE',
     RegExp(r'Incorrect package="([^"]+)" found in source AndroidManifest\.xml'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'ANDROID_MANIFEST_PACKAGE',
       explanation:
           'An AndroidManifest.xml still declares package="${match.group(1)}".',
@@ -150,7 +223,7 @@ final List<_Signature> _signatures = [
     'JVM_TARGET_MISMATCH',
     RegExp(
         r"Inconsistent JVM-target compatibility detected for tasks '([^']+)' \(([^)]+)\) and '([^']+)' \(([^)]+)\)"),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'JVM_TARGET_MISMATCH',
       explanation: 'Java and Kotlin compile to different JVM targets '
           '(${match.group(2)} and ${match.group(4)}) in a module.',
@@ -162,7 +235,7 @@ final List<_Signature> _signatures = [
   _Signature(
     'DART_SDK_CONSTRAINT',
     RegExp(r'The current Dart SDK version is ([\w.\-]+)'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'DART_SDK_CONSTRAINT',
       explanation: 'A package does not allow Dart ${match.group(1)}.',
       suggestion: 'Upgrade the package, or fix environment.sdk if it is this '
@@ -174,7 +247,7 @@ final List<_Signature> _signatures = [
   _Signature(
     'COCOAPODS_DEPLOYMENT_TARGET',
     RegExp(r'required a higher minimum deployment target'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'COCOAPODS_DEPLOYMENT_TARGET',
       explanation: 'A pod requires a newer iOS deployment target than the '
           'Podfile platform.',
@@ -186,7 +259,7 @@ final List<_Signature> _signatures = [
   _Signature(
     'COCOAPODS_INCOMPATIBLE',
     RegExp(r'CocoaPods could not find compatible versions for pod "([^"]+)"'),
-    (match, line) => FailureDiagnosis(
+    (match, line, context) => FailureDiagnosis(
       id: 'COCOAPODS_INCOMPATIBLE',
       explanation: 'CocoaPods could not resolve pod ${match.group(1)}.',
       suggestion: 'Run `pod repo update` and check the pod deployment target '
@@ -200,8 +273,13 @@ final _failedTask = RegExp(r"Execution failed for task '(:[^']+)'");
 
 final _dartError = RegExp(r'^(\S+\.dart):(\d+):(\d+): Error: (.+)$');
 
-/// Explains known failures in [output], most specific first.
-List<FailureDiagnosis> diagnoseFailure(String output) {
+/// Explains known failures in [output], in the order they appear.
+///
+/// [target] is the Flutter release the project was migrated to; when given,
+/// suggestions refer to its values.
+List<FailureDiagnosis> diagnoseFailure(String output,
+    {FlutterRelease? target}) {
+  final context = _FailureContext(output, target);
   final results = <FailureDiagnosis>[];
   final seen = <String>{};
   final dartErrors = <RegExpMatch>[];
@@ -211,8 +289,10 @@ List<FailureDiagnosis> diagnoseFailure(String output) {
     for (final signature in _signatures) {
       final match = signature.pattern.firstMatch(line);
       if (match == null) continue;
-      final diagnosis = signature.describe(match, line.trim());
-      if (seen.add('${diagnosis.id}:${diagnosis.evidence}')) {
+      final diagnosis = signature.describe(match, line.trim(), context);
+      // The same failure is often repeated in several lines of Gradle output.
+      if (diagnosis != null &&
+          seen.add('${diagnosis.id}:${diagnosis.explanation}')) {
         results.add(diagnosis);
       }
     }

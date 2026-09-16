@@ -97,13 +97,17 @@ final class RecipeDescriptor {
 final class PlanOptions {
   const PlanOptions({
     this.includeRecommended = false,
+    this.includedRecipes = const {},
     this.acceptAllReviews = false,
     this.acceptedReviews = const {},
     this.skippedRecipes = const {},
   });
 
-  /// Also plan recommended (non-required) steps.
+  /// Also plan recommended (non-required) steps of every recipe.
   final bool includeRecommended;
+
+  /// Recipes whose recommended steps are planned.
+  final Set<String> includedRecipes;
 
   /// Treat every review step as accepted, so later steps build on it.
   final bool acceptAllReviews;
@@ -117,8 +121,26 @@ final class PlanOptions {
   bool accepts(String recipeId) =>
       acceptAllReviews || acceptedReviews.contains(recipeId);
 
+  /// Whether recommended steps of [recipeId] are planned.
+  bool includesRecommended(String recipeId) =>
+      includeRecommended || includedRecipes.contains(recipeId);
+
+  /// Reads options written by [toJson]; missing fields take their defaults.
+  factory PlanOptions.fromJson(Map<String, Object?> json) {
+    Set<String> ids(String key) =>
+        {for (final id in (json[key] as List? ?? const [])) '$id'};
+    return PlanOptions(
+      includeRecommended: json['includeRecommended'] == true,
+      includedRecipes: ids('includedRecipes'),
+      acceptAllReviews: json['acceptAllReviews'] == true,
+      acceptedReviews: ids('acceptedReviews'),
+      skippedRecipes: ids('skippedRecipes'),
+    );
+  }
+
   Map<String, Object?> toJson() => {
         'includeRecommended': includeRecommended,
+        'includedRecipes': (includedRecipes.toList()..sort()),
         'acceptAllReviews': acceptAllReviews,
         'acceptedReviews': (acceptedReviews.toList()..sort()),
         'skippedRecipes': (skippedRecipes.toList()..sort()),

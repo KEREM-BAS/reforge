@@ -3,8 +3,8 @@
 // Facts are extracted from primary sources only:
 //  * the Flutter release manifest (versions, revisions, Dart versions, dates)
 //  * flutter/flutter sources at each stable release tag (Gradle/AGP/Kotlin/
-//    Java/minSdk floors, template toolchain, Android defaults, iOS minimum,
-//    imperative Gradle apply behaviour)
+//    Java/minSdk floors, template toolchain and gradle.properties, Android
+//    defaults, iOS minimum, imperative Gradle apply behaviour)
 //
 // Usage:
 //   curl -o /tmp/releases_macos.json \
@@ -20,6 +20,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:reforge_core/src/parsing/properties/properties_file.dart';
 
 Future<void> main(List<String> arguments) async {
   final parser = ArgParser()
@@ -150,6 +151,23 @@ Future<void> main(List<String> arguments) async {
       'packages/flutter_tools/templates/app_shared/android-kotlin.tmpl/app/build.gradle.tmpl',
       'packages/flutter_tools/templates/app/android-kotlin.tmpl/app/build.gradle.tmpl',
     ]);
+    final gradlePropertiesTemplate = await git.firstOf(tag, const [
+      'packages/flutter_tools/templates/app/android.tmpl/gradle.properties.tmpl',
+      'packages/flutter_tools/templates/app_shared/android.tmpl/gradle.properties.tmpl',
+    ]);
+    if (gradlePropertiesTemplate == null) {
+      throw StateError('$tag: gradle.properties template not found.');
+    }
+    if (gradlePropertiesTemplate.contains('{{')) {
+      warnings.add('$tag: the gradle.properties template has placeholders.');
+    }
+    final templateProperties = {
+      for (final entry in PropertiesFile.parse(
+              'gradle.properties.tmpl', gradlePropertiesTemplate)
+          .entries)
+        entry.key: entry.value,
+    };
+
     final String imperativeApply;
     // Match Flutter's own messages, not incidental code: the pre-3.16 plugin
     // implementation also throws GradleExceptions for unrelated reasons.
@@ -217,6 +235,8 @@ Future<void> main(List<String> arguments) async {
     templateDsl: '${ktsSettings != null ? 'kotlin' : 'groovy'}',
     templateDeclarativePlugins: $declarative,
     templateNamespace: ${appBuild?.contains('namespace') ?? false},
+    templateGradleProperties: {
+${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartString(e.value)},\n').join()}    },
     compileSdk: ${sdkDefault('compileSdkVersion')},
     targetSdk: ${sdkDefault('targetSdkVersion')},
     minSdk: ${sdkDefault('minSdkVersion')},
@@ -258,6 +278,15 @@ Future<void> main(List<String> arguments) async {
     stderr.writeln('warning: $warning');
   }
   stdout.writeln('Wrote ${records.length} releases to ${args['out']}.');
+}
+
+/// A single-quoted Dart string literal with the value of [value].
+String _dartString(String value) {
+  final escaped = value
+      .replaceAll(r'\', r'\\')
+      .replaceAll("'", r"\'")
+      .replaceAll(r'$', r'\$');
+  return "'$escaped'";
 }
 
 String? _iosFromDarwin;

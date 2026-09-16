@@ -1,0 +1,5 @@
+project: flutter_3_3_app
+target: 3.47.4
+acceptReviews: true
+includeRecommended: false
+include: [ANDROID_GRADLE_JVM_ARGS, ANDROID_JETIFIER]

@@ -84,6 +84,8 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 | [ANDROID_AGP_VERSION](docs/recipes/ANDROID_AGP_VERSION.md) | Android Gradle Plugin version |
 | [ANDROID_KOTLIN_VERSION](docs/recipes/ANDROID_KOTLIN_VERSION.md) | Kotlin Gradle plugin version |
 | [ANDROID_NAMESPACE](docs/recipes/ANDROID_NAMESPACE.md) | `android.namespace` instead of manifest `package` |
+| [ANDROID_GRADLE_JVM_ARGS](docs/recipes/ANDROID_GRADLE_JVM_ARGS.md) | Gradle memory settings of an older template (recommended) |
+| [ANDROID_JETIFIER](docs/recipes/ANDROID_JETIFIER.md) | Stop running Jetifier (recommended) |
 | [IOS_DEPLOYMENT_TARGET](docs/recipes/IOS_DEPLOYMENT_TARGET.md) | Minimum iOS deployment target |
 | [DART_SDK_CONSTRAINT](docs/recipes/DART_SDK_CONSTRAINT.md) | `environment.sdk` accepts the target Dart |
 

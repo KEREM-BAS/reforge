@@ -8,6 +8,7 @@ import '../model/declarations.dart';
 import '../model/finding.dart';
 import '../version/tool_version.dart';
 import 'recipe.dart';
+import 'recipe_ids.dart';
 
 /// The version a toolchain component should move to, and why.
 @immutable
@@ -41,19 +42,27 @@ final class ToolchainTarget {
 /// that satisfies every requirement (Flutter's error floor and the
 /// requirements between tools). This is the smallest change the Flutter team
 /// declares as supported. Warning floors are recommended upgrades that are only
-/// planned when [includeRecommended] is set.
+/// planned when the plan options include the recommended steps of the
+/// component's recipe.
 final class AndroidToolchainTargets {
   AndroidToolchainTargets({
     required this.android,
     required this.release,
     required this.knowledge,
-    required this.includeRecommended,
-  });
+    required PlanOptions options,
+  })  : _recommendedAgp =
+            options.includesRecommended(RecipeIds.androidAgpVersion),
+        _recommendedGradle =
+            options.includesRecommended(RecipeIds.androidGradleWrapper),
+        _recommendedKotlin =
+            options.includesRecommended(RecipeIds.androidKotlinVersion);
 
   final AndroidProject android;
   final FlutterRelease release;
   final KnowledgeBase knowledge;
-  final bool includeRecommended;
+  final bool _recommendedAgp;
+  final bool _recommendedGradle;
+  final bool _recommendedKotlin;
 
   late final ToolchainTarget? agp = _agp();
   late final ToolchainTarget? gradle = _gradle();
@@ -89,8 +98,8 @@ final class AndroidToolchainTargets {
             minimum.source));
       }
     }
-    return _choose(
-        declared, required, recommended, reasons, knowledge.earliestAgpRelease);
+    return _choose(declared, required, recommended, reasons,
+        knowledge.earliestAgpRelease, _recommendedAgp);
   }
 
   ToolchainTarget? _gradle() {
@@ -120,7 +129,7 @@ final class AndroidToolchainTargets {
       }
     }
     return _choose(declared, required, recommended, reasons,
-        knowledge.earliestGradleRelease);
+        knowledge.earliestGradleRelease, _recommendedGradle);
   }
 
   ToolchainTarget? _kotlin() {
@@ -139,6 +148,7 @@ final class AndroidToolchainTargets {
             release.dependencyCheckerSource),
       ],
       knowledge.earliestKotlinRelease,
+      _recommendedKotlin,
     );
   }
 
@@ -148,6 +158,7 @@ final class AndroidToolchainTargets {
     ToolVersion recommended,
     List<Evidence> reasons,
     Fact<ToolVersion>? Function(ToolVersion) earliest,
+    bool includeRecommended,
   ) {
     final ToolVersion minimum;
     final Necessity necessity;

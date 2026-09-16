@@ -135,6 +135,7 @@ final class VerifyCommand extends ReforgeCommand {
           check,
           flutterExecutable: argResults!['flutter'] as String,
           logDirectory: logDirectory,
+          target: target,
           onOutput:
               verbose && text ? (line) => t.line('      ${t.dim(line)}') : null,
         );
@@ -251,19 +252,8 @@ Iterable<VerificationCheck> _planChecks(Map<String, Object?> plan) sync* {
   }
 }
 
-PlanOptions _optionsOf(Map<String, Object?> plan) {
-  final options = plan['options'] as Map<String, Object?>? ?? const {};
-  return PlanOptions(
-    includeRecommended: options['includeRecommended'] == true,
-    acceptAllReviews: options['acceptAllReviews'] == true,
-    acceptedReviews: {
-      for (final id in (options['acceptedReviews'] as List? ?? const [])) '$id',
-    },
-    skippedRecipes: {
-      for (final id in (options['skippedRecipes'] as List? ?? const [])) '$id',
-    },
-  );
-}
+PlanOptions _optionsOf(Map<String, Object?> plan) =>
+    PlanOptions.fromJson(plan['options'] as Map<String, Object?>? ?? const {});
 
 String _label(VerificationCheck check) => switch (check) {
       VerificationCheck.staticAnalysis => 'static',

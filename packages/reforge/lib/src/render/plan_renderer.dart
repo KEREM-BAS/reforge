@@ -36,9 +36,24 @@ void renderPlan(Terminal t, MigrationPlan plan,
     }
   }
 
-  if (verbose && plan.skipped.isNotEmpty) {
+  final recommendations = plan.recommendationsNotIncluded;
+  if (recommendations.isNotEmpty) {
+    t.heading('Recommended, not planned');
+    for (final skipped in recommendations) {
+      t.line('  ${t.dim(t.info)} ${skipped.recipe.id}'
+          '${skipped.project.isEmpty ? '' : t.dim(' (${skipped.project})')}');
+      t.paragraph(skipped.summary ?? skipped.reason);
+    }
+    final ids = recommendations.map((s) => s.recipe.id).toSet().join(',');
+    t.line(t.dim('  Plan them with --include $ids'));
+  }
+
+  final notApplicable = plan.skipped
+      .where((s) => s.kind != SkipKind.recommendationNotIncluded)
+      .toList();
+  if (verbose && notApplicable.isNotEmpty) {
     t.heading('Not applicable');
-    for (final skipped in plan.skipped) {
+    for (final skipped in notApplicable) {
       t.line('  ${t.dim(t.info)} ${skipped.recipe.id}'
           '${skipped.project.isEmpty ? '' : t.dim(' (${skipped.project})')}');
       t.paragraph(skipped.reason);

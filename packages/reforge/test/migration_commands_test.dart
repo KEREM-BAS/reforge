@@ -35,6 +35,20 @@ void main() {
     ]);
     expect(gated.exitCode, ExitCodes.failed);
 
+    expect(run.stdout, contains('Recommended, not planned'));
+    expect(run.stdout,
+        contains('--include ANDROID_GRADLE_JVM_ARGS,ANDROID_JETIFIER'));
+
+    final included = await runCli([
+      '-C', project.path, 'plan', '--to', '3.47.4', '--no-env', //
+      '--accept-all', '--include', 'ANDROID_GRADLE_JVM_ARGS',
+    ]);
+    expect(included.stdout, contains('ANDROID_GRADLE_JVM_ARGS  auto'));
+    expect(
+        included.stdout,
+        contains('reforge apply --to 3.47.4 --include ANDROID_GRADLE_JVM_ARGS '
+            '--accept-all'));
+
     final json = await runCli([
       '-C', project.path, 'plan', '--to', '3.47.4', '--no-env', //
       '--accept-all', '--format', 'json',

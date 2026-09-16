@@ -126,10 +126,14 @@ final class Verifier {
   }
 
   /// Runs a toolchain check with the `flutter` executable.
+  ///
+  /// [target] is the release the project was migrated to; it makes failure
+  /// explanations refer to the target's values.
   Future<CheckResult> runToolCheck(
     VerificationCheck check, {
     required String flutterExecutable,
     required String logDirectory,
+    FlutterRelease? target,
     void Function(String line)? onOutput,
   }) async {
     final List<String> arguments;
@@ -211,7 +215,7 @@ final class Verifier {
       exitCode: result.exitCode,
       duration: result.elapsed,
       logFile: log.path,
-      diagnoses: passed ? const [] : diagnoseFailure(output),
+      diagnoses: passed ? const [] : diagnoseFailure(output, target: target),
       failingModule: passed ? null : failingGradleModule(output),
       modifiedFiles: modified,
       details: passed ? const [] : _tail(output, 15),

@@ -73,17 +73,41 @@ final class PlanStep {
       };
 }
 
-/// A recipe that was evaluated but did not apply.
+/// Why an evaluated recipe contributes no step to a plan.
+enum SkipKind {
+  /// The recipe does not apply to the project.
+  notApplicable,
+
+  /// The recipe was excluded by the plan options.
+  excluded,
+
+  /// The recipe proposes a recommended step, but recommended steps of the
+  /// recipe were not requested.
+  recommendationNotIncluded,
+}
+
+/// A recipe that was evaluated but contributes no step.
 @immutable
 final class SkippedRecipe {
-  const SkippedRecipe(this.recipe, this.project, this.reason);
+  const SkippedRecipe(this.recipe, this.project, this.reason,
+      {this.kind = SkipKind.notApplicable, this.summary});
 
   final RecipeDescriptor recipe;
   final String project;
   final String reason;
+  final SkipKind kind;
 
-  Map<String, Object?> toJson() =>
-      {'recipe': recipe.id, 'project': project, 'reason': reason};
+  /// The summary of the step that was not planned, for
+  /// [SkipKind.recommendationNotIncluded].
+  final String? summary;
+
+  Map<String, Object?> toJson() => {
+        'recipe': recipe.id,
+        'project': project,
+        'kind': kind.name,
+        'reason': reason,
+        if (summary != null) 'summary': summary,
+      };
 }
 
 /// A change to one file across the whole plan.
@@ -150,6 +174,13 @@ final class MigrationPlan {
             step,
       ];
 
+  /// Recommended steps that recipes proposed but the options did not
+  /// request.
+  List<SkippedRecipe> get recommendationsNotIncluded => [
+        for (final skip in skipped)
+          if (skip.kind == SkipKind.recommendationNotIncluded) skip,
+      ];
+
   /// Errors that remain after the plan is applied.
   List<Finding> get remainingErrors =>
       remainingFindings.where((f) => f.severity == Severity.error).toList();
@@ -208,6 +239,7 @@ final class MigrationPlan {
             status.name: stepsWith(status).length,
           'applied': steps.where((s) => s.applied).length,
           'filesChanged': fileChanges.length,
+          'recommendationsNotIncluded': recommendationsNotIncluded.length,
           'remainingErrors': remainingErrors.length,
           'unanalyzedFiles': unanalyzedFiles.length,
           'complete': isComplete,

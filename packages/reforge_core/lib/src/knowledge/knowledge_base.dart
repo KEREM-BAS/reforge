@@ -85,6 +85,19 @@ final class KnowledgeBase {
     );
   }
 
+  /// Releases whose `flutter create` template sets [key] to [value] in
+  /// `android/gradle.properties`, ascending. Runs of whitespace in values are
+  /// compared as a single space.
+  List<FlutterRelease> releasesWithTemplateGradleProperty(
+      String key, String value) {
+    final normalized = normalizePropertyValue(value);
+    return [
+      for (final release in releases)
+        if (release.template.gradleProperties[key] case final templateValue?)
+          if (normalizePropertyValue(templateValue) == normalized) release,
+    ];
+  }
+
   /// The minimum Gradle version required by [agp], or `null` when the AGP
   /// line is not in the knowledge base.
   Fact<ToolVersion>? minimumGradleForAgp(ToolVersion agp) {
@@ -139,6 +152,12 @@ final class KnowledgeBase {
     if (minimum == null) return null;
     return Fact(ToolVersion.parse(minimum), android.apiLevelAgpSource);
   }
+
+  static const jetifierTemplateRemovalSource =
+      android.jetifierTemplateRemovalSource;
+  static const buildAnalyzerJetifierSource =
+      android.buildAnalyzerJetifierSource;
+  static const androidxMigrationSource = android.androidxMigrationSource;
 
   static const gradleReleasesSource = KnowledgeSource(
     title: 'Gradle releases and distribution checksums',
@@ -213,6 +232,10 @@ final class KnowledgeBase {
   }
 }
 
+/// [value] trimmed, with runs of whitespace replaced by a single space.
+String normalizePropertyValue(String value) =>
+    value.trim().replaceAll(RegExp(r'\s+'), ' ');
+
 FlutterRelease _releaseFromRecord(FlutterReleaseRecord record) {
   VersionFloor? floor(String? encoded) {
     if (encoded == null) return null;
@@ -248,6 +271,7 @@ FlutterRelease _releaseFromRecord(FlutterReleaseRecord record) {
       dsl: GradleDsl.values.byName(record.templateDsl),
       declarativePlugins: record.templateDeclarativePlugins,
       namespaceInBuildScript: record.templateNamespace,
+      gradleProperties: record.templateGradleProperties,
     ),
     imperativeGradleApply:
         ImperativeGradleApply.values.byName(record.imperativeApply),

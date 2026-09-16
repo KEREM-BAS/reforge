@@ -1,7 +1,8 @@
 // Golden migration tests.
 //
 // Each directory in fixtures/migrations describes a case:
-//   case.yaml   project, target and plan options
+//   case.yaml   project, target and plan options (acceptReviews,
+//               includeRecommended, include: [RECIPE_ID, ...])
 //   plan.md     the expected plan summary
 //   files/      the expected content of every file the plan changes
 //
@@ -78,6 +79,9 @@ void main() {
       final options = PlanOptions(
         acceptAllReviews: spec['acceptReviews'] == true,
         includeRecommended: spec['includeRecommended'] == true,
+        includedRecipes: {
+          for (final id in (spec['include'] as YamlList? ?? const [])) '$id',
+        },
       );
       final target = knowledge.resolveFlutterVersion('${spec['target']}');
       final files = LocalProjectFileSystem(project);

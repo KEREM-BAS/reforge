@@ -71,7 +71,8 @@ final class MigrationPlanner {
         final descriptor = recipe.descriptor;
         if (options.skippedRecipes.contains(descriptor.id)) {
           skipped.add(SkippedRecipe(
-              descriptor, original.path, 'Skipped by configuration.'));
+              descriptor, original.path, 'Excluded by the plan options.',
+              kind: SkipKind.excluded));
           continue;
         }
         final project = ProjectInspector(overlay, knowledge: knowledge)
@@ -95,12 +96,15 @@ final class MigrationPlanner {
         }
         var proposal = result;
         if (proposal.necessity == Necessity.recommended &&
-            !options.includeRecommended) {
+            !options.includesRecommended(descriptor.id)) {
           skipped.add(SkippedRecipe(
-              descriptor,
-              original.path,
-              'Recommended but not required for Flutter ${target.version}: '
-              '${proposal.summary} Use --include-recommended to plan it.'));
+            descriptor,
+            original.path,
+            'Recommended but not required for Flutter ${target.version}: '
+            '${proposal.summary}',
+            kind: SkipKind.recommendationNotIncluded,
+            summary: proposal.summary,
+          ));
           continue;
         }
 

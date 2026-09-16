@@ -17,8 +17,13 @@ mixin PlanningCommand on ReforgeCommand {
       ..addFlag(
         'include-recommended',
         negatable: false,
-        help: 'Also plan recommended upgrades (Flutter warning thresholds and '
-            'deprecations), not only required ones.',
+        help: 'Also plan recommended steps of every recipe (Flutter warning '
+            'thresholds, template modernizations), not only required ones.',
+      )
+      ..addMultiOption(
+        'include',
+        valueHelp: 'RECIPE_ID',
+        help: 'Also plan recommended steps of these recipes.',
       )
       ..addMultiOption(
         'accept',
@@ -64,8 +69,9 @@ mixin PlanningCommand on ReforgeCommand {
   PlanOptions planOptions() {
     final accepted = (argResults!['accept'] as List<String>).toSet();
     final skipped = (argResults!['skip'] as List<String>).toSet();
+    final included = (argResults!['include'] as List<String>).toSet();
     final known = builtInRecipes().map((r) => r.descriptor.id).toSet();
-    for (final id in [...accepted, ...skipped]) {
+    for (final id in [...accepted, ...skipped, ...included]) {
       if (!known.contains(id)) {
         throw InvalidUsageException(
           'UNKNOWN_RECIPE',
@@ -76,6 +82,7 @@ mixin PlanningCommand on ReforgeCommand {
     }
     return PlanOptions(
       includeRecommended: argResults!['include-recommended'] as bool,
+      includedRecipes: included,
       acceptAllReviews: argResults!['accept-all'] as bool,
       acceptedReviews: accepted,
       skippedRecipes: skipped,
@@ -104,17 +111,26 @@ mixin PlanningCommand on ReforgeCommand {
     return (plan, environment);
   }
 
-  /// The command line that reproduces [plan] with review acceptance.
+  /// The command line that reproduces [plan] with review acceptance and
+  /// additionally included recipes.
   String suggestedCommand(String command, MigrationPlan plan,
-      {Set<String> extraAccepts = const {}}) {
+      {Set<String> extraAccepts = const {},
+      Set<String> extraIncludes = const {}}) {
     final accepted = {
       ...plan.options.acceptedReviews,
       ...extraAccepts,
     }.toList()
       ..sort();
+    final included = {
+      ...plan.options.includedRecipes,
+      ...extraIncludes,
+    }.toList()
+      ..sort();
     return [
       'reforge $command --to ${plan.target.version}',
       if (plan.options.includeRecommended) '--include-recommended',
+      if (!plan.options.includeRecommended && included.isNotEmpty)
+        '--include ${included.join(',')}',
       if (plan.options.acceptAllReviews) '--accept-all',
       if (!plan.options.acceptAllReviews && accepted.isNotEmpty)
         '--accept ${accepted.join(',')}',

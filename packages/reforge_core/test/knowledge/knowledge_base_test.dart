@@ -91,6 +91,37 @@ void main() {
       expect(release('3.3.0').iosMinimumDeploymentTarget, v('11.0'));
     });
 
+    test('template gradle.properties history', () {
+      String? property(String version, String key) =>
+          release(version).template.gradleProperties[key];
+      const jvmArgs = 'org.gradle.jvmargs';
+      expect(property('3.0.0', jvmArgs), '-Xmx1536M');
+      expect(property('3.13.9', jvmArgs), '-Xmx1536M');
+      expect(property('3.16.0', jvmArgs), '-Xmx4G');
+      expect(property('3.22.0', jvmArgs),
+          '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError');
+      expect(property('3.24.0', jvmArgs),
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError');
+      expect(
+          property('3.29.0', jvmArgs),
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m '
+          '-XX:+HeapDumpOnOutOfMemoryError');
+      expect(property('3.35.0', 'android.enableJetifier'), 'true');
+      expect(property('3.38.0', 'android.enableJetifier'), isNull);
+      expect(property('3.41.0', 'android.newDsl'), isNull);
+      expect(property('3.44.0', 'android.newDsl'), 'false');
+      expect(property('3.44.0', 'android.builtInKotlin'), 'false');
+
+      final generated = KnowledgeBase.bundled
+          .releasesWithTemplateGradleProperty(jvmArgs, ' -Xmx1536M ');
+      expect(generated.first.version, Version(3, 0, 0));
+      expect(generated.last.version, Version(3, 13, 9));
+      expect(release('3.27.0').templateGradlePropertiesSource.url,
+          contains('/templates/app_shared/android.tmpl/'));
+      expect(release('3.29.0').templateGradlePropertiesSource.url,
+          contains('/templates/app/android.tmpl/'));
+    });
+
     test('floor status', () {
       final floor = release('3.47.0').androidRequirements.androidGradlePlugin!;
       expect(floor.statusOf(v('8.7.0')), FloorStatus.belowError);

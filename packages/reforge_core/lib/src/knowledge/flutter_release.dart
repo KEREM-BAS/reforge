@@ -78,6 +78,7 @@ final class TemplateToolchain {
     required this.dsl,
     required this.declarativePlugins,
     required this.namespaceInBuildScript,
+    required this.gradleProperties,
   });
 
   final ToolVersion gradle;
@@ -91,6 +92,9 @@ final class TemplateToolchain {
   /// Whether new projects declare `namespace` in `app/build.gradle` (instead
   /// of `package` in `AndroidManifest.xml`).
   final bool namespaceInBuildScript;
+
+  /// The properties new projects get in `android/gradle.properties`.
+  final Map<String, String> gradleProperties;
 }
 
 /// Defaults exposed by the Flutter Gradle plugin as `flutter.compileSdkVersion`
@@ -182,6 +186,12 @@ final class FlutterRelease {
   /// The source of [template] and [androidDefaults] versions.
   KnowledgeSource get templateSource =>
       sourceFor('packages/flutter_tools/lib/src/android/gradle_utils.dart');
+
+  /// The source of [TemplateToolchain.gradleProperties].
+  KnowledgeSource get templateGradlePropertiesSource => sourceFor(version >=
+          Version(3, 29, 0)
+      ? 'packages/flutter_tools/templates/app/android.tmpl/gradle.properties.tmpl'
+      : 'packages/flutter_tools/templates/app_shared/android.tmpl/gradle.properties.tmpl');
 
   @override
   String toString() => 'Flutter $version';

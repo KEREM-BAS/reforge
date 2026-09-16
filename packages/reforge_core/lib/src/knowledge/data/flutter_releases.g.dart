@@ -28,6 +28,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -51,6 +56,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -74,6 +84,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -97,6 +112,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -120,6 +140,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -143,6 +168,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -166,6 +196,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -189,6 +224,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -212,6 +252,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -235,6 +280,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -258,6 +308,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -281,6 +336,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -304,6 +364,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -327,6 +392,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -350,6 +420,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -373,6 +448,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -396,6 +476,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 31,
     targetSdk: 31,
     minSdk: 16,
@@ -419,6 +504,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -442,6 +532,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -465,6 +560,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -488,6 +588,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -511,6 +616,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -534,6 +644,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -557,6 +672,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -580,6 +700,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -603,6 +728,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -626,6 +756,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -649,6 +784,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -672,6 +812,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -695,6 +840,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: false,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -718,6 +868,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -741,6 +896,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -764,6 +924,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -787,6 +952,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -810,6 +980,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -833,6 +1008,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -856,6 +1036,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 16,
@@ -879,6 +1064,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -902,6 +1092,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -925,6 +1120,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -948,6 +1148,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -971,6 +1176,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -994,6 +1204,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1017,6 +1232,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1040,6 +1260,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1063,6 +1288,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1086,6 +1316,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: false,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx1536M',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1109,6 +1344,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1132,6 +1372,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1155,6 +1400,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1178,6 +1428,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1201,6 +1456,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1224,6 +1484,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1247,6 +1512,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1270,6 +1540,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1293,6 +1568,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1316,6 +1596,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 33,
     targetSdk: 33,
     minSdk: 19,
@@ -1339,6 +1624,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1362,6 +1652,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1385,6 +1680,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1408,6 +1708,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1431,6 +1736,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1454,6 +1764,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1477,6 +1792,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 33,
     minSdk: 19,
@@ -1500,6 +1820,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1523,6 +1848,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1546,6 +1876,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1569,6 +1904,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs': '-Xmx4G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1592,6 +1932,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1615,6 +1961,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1638,6 +1990,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1661,6 +2019,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1684,6 +2048,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1707,6 +2077,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 34,
     targetSdk: 34,
     minSdk: 21,
@@ -1730,6 +2106,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1753,6 +2135,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1776,6 +2164,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1799,6 +2193,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1822,6 +2222,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'groovy',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx4G -XX:MaxMetaspaceSize=2G -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1845,6 +2251,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1868,6 +2280,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1891,6 +2309,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1914,6 +2338,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1937,6 +2367,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1960,6 +2396,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -1983,6 +2425,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2006,6 +2454,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2029,6 +2483,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2052,6 +2512,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2075,6 +2541,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2098,6 +2570,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2121,6 +2599,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 35,
     targetSdk: 35,
     minSdk: 21,
@@ -2144,6 +2628,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2167,6 +2657,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2190,6 +2686,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2213,6 +2715,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2236,6 +2744,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2259,6 +2773,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2282,6 +2802,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2305,6 +2831,12 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.enableJetifier': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2328,6 +2860,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2351,6 +2888,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2374,6 +2916,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2397,6 +2944,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2420,6 +2972,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2443,6 +3000,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2466,6 +3028,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2489,6 +3056,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2512,6 +3084,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2535,6 +3112,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2558,6 +3140,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2581,6 +3168,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2604,6 +3196,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2627,6 +3224,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2650,6 +3252,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2673,6 +3280,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2696,6 +3308,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2719,6 +3336,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2742,6 +3364,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2765,6 +3392,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2788,6 +3420,11 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2811,6 +3448,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2834,6 +3478,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2857,6 +3508,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2880,6 +3538,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2903,6 +3568,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2926,6 +3598,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2949,6 +3628,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2972,6 +3658,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -2995,6 +3688,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -3018,6 +3718,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -3041,6 +3748,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -3064,6 +3778,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -3087,6 +3808,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -3110,6 +3838,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,
@@ -3133,6 +3868,13 @@ const flutterReleaseRecords = <FlutterReleaseRecord>[
     templateDsl: 'kotlin',
     templateDeclarativePlugins: true,
     templateNamespace: true,
+    templateGradleProperties: {
+      'org.gradle.jvmargs':
+          '-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError',
+      'android.useAndroidX': 'true',
+      'android.newDsl': 'false',
+      'android.builtInKotlin': 'false',
+    },
     compileSdk: 36,
     targetSdk: 36,
     minSdk: 24,

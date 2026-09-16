@@ -40,7 +40,7 @@ final class AgpVersionRecipe extends MigrationRecipe {
       android: android,
       release: context.target,
       knowledge: context.knowledge,
-      includeRecommended: context.options.includeRecommended,
+      options: context.options,
     );
     final result = _evaluateVersionBump(
       context: context,
@@ -170,7 +170,7 @@ final class KotlinVersionRecipe extends MigrationRecipe {
       android: android,
       release: context.target,
       knowledge: context.knowledge,
-      includeRecommended: context.options.includeRecommended,
+      options: context.options,
     );
     final result = _evaluateVersionBump(
       context: context,

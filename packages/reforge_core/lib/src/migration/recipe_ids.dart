@@ -9,6 +9,8 @@ abstract final class RecipeIds {
   static const androidAgpVersion = 'ANDROID_AGP_VERSION';
   static const androidKotlinVersion = 'ANDROID_KOTLIN_VERSION';
   static const androidNamespace = 'ANDROID_NAMESPACE';
+  static const androidGradleJvmArgs = 'ANDROID_GRADLE_JVM_ARGS';
+  static const androidJetifier = 'ANDROID_JETIFIER';
   static const iosDeploymentTarget = 'IOS_DEPLOYMENT_TARGET';
   static const dartSdkConstraint = 'DART_SDK_CONSTRAINT';
 }

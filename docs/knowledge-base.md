@@ -16,6 +16,7 @@ since 3.0.0.
 | Template Gradle, AGP and Kotlin versions | `lib/src/android/gradle_utils.dart` |
 | Default compileSdk, targetSdk, minSdk and NDK | `FlutterExtension.kt`, `flutter.groovy` or `flutter.gradle` |
 | Template DSL, declarative plugins, namespace | App templates |
+| Template `gradle.properties` (JVM arguments, Jetifier, AGP 9 opt-outs) | `templates/app_shared/android.tmpl/gradle.properties.tmpl` (before 3.29), `templates/app/android.tmpl/gradle.properties.tmpl` |
 | Imperative Gradle apply support | `packages/flutter_tools/gradle/flutter.gradle` (deprecation and removal messages) |
 | Minimum iOS deployment target | `darwin.dart`, `ios_deployment_target_migration.dart` or `deployment_target_migration.dart` |
 
@@ -56,6 +57,8 @@ Recipes only select versions from these lists.
 | AGP to minimum Java | Flutter's `gradle_utils.dart` Java/AGP list, mirroring AGP release notes |
 | Compile API level to minimum AGP | developer.android.com, "API level support" |
 | Buildscript classpath artifact to plugin id | Flutter's imperative apply migration guide |
+| Why Flutter templates stopped enabling Jetifier | flutter/flutter#173430 |
+| Checking whether Jetifier is still needed | developer.android.com, "Build Analyzer" |
 
 ## Facts, observations, inferences
 
