@@ -78,7 +78,8 @@ Refuses to apply when:
 - the plan is incomplete (unless `--allow-incomplete`);
 - files to change have uncommitted Git changes (unless `--allow-dirty`);
 - no confirmation is given (`--yes` is required when not interactive);
-- the project changed since planning, or differs from a reviewed `--plan`.
+- the project changed since planning, or differs from a reviewed `--plan`;
+- an earlier session was interrupted while applying (roll it back first).
 
 Every file is backed up and journaled in `.reforge/sessions/<id>/` before it is
 changed; files are replaced atomically; if a write fails, earlier writes are
@@ -141,7 +142,9 @@ Exit code 1 when a check it ran failed; 0 otherwise.
 
 ### `rollback [session]`
 
-Restores the most recent applied session (or the given one): first the
+Restores the most recent applied or interrupted session (or the given one).
+For a session interrupted while applying (for example a killed process), files
+are recognized as written by their content, not only by the journal. First the
 changes tools made during `verify`, newest first, then the migrated files.
 Refuses when a file changed after Reforge or a verified tool last wrote it, and
 names the tool when one did; `--force` restores the backups anyway.

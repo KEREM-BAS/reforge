@@ -70,6 +70,21 @@ final class MigrationApplier {
           'NOTHING_TO_APPLY', 'The plan does not change any file.');
     }
     return journal.withLock(() {
+      final interrupted = journal
+          .sessions()
+          .where((s) => s.status == SessionStatus.applying)
+          .firstOrNull;
+      if (interrupted != null) {
+        throw MigrationBlockedException(
+          'INTERRUPTED_SESSION',
+          'Session ${interrupted.id} was interrupted while applying; some of '
+              'its files may already be changed.',
+          hints: [
+            'Restore the project with `reforge rollback ${interrupted.id}`, '
+                'then plan again.',
+          ],
+        );
+      }
       ensureCurrent(plan);
       for (final change in plan.fileChanges) {
         final absolute = _absolute(change.path);
@@ -173,22 +188,42 @@ final class MigrationApplier {
   /// set.
   MigrationSession rollback({String? sessionId, bool force = false}) {
     return journal.withLock(() {
+      bool restorable(MigrationSession s) =>
+          s.status == SessionStatus.applied ||
+          s.status == SessionStatus.applying;
       final session = sessionId == null
-          ? journal
-              .sessions()
-              .where((s) => s.status == SessionStatus.applied)
-              .firstOrNull
+          ? journal.sessions().where(restorable).firstOrNull
           : journal.find(sessionId);
       if (session == null) {
         throw const JournalException('NOTHING_TO_ROLL_BACK',
             'There is no applied migration session to roll back.');
       }
-      if (session.status != SessionStatus.applied) {
-        throw JournalException('SESSION_NOT_APPLIED',
-            'Session ${session.id} is ${session.status.name}; only applied sessions can be rolled back.');
+      if (!restorable(session)) {
+        throw JournalException(
+            'SESSION_NOT_APPLIED',
+            'Session ${session.id} is ${session.status.name}; only applied '
+                'or interrupted sessions can be rolled back.');
       }
 
-      final written = session.files.where((f) => f.written).toList();
+      // A session still marked as applying was interrupted (for example the
+      // process was killed). A file may have been replaced after the journal
+      // last recorded it, so written files are recognized by their content.
+      final interrupted = session.status == SessionStatus.applying;
+      final conflicts = <String>{};
+      final written = <JournalFile>[];
+      for (final file in session.files) {
+        if (file.written) {
+          written.add(file);
+          continue;
+        }
+        if (!interrupted) continue;
+        final current = hashOfFile(_absolute(file.path));
+        if (current == file.afterHash) {
+          written.add(file);
+        } else if (current != file.beforeHash) {
+          conflicts.add(file.path);
+        }
+      }
       final toolChanges = [
         for (final record in session.verifications)
           for (final change in record.toolChanges) (record, change),
@@ -199,7 +234,6 @@ final class MigrationApplier {
       // last recorded means the file was edited in between.
       final expected = <String, String?>{};
       final original = <String, String?>{};
-      final conflicts = <String>{};
       for (final file in written) {
         expected[file.path] = file.afterHash;
         original[file.path] = file.beforeHash;

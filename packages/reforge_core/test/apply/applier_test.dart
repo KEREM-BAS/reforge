@@ -191,6 +191,46 @@ void main() {
     });
   });
 
+  test('an interrupted apply blocks new applies and can be rolled back', () {
+    final original = snapshot(project.path);
+    final plan = planProject(project.path);
+    final applier = MigrationApplier(projectRoot: project.path);
+    final session = applier.apply(plan);
+
+    // Simulate a process killed while applying: the last file was replaced
+    // but not yet recorded, and the one before it was never written.
+    final journal = Journal(project.path);
+    final files = [...session.files];
+    final last = files.last;
+    final skipped = files[files.length - 2];
+    File(p.join(project.path, skipped.path))
+        .writeAsStringSync(original[p.joinAll(skipped.path.split('/'))]!);
+    files[files.length - 1] = JournalFile(
+        path: last.path,
+        beforeHash: last.beforeHash,
+        afterHash: last.afterHash,
+        written: false);
+    files[files.length - 2] = JournalFile(
+        path: skipped.path,
+        beforeHash: skipped.beforeHash,
+        afterHash: skipped.afterHash,
+        written: false);
+    session
+      ..files = files
+      ..status = SessionStatus.applying;
+    journal.save(session);
+
+    expect(
+      () => applier.apply(plan),
+      throwsA(isA<MigrationBlockedException>()
+          .having((e) => e.code, 'code', 'INTERRUPTED_SESSION')),
+    );
+    final rolledBack = applier.rollback();
+    expect(rolledBack.id, session.id);
+    expect(rolledBack.status, SessionStatus.rolledBack);
+    expect(snapshot(project.path), original);
+  });
+
   test('a concurrent run is locked out', () {
     final plan = planProject(project.path);
     final lock = File(p.join(project.path, '.reforge', 'lock'))

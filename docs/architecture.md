@@ -198,6 +198,10 @@ plan is reproducible and has a stable `planId`.
 - `rollback` restores backups only if each file still has the hash Reforge
   wrote; files changed afterwards are reported as conflicts instead of being
   overwritten.
+- A crash during `apply` leaves the session marked `applying`. Because files
+  are replaced before the journal records them, rollback of such a session
+  treats a file as written when its content has the planned hash, and new
+  applies are refused until the interrupted session is rolled back.
 - Changes that tools make while `verify` runs them (Flutter's own project
   migrations during `flutter build`, `pod install`, `pub get`) are part of the
   session: before each toolchain check the project files are snapshotted, and
