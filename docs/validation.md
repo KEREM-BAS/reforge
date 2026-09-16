@@ -138,6 +138,36 @@ reforge verify --check android
   Flutter" (present in run 1) no longer appeared.
 - No project file was changed by the build.
 
+### Run 6: macOS host (Reforge ae8dbd1)
+
+The fixture now has the macOS host of the Flutter 3.3 templates
+(`MACOSX_DEPLOYMENT_TARGET = 10.11` in three configurations, Podfile
+`platform :osx, '10.11'`).
+
+```bash
+reforge apply --to 3.47.4 --accept-all --yes
+flutter pub get && dart fix --apply
+reforge verify --check macos
+reforge rollback
+```
+
+- `MACOS_DEPLOYMENT_TARGET` raised the three build settings and the Podfile
+  platform to 12.0. `flutter build macos --debug` succeeded in 16 s.
+- The Flutter tool changed four project files during the build, all reported
+  and backed up: `.gitignore` (`.build/`, `.swiftpm/`), `project.pbxproj`
+  (`objectVersion` 51 to 54, `LastUpgradeCheck`, `alwaysOutOfDate` on a script
+  phase), `Runner.xcscheme` (`LastUpgradeVersion`, `enableGPUValidationMode`)
+  and `AppDelegate.swift` (`@NSApplicationMain` to `@main`,
+  `applicationSupportsSecureRestorableState`). It did not touch the deployment
+  target.
+- `reforge rollback` restored the migration and the tool changes; only
+  `lib/main.dart` (`dart fix`), `pubspec.lock` and
+  `macos/Flutter/GeneratedPluginRegistrant.swift` (`pub get`) remained.
+
+The same run with `--to 3.44.0`, the installed SDK, set 10.15, the value the
+3.44 tool's `MacOSDeploymentTargetMigration` writes; the build succeeded in
+10 s and again left the deployment target unchanged.
+
 ### Caveat
 
 The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The
