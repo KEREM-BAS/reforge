@@ -3,7 +3,14 @@ description: >-
   Flutter upgrade infrastructure. Inspect a Flutter project, plan a migration
   to a target Flutter release, apply it safely and verify the result.
 version: 0.1.0-dev
-publish_to: none
+repository: https://github.com/KEREM-BAS/reforge/tree/main/packages/reforge
+issue_tracker: https://github.com/KEREM-BAS/reforge/issues
+topics:
+  - flutter
+  - migration
+  - cli
+  - gradle
+  - upgrade
 resolution: workspace
 
 environment:
@@ -14,8 +21,8 @@ executables:
 dependencies:
   args: ^2.7.0
   path: ^1.9.1
-  reforge_core:
-    path: ../reforge_core
+  # Released together with this package, at the same version.
+  reforge_core: ^0.1.0-dev
 dev_dependencies:
   lints: ^6.1.0
   test: ^1.32.0

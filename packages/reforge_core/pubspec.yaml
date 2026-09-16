@@ -3,7 +3,14 @@ description: >-
   The Reforge engine: Flutter project inspection, compatibility knowledge,
   migration planning, transactional mutation and verification.
 version: 0.1.0-dev
-publish_to: none
+repository: https://github.com/KEREM-BAS/reforge/tree/main/packages/reforge_core
+issue_tracker: https://github.com/KEREM-BAS/reforge/issues
+topics:
+  - flutter
+  - migration
+  - gradle
+  - android
+  - ios
 resolution: workspace
 
 environment:

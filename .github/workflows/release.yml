@@ -23,17 +23,29 @@ jobs:
 
       - run: dart pub get
 
-      - name: Check the tag against the Reforge version and the changelog
+      - name: Check the tag against the versions, changelogs and licenses
         run: |
           version=$(dart run packages/reforge/bin/reforge.dart --version | awk '{print $2}')
-          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match Reforge $version (reforgeVersion in packages/reforge_core/lib/reforge_core.dart)."
-            exit 1
-          fi
-          if ! grep -qx "## $version" CHANGELOG.md; then
-            echo "::error::CHANGELOG.md has no '## $version' section."
-            exit 1
-          fi
+          fail() { echo "::error::$1"; exit 1; }
+          [ "v$version" = "$GITHUB_REF_NAME" ] ||
+            fail "Tag $GITHUB_REF_NAME does not match Reforge $version (reforgeVersion in packages/reforge_core/lib/reforge_core.dart)."
+          for package in reforge reforge_core; do
+            grep -qx "version: $version" "packages/$package/pubspec.yaml" ||
+              fail "packages/$package/pubspec.yaml is not at version $version."
+            grep -qx "## $version" "packages/$package/CHANGELOG.md" ||
+              fail "packages/$package/CHANGELOG.md has no '## $version' section."
+            cmp -s LICENSE "packages/$package/LICENSE" ||
+              fail "packages/$package/LICENSE differs from LICENSE."
+          done
+          grep -qx "  reforge_core: ^$version" packages/reforge/pubspec.yaml ||
+            fail "packages/reforge/pubspec.yaml must depend on reforge_core: ^$version."
+          grep -qx "## $version" CHANGELOG.md ||
+            fail "CHANGELOG.md has no '## $version' section."
+
+      - name: Validate the packages for pub.dev
+        run: |
+          (cd packages/reforge_core && dart pub publish --dry-run)
+          (cd packages/reforge && dart pub publish --dry-run)
 
   build:
     needs: check
@@ -72,6 +84,33 @@ jobs:
           name: ${{ matrix.asset }}
           path: ${{ matrix.asset }}
           if-no-files-found: error
+
+  # Publishing to pub.dev from GitHub Actions must be enabled on pub.dev for
+  # both packages first, and the repository variable PUB_AUTOMATED_PUBLISHING
+  # set to true. See docs/releasing.md.
+  pub:
+    needs: build
+    if: vars.PUB_AUTOMATED_PUBLISHING == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - run: dart pub get
+
+      - name: Publish reforge_core
+        run: dart pub publish --force
+        working-directory: packages/reforge_core
+
+      - name: Publish reforge
+        run: dart pub publish --force
+        working-directory: packages/reforge
 
   publish:
     needs: build

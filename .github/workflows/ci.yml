@@ -25,4 +25,9 @@ jobs:
         working-directory: packages/reforge_core
       - run: dart test
         working-directory: packages/reforge
+      - name: Validate the packages for pub.dev
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          (cd packages/reforge_core && dart pub publish --dry-run)
+          (cd packages/reforge && dart pub publish --dry-run)
       - run: dart compile exe packages/reforge/bin/reforge.dart -o reforge-${{ matrix.os }}

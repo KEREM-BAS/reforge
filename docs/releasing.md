@@ -3,13 +3,19 @@
 ## Versions
 
 Reforge uses semantic versioning; before 1.0, any minor version may break
-compatibility. The version is written in three places, which must agree:
+compatibility. Both packages, `reforge_core` (the engine) and `reforge` (the
+command-line tool), are released together at the same version, which is
+written in:
 
 - `version` in `packages/reforge/pubspec.yaml` and
   `packages/reforge_core/pubspec.yaml`;
+- the `reforge_core: ^<version>` dependency in `packages/reforge/pubspec.yaml`;
 - `reforgeVersion` in `packages/reforge_core/lib/reforge_core.dart`.
 
-`CHANGELOG.md` needs a `## <version>` section. It becomes the release notes.
+`CHANGELOG.md` needs a `## <version>` section, which becomes the GitHub
+release notes, and each package's `CHANGELOG.md` a `## <version>` section for
+pub.dev. Each package carries a copy of `LICENSE`. The release workflow checks
+all of this.
 
 ## Publishing a release
 
@@ -41,6 +47,38 @@ the tag to the fixed commit:
 git tag --force v0.1.0-dev
 git push --force origin v0.1.0-dev
 ```
+
+## Publishing to pub.dev
+
+Package versions on pub.dev are permanent: they cannot be deleted, only
+retracted within seven days. Publish from a clean checkout of the tagged
+commit, `reforge_core` first, since `reforge` depends on it:
+
+```bash
+cd packages/reforge_core
+dart pub publish --dry-run
+dart pub publish
+cd ../reforge
+dart pub publish --dry-run
+dart pub publish
+```
+
+Always run `dart pub publish` inside `packages/reforge_core` and
+`packages/reforge`. At the repository root it tries to publish the development
+workspace, which is not a package.
+
+After the first version, releases can publish to pub.dev automatically when
+the tag is pushed:
+
+1. On pub.dev, open **Admin → Automated publishing** of each package, enable
+   publishing from GitHub Actions for the repository `KEREM-BAS/reforge`, and
+   set the tag pattern to `v{{version}}`.
+2. In the GitHub repository, add the variable `PUB_AUTOMATED_PUBLISHING` with
+   the value `true` (**Settings → Secrets and variables → Actions →
+   Variables**).
+
+The `pub` job of the release workflow then publishes `reforge_core` and
+`reforge` after the executables are built.
 
 ## Keeping the knowledge base current
 

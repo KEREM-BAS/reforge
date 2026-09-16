@@ -116,7 +116,13 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 
 ## Getting started
 
-Download the executable for your platform from the
+Install with Dart 3.6 or newer:
+
+```bash
+dart pub global activate reforge 0.1.0-dev
+```
+
+Or download the executable for your platform from the
 [releases page](https://github.com/KEREM-BAS/reforge/releases): Linux (x64),
 macOS (Apple silicon) or Windows (x64). Compare it with `SHA256SUMS`, then make
 it executable:
@@ -128,7 +134,7 @@ xattr -d com.apple.quarantine reforge-macos-arm64
 ./reforge-macos-arm64 --version
 ```
 
-Or build it from source with Dart 3.6 or newer:
+Or build it from source:
 
 ```bash
 git clone https://github.com/KEREM-BAS/reforge.git
