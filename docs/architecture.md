@@ -49,7 +49,7 @@ Workspace (single project, pub workspace or Melos)
     │   ├── AndroidAppModule   namespace, applicationId, SDK levels (and flavor
     │   │                      minSdk), plugin application style
     │   └── manifests
-    └── IosProject?
+    └── DarwinProject? (ios, macos)
         ├── Podfile            platform, customizations
         ├── XcodeProject       build configurations, deployment targets
         └── dependency manager (CocoaPods / Swift Package Manager / both / none)

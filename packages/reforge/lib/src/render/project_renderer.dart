@@ -153,12 +153,12 @@ void _renderAndroid(
   }
 }
 
-void _renderIos(Terminal t, IosProject ios) {
+void _renderIos(Terminal t, DarwinProject ios) {
   final manager = switch (ios.dependencyManager) {
-    IosDependencyManager.cocoapods => 'CocoaPods',
-    IosDependencyManager.swiftPackageManager => 'Swift Package Manager',
-    IosDependencyManager.both => 'CocoaPods and Swift Package Manager',
-    IosDependencyManager.none => 'no dependency manager configured',
+    DarwinDependencyManager.cocoapods => 'CocoaPods',
+    DarwinDependencyManager.swiftPackageManager => 'Swift Package Manager',
+    DarwinDependencyManager.both => 'CocoaPods and Swift Package Manager',
+    DarwinDependencyManager.none => 'no dependency manager configured',
   };
   t.line();
   t.line('  ${t.bold('iOS')}  ${t.dim(manager)}');

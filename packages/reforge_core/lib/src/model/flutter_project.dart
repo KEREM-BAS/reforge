@@ -5,8 +5,8 @@ import '../common/source.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
 import 'android_project.dart';
+import 'darwin_project.dart';
 import 'declarations.dart';
-import 'ios_project.dart';
 
 enum FlutterProjectKind { app, plugin, module, package, dartPackage }
 
@@ -66,6 +66,7 @@ final class FlutterProject {
     this.flutterVersionObservations = const [],
     this.android,
     this.ios,
+    this.macos,
     this.otherPlatforms = const [],
     this.problems = const [],
   });
@@ -81,7 +82,10 @@ final class FlutterProject {
   final FlutterProjectMetadata? metadata;
   final List<FlutterVersionObservation> flutterVersionObservations;
   final AndroidProject? android;
-  final IosProject? ios;
+  final DarwinProject? ios;
+
+  /// The macOS host project (`macos/`), when the app targets macOS.
+  final DarwinProject? macos;
 
   /// Other platform directories present (`macos`, `web`, `linux`, `windows`).
   final List<String> otherPlatforms;
@@ -138,6 +142,7 @@ final class FlutterProject {
         },
         'android': android?.toJson(),
         'ios': ios?.toJson(),
+        'macos': macos?.toJson(),
         'otherPlatforms': otherPlatforms,
         'problems': [for (final p in problems) p.toJson()],
       };

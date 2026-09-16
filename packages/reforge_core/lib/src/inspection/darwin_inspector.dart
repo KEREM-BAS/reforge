@@ -2,21 +2,24 @@ import 'package:xml/xml_events.dart';
 
 import '../common/source.dart';
 import '../fs/project_file_system.dart';
+import '../model/darwin_project.dart';
 import '../model/declarations.dart';
-import '../model/ios_project.dart';
 import '../parsing/parse_diagnostic.dart';
 import '../parsing/ruby/podfile.dart';
 import '../parsing/xcode/pbxproj.dart';
 import '../version/tool_version.dart';
 
-/// Builds an [IosProject] model from `ios/`.
-final class IosInspector {
-  IosInspector(this.files);
+/// Builds a [DarwinProject] model from `ios/` or `macos/`.
+final class DarwinInspector {
+  DarwinInspector(this.files, this.platform);
 
   final ProjectFileSystem files;
+  final DarwinPlatform platform;
 
-  IosProject? inspect(String projectPath) {
-    final directory = projectPath.isEmpty ? 'ios' : '$projectPath/ios';
+  DarwinProject? inspect(String projectPath) {
+    final directory = projectPath.isEmpty
+        ? platform.directory
+        : '$projectPath/${platform.directory}';
     if (!files.directoryExists(directory)) return null;
     final problems = <ParseProblem>[];
 
@@ -50,7 +53,8 @@ final class IosInspector {
         void collect(String owner, bool application,
             List<XcodeBuildConfiguration> configurations) {
           for (final configuration in configurations) {
-            final setting = configuration.setting('IPHONEOS_DEPLOYMENT_TARGET');
+            final setting =
+                configuration.setting(platform.deploymentTargetSetting);
             if (setting == null) continue;
             deploymentTargets.add(DeploymentTargetSetting(
               owner: owner,
@@ -77,10 +81,10 @@ final class IosInspector {
 
     final usesSwiftPackages = xcodeProject?.usesFlutterSwiftPackage ?? false;
     final manager = switch ((podfile != null, usesSwiftPackages)) {
-      (true, true) => IosDependencyManager.both,
-      (true, false) => IosDependencyManager.cocoapods,
-      (false, true) => IosDependencyManager.swiftPackageManager,
-      (false, false) => IosDependencyManager.none,
+      (true, true) => DarwinDependencyManager.both,
+      (true, false) => DarwinDependencyManager.cocoapods,
+      (false, true) => DarwinDependencyManager.swiftPackageManager,
+      (false, false) => DarwinDependencyManager.none,
     };
 
     String? language;
@@ -90,7 +94,8 @@ final class IosInspector {
       language = 'objc';
     }
 
-    return IosProject(
+    return DarwinProject(
+      platform: platform,
       directory: directory,
       podfile: podfile,
       xcodeProject: xcodeProject,
@@ -98,8 +103,10 @@ final class IosInspector {
       hasWorkspace: files.directoryExists('$directory/Runner.xcworkspace'),
       dependencyManager: manager,
       deploymentTargets: deploymentTargets,
-      appFrameworkMinimumOsVersion: _appFrameworkMinimumOsVersion(
-          '$directory/Flutter/AppFrameworkInfo.plist', problems),
+      appFrameworkMinimumOsVersion: platform == DarwinPlatform.ios
+          ? _appFrameworkMinimumOsVersion(
+              '$directory/Flutter/AppFrameworkInfo.plist', problems)
+          : null,
       appDelegateLanguage: language,
       problems: problems,
     );

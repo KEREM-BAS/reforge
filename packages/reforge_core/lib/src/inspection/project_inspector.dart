@@ -7,13 +7,14 @@ import '../common/errors.dart';
 import '../common/source.dart';
 import '../fs/project_file_system.dart';
 import '../knowledge/knowledge_base.dart';
+import '../model/darwin_project.dart';
 import '../model/declarations.dart';
 import '../model/flutter_project.dart';
 import '../parsing/parse_diagnostic.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
 import 'android_inspector.dart';
-import 'ios_inspector.dart';
+import 'darwin_inspector.dart';
 
 /// Builds the typed model of a workspace and its Flutter projects.
 ///
@@ -23,12 +24,14 @@ final class ProjectInspector {
   ProjectInspector(this.files, {KnowledgeBase? knowledge})
       : knowledge = knowledge ?? KnowledgeBase.bundled,
         _android = AndroidInspector(files),
-        _ios = IosInspector(files);
+        _ios = DarwinInspector(files, DarwinPlatform.ios),
+        _macos = DarwinInspector(files, DarwinPlatform.macos);
 
   final ProjectFileSystem files;
   final KnowledgeBase knowledge;
   final AndroidInspector _android;
-  final IosInspector _ios;
+  final DarwinInspector _ios;
+  final DarwinInspector _macos;
 
   /// Inspects the workspace rooted at the file system root.
   ///
@@ -159,8 +162,10 @@ final class ProjectInspector {
 
     final android = _android.inspect(projectPath);
     final ios = _ios.inspect(projectPath);
+    final macos = _macos.inspect(projectPath);
     if (android != null) problems.addAll(android.problems);
     if (ios != null) problems.addAll(ios.problems);
+    if (macos != null) problems.addAll(macos.problems);
 
     return FlutterProject(
       path: projectPath,
@@ -174,6 +179,7 @@ final class ProjectInspector {
           projectPath, packageConfig, pluginRegistry, metadata, problems),
       android: android,
       ios: ios,
+      macos: macos,
       otherPlatforms: [
         for (final platform in const ['macos', 'web', 'linux', 'windows'])
           if (files.directoryExists(_join(projectPath, platform))) platform,

@@ -6,9 +6,44 @@ import '../parsing/xcode/pbxproj.dart';
 import '../version/tool_version.dart';
 import 'declarations.dart';
 
-enum IosDependencyManager { cocoapods, swiftPackageManager, both, none }
+enum DarwinDependencyManager { cocoapods, swiftPackageManager, both, none }
 
-/// An `IPHONEOS_DEPLOYMENT_TARGET` build setting.
+/// The Apple platforms a Flutter app can target.
+enum DarwinPlatform {
+  ios(
+    displayName: 'iOS',
+    directory: 'ios',
+    deploymentTargetSetting: 'IPHONEOS_DEPLOYMENT_TARGET',
+    podfilePlatform: 'ios',
+  ),
+  macos(
+    displayName: 'macOS',
+    directory: 'macos',
+    deploymentTargetSetting: 'MACOSX_DEPLOYMENT_TARGET',
+    podfilePlatform: 'osx',
+  );
+
+  const DarwinPlatform({
+    required this.displayName,
+    required this.directory,
+    required this.deploymentTargetSetting,
+    required this.podfilePlatform,
+  });
+
+  final String displayName;
+
+  /// The host project directory, `ios` or `macos`.
+  final String directory;
+
+  /// The Xcode build setting holding the deployment target.
+  final String deploymentTargetSetting;
+
+  /// The CocoaPods platform name (`platform :osx, '12.0'`).
+  final String podfilePlatform;
+}
+
+/// A deployment target build setting (`IPHONEOS_DEPLOYMENT_TARGET` or
+/// `MACOSX_DEPLOYMENT_TARGET`).
 @immutable
 final class DeploymentTargetSetting {
   const DeploymentTargetSetting({
@@ -44,10 +79,11 @@ final class DeploymentTargetSetting {
       };
 }
 
-/// The iOS host project of a Flutter app (`ios/`).
+/// The iOS (`ios/`) or macOS (`macos/`) host project of a Flutter app.
 @immutable
-final class IosProject {
-  const IosProject({
+final class DarwinProject {
+  const DarwinProject({
+    required this.platform,
     required this.directory,
     required this.dependencyManager,
     this.podfile,
@@ -60,15 +96,16 @@ final class IosProject {
     this.problems = const [],
   });
 
+  final DarwinPlatform platform;
   final String directory;
   final Podfile? podfile;
   final XcodeProject? xcodeProject;
   final bool hasPodfileLock;
   final bool hasWorkspace;
-  final IosDependencyManager dependencyManager;
+  final DarwinDependencyManager dependencyManager;
   final List<DeploymentTargetSetting> deploymentTargets;
 
-  /// `MinimumOSVersion` in `ios/Flutter/AppFrameworkInfo.plist` (older
+  /// `MinimumOSVersion` in `ios/Flutter/AppFrameworkInfo.plist` (iOS, older
   /// templates only).
   final String? appFrameworkMinimumOsVersion;
 

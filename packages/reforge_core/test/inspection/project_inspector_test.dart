@@ -3,9 +3,9 @@ import 'package:reforge_core/src/common/errors.dart';
 import 'package:reforge_core/src/fs/project_file_system.dart';
 import 'package:reforge_core/src/inspection/project_inspector.dart';
 import 'package:reforge_core/src/model/android_project.dart';
+import 'package:reforge_core/src/model/darwin_project.dart';
 import 'package:reforge_core/src/model/declarations.dart';
 import 'package:reforge_core/src/model/flutter_project.dart';
-import 'package:reforge_core/src/model/ios_project.dart';
 import 'package:reforge_core/src/version/tool_version.dart';
 import 'package:test/test.dart';
 
@@ -76,7 +76,7 @@ void main() {
 
     test('iOS project', () {
       final ios = project.ios!;
-      expect(ios.dependencyManager, IosDependencyManager.cocoapods);
+      expect(ios.dependencyManager, DarwinDependencyManager.cocoapods);
       expect(ios.effectiveDeploymentTarget, ToolVersion.parse('11.0'));
       expect(ios.deploymentTargets.map((d) => d.owner).toSet(), {'project'});
       expect(ios.podfile!.commentedPlatform!.version, '11.0');

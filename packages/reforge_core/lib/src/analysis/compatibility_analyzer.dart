@@ -6,11 +6,11 @@ import '../knowledge/flutter_release.dart';
 import '../knowledge/knowledge_base.dart';
 import '../migration/recipe_ids.dart';
 import '../model/android_project.dart';
+import '../model/darwin_project.dart';
 import '../model/declarations.dart';
 import '../model/dependencies.dart';
 import '../model/finding.dart';
 import '../model/flutter_project.dart';
-import '../model/ios_project.dart';
 import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/sdk_constraint.dart';
@@ -618,7 +618,7 @@ final class CompatibilityAnalyzer {
     // Pods that need a newer iOS than the platform CocoaPods resolves for.
     final ios = project.ios;
     if (ios != null &&
-        ios.dependencyManager != IosDependencyManager.swiftPackageManager) {
+        ios.dependencyManager != DarwinDependencyManager.swiftPackageManager) {
       final platform = ios.podfile?.platform;
       final platformVersion =
           platform != null && platform.name == 'ios' && platform.version != null
