@@ -107,6 +107,11 @@ machines (September 2026) all 1,527 Groovy and 190 Kotlin DSL Gradle scripts,
 410 Podfiles and 318 podspecs found this way were read reliably; keep it that
 way, or add the file's construct to a parser test.
 
+## Releasing
+
+Versions, tags and the weekly knowledge updates are described in
+[docs/releasing.md](docs/releasing.md).
+
 ## Security
 
 - Inspection and planning only read files and never execute project code.

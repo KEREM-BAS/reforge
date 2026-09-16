@@ -45,9 +45,10 @@ Summary
   ✓ Complete: applying this plan resolves every known blocker for Flutter 3.47.4.
 ```
 
-> Status: early development. The engine, seventeen migration recipes and the CLI
-> work end to end on the fixture projects in this repository. Expect breaking
-> changes before 1.0.
+> Status: 0.1.0-dev, early development. The engine, seventeen migration recipes
+> and the CLI work end to end on the fixture projects in this repository and
+> were validated with real builds ([docs/validation.md](docs/validation.md)).
+> Expect breaking changes before 1.0.
 
 ## Why
 
@@ -82,7 +83,7 @@ a time. Reforge computes the whole chain up front, from facts:
 | `reforge env` | The local toolchain: Flutter, the JDK Flutter will use, Xcode, CocoaPods, Git. |
 | `reforge plan --to <version>` | The migration plan. Never changes files. `--diff`, `--out plan.json`, `--fail-on incomplete`. |
 | `reforge apply --to <version>` | Applies the plan transactionally and verifies it statically. |
-| `reforge verify` | Static checks, `pub get`, `analyze`, Android and iOS builds, recorded in the journal. |
+| `reforge verify` | Static checks, `pub get`, `analyze`, Android, iOS and macOS builds, recorded in the journal. |
 | `reforge recipes`, `reforge explain <RECIPE_ID>` | Lists the recipes and shows their documentation offline. |
 | `reforge diagnose [--log build.log]` | Explains a failing build and confirms the cause from the project, its plugins and the environment. |
 | `reforge rollback [session]` | Restores the files of a migration session, including changes tools made during `verify`. |
@@ -115,20 +116,47 @@ Exit codes are documented in [docs/cli.md](docs/cli.md).
 
 ## Getting started
 
-Reforge is a Dart workspace. With Dart 3.6 or newer:
+Download the executable for your platform from the
+[releases page](https://github.com/KEREM-BAS/reforge/releases): Linux (x64),
+macOS (Apple silicon) or Windows (x64). Compare it with `SHA256SUMS`, then make
+it executable:
 
 ```bash
-git clone https://github.com/<owner>/reforge.git
+chmod +x reforge-macos-arm64
+# macOS only, when the file was downloaded with a browser:
+xattr -d com.apple.quarantine reforge-macos-arm64
+./reforge-macos-arm64 --version
+```
+
+Or build it from source with Dart 3.6 or newer:
+
+```bash
+git clone https://github.com/KEREM-BAS/reforge.git
 cd reforge
 dart pub get
-dart run packages/reforge/bin/reforge.dart --project path/to/flutter_app inspect
+dart compile exe packages/reforge/bin/reforge.dart -o reforge
+./reforge --version
 ```
 
-Build a native executable:
+Then, in a Flutter project (or with `-C path/to/flutter_app` from anywhere):
 
 ```bash
-dart compile exe packages/reforge/bin/reforge.dart -o reforge
+reforge inspect
+reforge plan --to stable
 ```
+
+`inspect` and `plan` only read files. Apply a plan on a clean Git branch, run
+`reforge verify` to build the result, and `reforge rollback` to undo it.
+
+## Staying current
+
+Each Reforge release contains its knowledge about Flutter releases (the date
+is in `reforge --version`), so a newer Flutter release needs a newer Reforge.
+Reforge says so when it matters: `plan --to stable` names the release it
+resolved to and warns when the knowledge base is more than 90 days old, and a
+Flutter on PATH or pinned by the project that is newer than the knowledge base
+is reported as `REFORGE_KNOWLEDGE_OUTDATED`. The knowledge is refreshed weekly
+when Flutter publishes a stable release ([docs/releasing.md](docs/releasing.md)).
 
 ## Repository layout
 
@@ -138,7 +166,7 @@ dart compile exe packages/reforge/bin/reforge.dart -o reforge
 | `packages/reforge` | The CLI. |
 | `fixtures/projects` | Fixture Flutter projects from different template eras. |
 | `fixtures/migrations` | Golden migration cases: expected plans and resulting files. |
-| `docs/` | [Architecture](docs/architecture.md), [CLI](docs/cli.md), [knowledge base](docs/knowledge-base.md), [recipes](docs/recipes/). |
+| `docs/` | [Architecture](docs/architecture.md), [CLI](docs/cli.md), [knowledge base](docs/knowledge-base.md), [recipes](docs/recipes/), [validation](docs/validation.md), [releasing](docs/releasing.md). |
 
 ## Development
 
@@ -151,3 +179,7 @@ dart analyze
 Golden migration expectations are regenerated with
 `UPDATE_GOLDENS=1 dart test test/migration/golden_migration_test.dart`; review
 the resulting diff like any code change. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+BSD 3-Clause; see [LICENSE](LICENSE).
