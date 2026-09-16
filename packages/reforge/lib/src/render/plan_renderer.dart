@@ -151,6 +151,16 @@ void renderPlan(Terminal t, MigrationPlan plan,
           '    ${plan.unanalyzedFiles.length} file(s) could not be analyzed.');
     }
   }
+  final unchecked = plan.remainingFindings
+      .where((f) =>
+          f.code == 'DEPENDENCIES_NOT_RESOLVED' ||
+          f.code == 'DEPENDENCY_FILES_UNAVAILABLE')
+      .toList();
+  if (unchecked.isNotEmpty) {
+    t.line(
+        '  ${t.yellow(t.warn)} ${unchecked.first.code == 'DEPENDENCIES_NOT_RESOLVED' ? 'Plugins and packages were not checked' : 'Some packages were not checked'}: '
+        'run `flutter pub get`, then plan again.');
+  }
   t.line(t.dim('  Plan id ${plan.id}'));
 }
 

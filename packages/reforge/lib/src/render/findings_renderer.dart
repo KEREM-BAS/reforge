@@ -15,9 +15,18 @@ void renderFindings(Terminal t, List<Finding> findings,
   final warnings = findings.where((f) => f.severity == Severity.warning).length;
   t.heading('Findings ${t.dim('$errors errors ${t.dot} $warnings warnings'
       '${hidden > 0 ? ' ${t.dot} $hidden info (use --verbose)' : ''}')}');
+  final unresolved = findings.any((f) => f.code == 'DEPENDENCIES_NOT_RESOLVED');
   if (visible.isEmpty) {
     t.line('  ${t.green(t.ok)} No problems found.');
+    if (unresolved) {
+      t.line('  ${t.yellow(t.warn)} Plugins and packages were not checked: run '
+          '`flutter pub get` first.');
+    }
     return;
+  }
+  if (unresolved && !verbose) {
+    t.line('  ${t.yellow(t.warn)} Plugins and packages were not checked: run '
+        '`flutter pub get` first.');
   }
   for (final finding in visible) {
     renderFinding(t, finding, verbose: verbose);

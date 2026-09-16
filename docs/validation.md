@@ -118,7 +118,7 @@ Follow-up: files that Flutter's app templates ignore (`gradlew`,
 `gradle-wrapper.jar`, `Flutter.podspec`, ...) are no longer reported as tool
 changes, and signing secrets are never read.
 
-### Run 5: every recommended step, Android Gradle Plugin 9 (Reforge 7ee46fb + ANDROID_APP_KOTLIN_PLUGIN)
+### Run 5: every recommended step, Android Gradle Plugin 9 (Reforge 3f6c06c)
 
 ```bash
 reforge apply --to 3.47.4 --accept-all --include-recommended --yes
@@ -144,3 +144,31 @@ The builds ran with Flutter 3.44.0 because 3.47.4 was not installed. The
 Android migrations of the 3.44 and 3.47 tools are the same list
 (`FlutterRelease.androidMigrations`), and `reforge verify` marks such results
 as not being evidence for the target.
+
+## 2026-09-16: parsers and dependency facts against real files
+
+`tool/check_parsers.dart` over the local pub cache and a Flutter checkout
+(apps, templates, integration tests): 1,527 Groovy and 190 Kotlin DSL Gradle
+scripts, 410 Podfiles and 318 podspecs, all read reliably (Reforge bd5c2e7).
+`reforge plan --to 3.47.4` over the 39 Flutter projects in the Flutter
+checkout produced no internal error.
+
+The dependency inspector over the 259 plugins in the pub cache, compared with
+a text search:
+
+- namespace: the text search missed `namespace("...")` calls inside
+  `if (project.android.hasProperty("namespace"))`; Reforge was right;
+- Kotlin plugin: `firebase_core` 4.14.0, `file_picker` 11.0.2 and others apply
+  it only inside `if (agpMajor < 9 || !builtInKotlin)`. Reforge had reported
+  them as not applying it; they are now reported as applying it conditionally
+  (they support built-in Kotlin), and only the 67 plugins that always apply
+  it are flagged (f02cd57);
+- podspecs: a newline after a hash literal (`s.license = { ... }`) did not
+  end the Ruby statement, hiding the `s.ios.deployment_target` of
+  `flutter_local_notifications` and `flutter_image_compress_common`. Fixed
+  (f02cd57); 185 of 186 podspecs now yield their iOS minimum, and the
+  remaining one declares none;
+- v1 embedding: the five flagged plugin versions (`awesome_notifications`
+  0.9.3+1, `device_info` 2.0.3, `flutter_inappwebview` 5.8.0,
+  `flutter_native_image` 0.0.6+1, `uni_links` 0.5.1) all really use
+  `PluginRegistry.Registrar`.
