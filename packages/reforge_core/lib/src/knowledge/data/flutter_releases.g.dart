@@ -10,6 +10,52 @@ import 'flutter_release_record.dart';
 /// Date the knowledge below was generated.
 const flutterKnowledgeGeneratedOn = '2026-09-16';
 
+/// Stable Flutter releases before the ones described below, ascending,
+/// for identifying the SDK that created or last built a project.
+const olderFlutterRevisions = <FlutterRevisionRecord>[
+  FlutterRevisionRecord('1.17.0', 'e6b34c2b5c96bb95325269a29a84e83ed8909b5f'),
+  FlutterRevisionRecord('1.17.1', 'f7a6a7906be96d2288f5d63a5a54c515a6e987fe'),
+  FlutterRevisionRecord('1.17.2', '5f21edf8b66e31a39133177319414395cc5b5f48'),
+  FlutterRevisionRecord('1.17.3', 'b041144f833e05cf463b8887fa12efdec9493488'),
+  FlutterRevisionRecord('1.17.4', '1ad9baa8b99a2897c20f9e6e54d3b9b359ade314'),
+  FlutterRevisionRecord('1.17.5', '8af6b2f038c1172e61d418869363a28dffec3cb4'),
+  FlutterRevisionRecord('1.20.0', '840c9205b344a59e48a5926ee2d791cc5640924c'),
+  FlutterRevisionRecord('1.20.1', '2ae34518b87dd891355ed6c6ea8cb68c4d52bb9d'),
+  FlutterRevisionRecord('1.20.2', 'bbfbf1770cca2da7c82e887e4e4af910034800b6'),
+  FlutterRevisionRecord('1.20.3', '216dee60c0cc9449f0b29bcf922974d612263e24'),
+  FlutterRevisionRecord('1.20.4', 'fba99f6cf9a14512e461e3122c8ddfaa25394e89'),
+  FlutterRevisionRecord('1.22.0', 'd408d302e22179d598f467e11da5dd968dbdc9ec'),
+  FlutterRevisionRecord('1.22.1', 'f30b7f4db93ee747cd727df747941a28ead25ff5'),
+  FlutterRevisionRecord('1.22.2', '84f3d28555368a70270e9ac8390a9441df95e752'),
+  FlutterRevisionRecord('1.22.3', '8874f21e79d7ec66d0457c7ab338348e31b17f1d'),
+  FlutterRevisionRecord('1.22.4', '1aafb3a8b9b0c36241c5f5b34ee914770f015818'),
+  FlutterRevisionRecord('1.22.5', '78910062997c3a836feee883712c241a5fd22983'),
+  FlutterRevisionRecord('1.22.6', '9b2d32b605630f28625709ebd9d78ab3016b2bf6'),
+  FlutterRevisionRecord('2.0.0', '60bd88df915880d23877bfc1602e8ddcf4c4dd2a'),
+  FlutterRevisionRecord('2.0.1', 'c5a4b4029c0798f37c4a39b479d7cb75daa7b05c'),
+  FlutterRevisionRecord('2.0.2', '8962f6dc68ec8e2206ac2fa874da4a453856c7d3'),
+  FlutterRevisionRecord('2.0.3', '4d7946a68d26794349189cf21b3f68cc6fe61dcb'),
+  FlutterRevisionRecord('2.0.4', 'b1395592de68cc8ac4522094ae59956dd21a91db'),
+  FlutterRevisionRecord('2.0.5', 'adc687823a831bbebe28bdccfac1a628ca621513'),
+  FlutterRevisionRecord('2.0.6', '1d9032c7e1d867f071f2277eb1673e8f9b0274e3'),
+  FlutterRevisionRecord('2.2.0', 'b22742018b3edf16c6cadd7b76d9db5e7f9064b5'),
+  FlutterRevisionRecord('2.2.1', '02c026b03cd31dd3f867e5faeb7e104cce174c5f'),
+  FlutterRevisionRecord('2.2.2', 'd79295af24c3ed621c33713ecda14ad196fd9c31'),
+  FlutterRevisionRecord('2.2.3', 'f4abaa0735eba4dfd8f33f73363911d63931fe03'),
+  FlutterRevisionRecord('2.5.0', '4cc385b4b84ac2f816d939a49ea1f328c4e0b48e'),
+  FlutterRevisionRecord('2.5.1', 'ffb2ecea5223acdd139a5039be2f9c796962833d'),
+  FlutterRevisionRecord('2.5.2', '3595343e20a61ff16d14e8ecc25f364276bb1b8b'),
+  FlutterRevisionRecord('2.5.3', '18116933e77adc82f80866c928266a5b4f1ed645'),
+  FlutterRevisionRecord('2.8.0', 'cf4400006550b70f28e4b4af815151d1e74846c6'),
+  FlutterRevisionRecord('2.8.1', '77d935af4db863f6abd0b9c31c7e6df2a13de57b'),
+  FlutterRevisionRecord('2.10.0', '5f105a6ca7a5ac7b8bc9b241f4c2d86f4188cf5c'),
+  FlutterRevisionRecord('2.10.1', 'db747aa1331bd95bc9b3874c842261ca2d302cd5'),
+  FlutterRevisionRecord('2.10.2', '097d3313d8e2c7f901932d63e537c1acefb87800'),
+  FlutterRevisionRecord('2.10.3', '7e9793dee1b85a243edd0e06cb1658e98b077561'),
+  FlutterRevisionRecord('2.10.4', 'c860cba910319332564e1e9d470a17074c1f2dfd'),
+  FlutterRevisionRecord('2.10.5', '5464c5bac742001448fe4fc0597be939379f88ea'),
+];
+
 /// Stable Flutter releases, ascending.
 const flutterReleaseRecords = <FlutterReleaseRecord>[
   FlutterReleaseRecord(

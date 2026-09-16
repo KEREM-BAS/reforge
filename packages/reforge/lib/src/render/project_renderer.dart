@@ -30,7 +30,10 @@ void renderProject(Terminal t, ProjectReport report, KnowledgeBase knowledge,
       CurrentFlutterBasis.lastPubGet => 'last pub get',
       CurrentFlutterBasis.created => 'created with; no newer evidence',
     };
-    t.field('Flutter', '${current.release.version} ${t.dim('($basis)')}');
+    t.field(
+        'Flutter',
+        '${current.version} ${t.dim('($basis)')}'
+            '${current.release != null ? '' : t.yellow('  older than the releases Reforge describes')}');
   }
   if (verbose) {
     for (final observation in project.flutterVersionObservations) {

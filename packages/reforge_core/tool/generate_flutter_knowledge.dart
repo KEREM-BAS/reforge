@@ -49,6 +49,8 @@ Future<void> main(List<String> arguments) async {
       jsonDecode(File(args['manifest'] as String).readAsStringSync())
           as Map<String, Object?>;
   final releases = <String, Map<String, Object?>>{};
+  // Releases before --min-version are only identified (version, revision).
+  final older = <String, Map<String, Object?>>{};
   for (final release
       in (manifest['releases']! as List).cast<Map<String, Object?>>()) {
     if (release['channel'] != 'stable') continue;
@@ -59,7 +61,11 @@ Future<void> main(List<String> arguments) async {
     } on FormatException {
       continue;
     }
-    if (parsed < minVersion || parsed.isPreRelease) continue;
+    if (parsed.isPreRelease) continue;
+    if (parsed < minVersion) {
+      older.putIfAbsent(version, () => release);
+      continue;
+    }
     releases.putIfAbsent(version, () => release);
   }
   final versions = releases.keys.map(Version.parse).toList()..sort();
@@ -427,6 +433,19 @@ ${templateProperties.entries.map((e) => '      ${_dartString(e.key)}: ${_dartStr
     ..writeln('/// Date the knowledge below was generated.')
     ..writeln(
         "const flutterKnowledgeGeneratedOn = '${DateTime.now().toUtc().toIso8601String().substring(0, 10)}';")
+    ..writeln()
+    ..writeln('/// Stable Flutter releases before the ones described below, '
+        'ascending,')
+    ..writeln(
+        '/// for identifying the SDK that created or last built a project.')
+    ..writeln('const olderFlutterRevisions = <FlutterRevisionRecord>[')
+    ..writeAll([
+      for (final version in older.keys.map(Version.parse).toList()..sort())
+        "  FlutterRevisionRecord('$version', "
+            "'${older['$version']!['hash']}'),",
+    ], '\n')
+    ..writeln()
+    ..writeln('];')
     ..writeln()
     ..writeln('/// Stable Flutter releases, ascending.')
     ..writeln('const flutterReleaseRecords = <FlutterReleaseRecord>[')

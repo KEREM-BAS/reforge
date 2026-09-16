@@ -211,7 +211,11 @@ Kotlin 1.3.50, `compileSdkVersion 30`, `minSdkVersion 16`, no
 3. With c3c1391 (11 steps: Gradle plugin DSL, wrapper 6.7 to 8.14, AGP 4.1.0
    to 8.11.1, Kotlin 1.3.50 to 2.2.20, compileSdk, minSdk, namespace, Java and
    Kotlin targets, clean task, AGP 9 opt-outs, iOS 15.0),
-   `flutter build apk --debug` succeeded in 15 s.
+   `flutter build apk --debug` succeeded in 15 s, and
+   `flutter build ios --debug --no-codesign` in 15 s. The iOS build changed
+   `project.pbxproj`, `Runner.xcscheme`, `AppDelegate.swift` and `Info.plist`;
+   `reforge rollback` restored them and the 11 migrated files, leaving only
+   `lib/main.dart` (`dart fix`) and `pubspec.lock`.
 
 `jcenter()` stayed in `android/build.gradle` (a recommended step with Gradle
 8.14). Its Gradle 9 errors were checked separately with Gradle 9.1.0 on

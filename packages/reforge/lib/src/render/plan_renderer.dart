@@ -18,7 +18,7 @@ void renderPlan(Terminal t, MigrationPlan plan,
       null => 'unknown',
     };
     t.line(t.dim('${project}current Flutter: '
-        '${current?.release.version ?? 'unknown'} ($basis)'));
+        '${current?.version ?? 'unknown'} ($basis)'));
   }
 
   final projects = plan.steps.map((s) => s.project).toSet().toList();

@@ -45,6 +45,15 @@ final class KnowledgeBase {
   FlutterRelease? releaseByRevision(String revision) =>
       releases.firstWhereOrNull((r) => r.revision == revision);
 
+  /// The stable release built from framework [revision], including releases
+  /// older than those [releases] describes.
+  Version? flutterVersionOfRevision(String revision) =>
+      releaseByRevision(revision)?.version ??
+      olderFlutterRevisions
+          .where((r) => r.revision == revision)
+          .map((r) => Version.parse(r.version))
+          .firstOrNull;
+
   /// Resolves a user-provided Flutter version: `3.47.4`, `3.47` (latest patch
   /// of that line) or `stable` (latest stable release).
   ///

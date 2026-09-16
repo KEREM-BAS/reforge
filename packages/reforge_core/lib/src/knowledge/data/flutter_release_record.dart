@@ -1,3 +1,11 @@
+/// A stable Flutter release known only by its version and framework revision.
+final class FlutterRevisionRecord {
+  const FlutterRevisionRecord(this.version, this.revision);
+
+  final String version;
+  final String revision;
+}
+
 /// Compact, generated representation of a Flutter release's facts.
 ///
 /// Records are produced by `tool/generate_flutter_knowledge.dart` from

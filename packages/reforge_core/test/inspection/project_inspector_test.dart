@@ -1,7 +1,9 @@
 import 'package:pub_semver/pub_semver.dart';
 import 'package:reforge_core/src/common/errors.dart';
 import 'package:reforge_core/src/fs/project_file_system.dart';
+import 'package:reforge_core/src/inspection/current_flutter_version.dart';
 import 'package:reforge_core/src/inspection/project_inspector.dart';
+import 'package:reforge_core/src/knowledge/knowledge_base.dart';
 import 'package:reforge_core/src/model/android_project.dart';
 import 'package:reforge_core/src/model/darwin_project.dart';
 import 'package:reforge_core/src/model/declarations.dart';
@@ -104,6 +106,17 @@ void main() {
       }
       expect(project.otherPlatforms, isEmpty);
     });
+  });
+
+  test('a Flutter 2.2 app is identified without release facts', () {
+    final project = inspectFixture('flutter_2_2_app');
+    expect(project.flutterVersionObservations.single.version, Version(2, 2, 0));
+    final current =
+        resolveCurrentFlutterVersion(project, knowledge: KnowledgeBase.bundled);
+    expect(current!.version, Version(2, 2, 0));
+    expect(current.release, isNull);
+    expect(current.basis, CurrentFlutterBasis.created);
+    expect(current.toJson()['described'], isFalse);
   });
 
   test('Flutter 3.13 transitional template mixes both styles', () {

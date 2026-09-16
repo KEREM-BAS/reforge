@@ -91,6 +91,18 @@ void main() {
       expect(release('3.3.0').iosMinimumDeploymentTarget, v('11.0'));
     });
 
+    test('revisions of releases older than those described', () {
+      expect(
+          kb.flutterVersionOfRevision(
+              'b22742018b3edf16c6cadd7b76d9db5e7f9064b5'),
+          Version(2, 2, 0));
+      expect(kb.flutterVersionOfRevision(release('3.3.0').revision),
+          Version(3, 3, 0));
+      expect(kb.flutterVersionOfRevision('0000'), isNull);
+      expect(kb.releaseByRevision('b22742018b3edf16c6cadd7b76d9db5e7f9064b5'),
+          isNull);
+    });
+
     test('compileSdk required by the Android embedding', () {
       final current = release('3.47.4');
       expect(current.embeddingMinCompileSdk, 34);

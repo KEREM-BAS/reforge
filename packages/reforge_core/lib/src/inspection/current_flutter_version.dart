@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import '../environment/environment.dart';
 import '../knowledge/flutter_release.dart';
@@ -24,20 +25,26 @@ enum CurrentFlutterBasis {
 @immutable
 final class CurrentFlutterVersion {
   const CurrentFlutterVersion({
+    required this.version,
     required this.release,
     required this.basis,
     required this.confidence,
     required this.evidence,
   });
 
-  /// The resolved release, known to the knowledge base.
-  final FlutterRelease release;
+  final Version version;
+
+  /// The facts about [version], or `null` when it is older than the releases
+  /// the knowledge base describes.
+  final FlutterRelease? release;
+
   final CurrentFlutterBasis basis;
   final Confidence confidence;
   final Evidence evidence;
 
   Map<String, Object?> toJson() => {
-        'version': '${release.version}',
+        'version': '$version',
+        'described': release != null,
         'basis': basis.name,
         'confidence': confidence.name,
         'evidence': evidence.toJson(),
@@ -48,8 +55,9 @@ final class CurrentFlutterVersion {
 ///
 /// Pins express the team's intent and win; otherwise the environment's
 /// `flutter`, then the SDK recorded by the last `pub get`, then the SDK that
-/// created the project. Only releases known to the knowledge base are
-/// returned.
+/// created the project. Releases the knowledge base describes are returned
+/// with their facts; older stable releases only by version. Newer or unknown
+/// versions are skipped.
 CurrentFlutterVersion? resolveCurrentFlutterVersion(
   FlutterProject project, {
   Environment? environment,
@@ -62,7 +70,8 @@ CurrentFlutterVersion? resolveCurrentFlutterVersion(
   final pin = project.pinnedFlutterVersion;
   if (pin != null && known(pin.version) != null) {
     return CurrentFlutterVersion(
-      release: known(pin.version)!,
+      version: pin.version!,
+      release: known(pin.version),
       basis: CurrentFlutterBasis.pinned,
       confidence: Confidence.high,
       evidence: Evidence(EvidenceKind.projectFile,
@@ -73,7 +82,8 @@ CurrentFlutterVersion? resolveCurrentFlutterVersion(
   final sdk = environment?.flutter;
   if (sdk?.version != null && known(sdk!.version) != null) {
     return CurrentFlutterVersion(
-      release: known(sdk.version)!,
+      version: sdk.version!,
+      release: known(sdk.version),
       basis: CurrentFlutterBasis.environment,
       confidence: Confidence.high,
       evidence: Evidence(EvidenceKind.environment,
@@ -89,7 +99,8 @@ CurrentFlutterVersion? resolveCurrentFlutterVersion(
         .firstOrNull;
     if (observation != null) {
       return CurrentFlutterVersion(
-        release: known(observation.version)!,
+        version: observation.version!,
+        release: known(observation.version),
         basis: CurrentFlutterBasis.lastPubGet,
         confidence: Confidence.medium,
         evidence: Evidence(
@@ -100,14 +111,16 @@ CurrentFlutterVersion? resolveCurrentFlutterVersion(
       );
     }
   }
+  // .metadata also identifies stable releases older than those described.
   final created = project.flutterVersionObservations
       .where((o) =>
           o.signal == FlutterVersionSignal.metadataRevision &&
-          known(o.version) != null)
+          o.version != null)
       .firstOrNull;
   if (created != null) {
     return CurrentFlutterVersion(
-      release: known(created.version)!,
+      version: created.version!,
+      release: known(created.version),
       basis: CurrentFlutterBasis.created,
       confidence: Confidence.low,
       evidence: Evidence(

@@ -308,7 +308,7 @@ final class ProjectInspector {
         FlutterVersionSignal.metadataRevision,
         revision,
         SourceRef(_join(projectPath, '.metadata')),
-        version: knowledge.releaseByRevision(revision)?.version,
+        version: knowledge.flutterVersionOfRevision(revision),
       ));
     }
     return observations;
