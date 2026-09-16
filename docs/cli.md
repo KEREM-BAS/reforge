@@ -9,7 +9,7 @@ reforge [global options] <command> [command options]
 | Option | Meaning |
 | --- | --- |
 | `-C`, `--project <dir>` | Project or workspace directory (default: current directory). |
-| `--format text\|json` | Output format. |
+| `--format text\|json\|sarif` | Output format. SARIF is available for `inspect`, `plan` and `diagnose`. |
 | `-v`, `--verbose` | Rationale, evidence, skipped recipes and tool output. |
 | `--no-color` | Plain output (also honours `NO_COLOR`). |
 | `--version` | Reforge and knowledge base versions. |
@@ -152,6 +152,32 @@ names the tool when one did; `--force` restores the backups anyway.
 ### `history`
 
 Lists migration sessions, their status and verification results.
+
+## Continuous integration
+
+`plan --fail-on` turns a plan into a gate, and SARIF output lets code scanning
+show steps and findings on the files they concern:
+
+```yaml
+- name: Check the upgrade to Flutter 3.47
+  run: |
+    reforge --format sarif plan --to 3.47 --no-env > reforge.sarif
+    reforge plan --to 3.47 --no-env --fail-on blocked
+- uses: github/codeql-action/upload-sarif@v3
+  if: always()
+  with:
+    sarif_file: reforge.sarif
+    category: reforge
+```
+
+In SARIF results:
+
+- findings keep their severity (`error`, `warning`, `note` for info);
+- plan steps are `error` when a required step is manual or blocked, `warning`
+  when a required review is not accepted, and `note` otherwise;
+- diagnoses are `error`;
+- locations are project files only, relative to the directory Reforge runs in;
+  files of dependencies are named in the message instead.
 
 ## Exit codes
 

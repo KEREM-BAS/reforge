@@ -159,7 +159,16 @@ final class DiagnoseCommand extends ReforgeCommand {
     final failedChecks =
         outputs.where((o) => o.check?.status == CheckStatus.failed).length;
 
-    if (format == OutputFormat.json) {
+    if (format == OutputFormat.sarif) {
+      final sarif = sarifBuilder();
+      for (final report in reports) {
+        for (final diagnosis in report.diagnoses) {
+          sarif.addDiagnosis(diagnosis, output: report.output.label);
+        }
+      }
+      findings.forEach(sarif.addFinding);
+      writeSarif(sarif);
+    } else if (format == OutputFormat.json) {
       writeJson({
         'flutter': release == null ? null : '${release.version}',
         'outputs': [

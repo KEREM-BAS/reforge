@@ -56,7 +56,11 @@ final class InspectCommand extends ReforgeCommand {
     }
 
     final findings = [for (final r in reports) ...r.findings];
-    if (format == OutputFormat.json) {
+    if (format == OutputFormat.sarif) {
+      final sarif = sarifBuilder();
+      findings.forEach(sarif.addFinding);
+      writeSarif(sarif);
+    } else if (format == OutputFormat.json) {
       writeJson({
         'workspace': {
           'root': workspace.rootPath,

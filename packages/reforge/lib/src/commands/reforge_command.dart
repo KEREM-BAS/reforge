@@ -6,9 +6,10 @@ import 'package:path/path.dart' as p;
 import 'package:reforge_core/reforge_core.dart';
 
 import '../cli_context.dart';
+import '../output/sarif.dart';
 import '../output/terminal.dart';
 
-enum OutputFormat { text, json }
+enum OutputFormat { text, json, sarif }
 
 /// Base class of Reforge commands: shared option handling and output.
 abstract class ReforgeCommand extends Command<int> {
@@ -58,6 +59,22 @@ abstract class ReforgeCommand extends Command<int> {
       'command': name,
       'result': result,
     }));
+  }
+
+  /// A SARIF builder whose locations are relative to the working directory.
+  SarifBuilder sarifBuilder() {
+    final relative =
+        p.relative(projectDirectory, from: context.workingDirectory);
+    final prefix = relative == '.' || relative.startsWith('..')
+        ? ''
+        : '${relative.replaceAll(r'\', '/')}/';
+    return SarifBuilder(command: name, pathPrefix: prefix);
+  }
+
+  /// Writes a SARIF log (without the Reforge JSON envelope).
+  void writeSarif(SarifBuilder builder) {
+    context.out
+        .writeln(const JsonEncoder.withIndent('  ').convert(builder.build()));
   }
 
   /// Runs inspection of the selected project directory.

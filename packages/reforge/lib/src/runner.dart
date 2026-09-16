@@ -30,9 +30,10 @@ Future<int> runReforge(List<String> arguments, {CliContext? context}) async {
     )
     ..argParser.addOption(
       'format',
-      allowed: const ['text', 'json'],
+      allowed: const ['text', 'json', 'sarif'],
       defaultsTo: 'text',
-      help: 'Output format. JSON output is stable and versioned.',
+      help: 'Output format. JSON output is stable and versioned. SARIF 2.1.0 '
+          '(inspect, plan, diagnose) is for code scanning.',
     )
     ..argParser
         .addFlag('no-color', negatable: false, help: 'Disable colored output.')
@@ -58,6 +59,18 @@ Future<int> runReforge(List<String> arguments, {CliContext? context}) async {
       ctx.out.writeln('reforge $reforgeVersion '
           '(knowledge base ${ctx.knowledge.version})');
       return ExitCodes.success;
+    }
+    const sarifCommands = {'inspect', 'plan', 'diagnose'};
+    if (parsed['format'] == 'sarif' &&
+        parsed.command != null &&
+        !sarifCommands.contains(parsed.command!.name)) {
+      throw InvalidUsageException(
+        'FORMAT_UNSUPPORTED',
+        '--format sarif is not available for ${parsed.command!.name}.',
+        hints: const [
+          'SARIF output is available for inspect, plan and diagnose.'
+        ],
+      );
     }
     return await runner.runCommand(parsed) ?? ExitCodes.success;
   } on args.UsageException catch (e) {

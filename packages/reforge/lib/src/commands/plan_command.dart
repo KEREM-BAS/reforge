@@ -48,7 +48,12 @@ final class PlanCommand extends ReforgeCommand with PlanningCommand {
       file.writeAsStringSync(
           const JsonEncoder.withIndent('  ').convert(plan.toJson()));
     }
-    if (format == OutputFormat.json) {
+    if (format == OutputFormat.sarif) {
+      final sarif = sarifBuilder();
+      plan.steps.forEach(sarif.addStep);
+      plan.remainingFindings.forEach(sarif.addFinding);
+      writeSarif(sarif);
+    } else if (format == OutputFormat.json) {
       writeJson(plan.toJson());
     } else {
       renderPlan(terminal, plan,
