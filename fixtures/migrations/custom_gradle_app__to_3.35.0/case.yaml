@@ -1,0 +1,4 @@
+project: custom_gradle_app
+target: 3.35.0
+acceptReviews: true
+includeRecommended: false

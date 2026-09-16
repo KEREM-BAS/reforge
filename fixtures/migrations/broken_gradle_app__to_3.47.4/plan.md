@@ -1,0 +1,43 @@
+# Plan to Flutter 3.47.4
+
+complete: false
+
+## ANDROID_GRADLE_WRAPPER (auto, required, applied)
+
+Upgrade the Gradle wrapper from 7.6.3 to 8.14.
+- note: Only the distribution is changed. The wrapper JAR and gradlew scripts keep working; `./gradlew wrapper` can refresh them later.
+- files: android/gradle/wrapper/gradle-wrapper.properties
+
+## ANDROID_AGP_VERSION (review, required, applied)
+
+Upgrade the Android Gradle Plugin from 7.3.0 to 8.11.1.
+- note: This is a major version upgrade (7.3.0 to 8.11.1).
+- note: Android Gradle Plugin 8 requires JDK 17 to run Gradle.
+- note: Android Gradle Plugin 8 no longer generates BuildConfig by default and makes R classes non-transitive by default.
+- files: android/settings.gradle
+
+## ANDROID_KOTLIN_VERSION (review, required, applied)
+
+Upgrade the Kotlin Gradle plugin from 1.7.10 to 2.2.20.
+- note: This is a major version upgrade (1.7.10 to 2.2.20).
+- note: Kotlin 2 compiles with the K2 compiler by default. Kotlin sources in the app module and Kotlin-based plugins should be rebuilt and tested.
+- files: android/settings.gradle
+
+## IOS_DEPLOYMENT_TARGET (auto, required, applied)
+
+Raise the iOS deployment target to 15.0.
+- note: MinimumOSVersion is removed from AppFrameworkInfo.plist, as Flutter 3.47.4 sets it when building App.framework.
+- files: ios/Runner.xcodeproj/project.pbxproj, ios/Flutter/AppFrameworkInfo.plist
+
+## Skipped
+
+- DART_SDK_CONSTRAINT: environment.sdk ">=3.4.0 <4.0.0" allows Dart 3.13.3.
+- ANDROID_FLUTTER_GRADLE_PLUGIN_DSL: Flutter's Gradle plugins are already applied declaratively.
+- ANDROID_NAMESPACE: android/app/build.gradle could not be parsed reliably, so its namespace is unknown (see PROJECT_FILE_UNREADABLE).
+
+## Remaining findings
+
+- warning PROJECT_FILE_UNREADABLE
+- warning ANDROID_AGP_BELOW_FLUTTER_RECOMMENDED
+- warning ANDROID_GRADLE_BELOW_FLUTTER_RECOMMENDED
+- warning ANDROID_KOTLIN_BELOW_FLUTTER_RECOMMENDED

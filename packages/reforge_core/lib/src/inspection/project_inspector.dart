@@ -102,6 +102,23 @@ final class ProjectInspector {
     );
   }
 
+  /// Inspects the single project at the workspace-relative [projectPath].
+  ///
+  /// Throws [InvalidProjectException] when its pubspec cannot be read.
+  FlutterProject inspectProject(String projectPath) {
+    final problems = <ParseProblem>[];
+    final pubspec = _readPubspec(projectPath, problems);
+    if (pubspec == null) {
+      throw InvalidProjectException(
+        'PUBSPEC_INVALID',
+        problems.isEmpty
+            ? 'No pubspec.yaml found in "$projectPath".'
+            : 'pubspec.yaml could not be parsed: ${problems.first.message}',
+      );
+    }
+    return _projectFrom(projectPath, pubspec);
+  }
+
   Pubspec? _readPubspec(String projectPath, List<ParseProblem> problems) {
     final path = _join(projectPath, 'pubspec.yaml');
     try {

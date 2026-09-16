@@ -6,6 +6,8 @@ import '../version/tool_version.dart';
 import 'data/android_toolchain.dart' as android;
 import 'data/flutter_release_record.dart';
 import 'data/flutter_releases.g.dart';
+import 'data/toolchain_release_record.dart';
+import 'data/toolchain_releases.g.dart';
 import 'flutter_release.dart';
 import 'knowledge_source.dart';
 
@@ -136,6 +138,71 @@ final class KnowledgeBase {
     final minimum = android.apiLevelMinimumAgp[apiLevel];
     if (minimum == null) return null;
     return Fact(ToolVersion.parse(minimum), android.apiLevelAgpSource);
+  }
+
+  static const gradleReleasesSource = KnowledgeSource(
+    title: 'Gradle releases and distribution checksums',
+    url: 'https://services.gradle.org/versions/all',
+    retrieved: toolchainReleasesGeneratedOn,
+  );
+
+  static const agpReleasesSource = KnowledgeSource(
+    title: 'Android Gradle Plugin releases (Google Maven)',
+    url:
+        'https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/maven-metadata.xml',
+    retrieved: toolchainReleasesGeneratedOn,
+  );
+
+  static const kotlinReleasesSource = KnowledgeSource(
+    title: 'Kotlin Gradle plugin releases (Maven Central)',
+    url:
+        'https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml',
+    retrieved: toolchainReleasesGeneratedOn,
+  );
+
+  late final List<(ToolVersion, GradleReleaseRecord)> _gradle = [
+    for (final record in gradleReleases)
+      (ToolVersion.parse(record.version), record),
+  ]..sort((a, b) => a.$1.compareTo(b.$1));
+
+  late final List<ToolVersion> _agp =
+      androidGradlePluginReleases.map(ToolVersion.parse).toList()..sort();
+
+  late final List<ToolVersion> _kotlin =
+      kotlinGradlePluginReleases.map(ToolVersion.parse).toList()..sort();
+
+  /// The earliest published stable Gradle release at or above [minimum].
+  Fact<ToolVersion>? earliestGradleRelease(ToolVersion minimum) {
+    for (final (version, _) in _gradle) {
+      if (version >= minimum) return Fact(version, gradleReleasesSource);
+    }
+    return null;
+  }
+
+  /// The published Gradle release equal to [version], with checksums.
+  GradleReleaseRecord? gradleRelease(ToolVersion version) {
+    for (final (known, record) in _gradle) {
+      if (known == version) return record;
+    }
+    return null;
+  }
+
+  /// The earliest published stable Android Gradle Plugin at or above
+  /// [minimum].
+  Fact<ToolVersion>? earliestAgpRelease(ToolVersion minimum) {
+    for (final version in _agp) {
+      if (version >= minimum) return Fact(version, agpReleasesSource);
+    }
+    return null;
+  }
+
+  /// The earliest published stable Kotlin Gradle plugin at or above
+  /// [minimum].
+  Fact<ToolVersion>? earliestKotlinRelease(ToolVersion minimum) {
+    for (final version in _kotlin) {
+      if (version >= minimum) return Fact(version, kotlinReleasesSource);
+    }
+    return null;
   }
 
   /// The documented `plugins {}` id for a buildscript classpath artifact

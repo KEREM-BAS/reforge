@@ -140,6 +140,13 @@ final class FlutterRelease {
   /// The minimum iOS deployment target supported by the release.
   final ToolVersion iosMinimumDeploymentTarget;
 
+  /// The source of versions, revisions, Dart versions and release dates.
+  static const releaseManifestSource = KnowledgeSource(
+    title: 'Flutter release manifest',
+    url:
+        'https://storage.googleapis.com/flutter_infra_release/releases/releases_macos.json',
+  );
+
   /// Where facts about this release come from.
   KnowledgeSource sourceFor(String file) => KnowledgeSource(
         title: 'flutter/flutter $version: $file',

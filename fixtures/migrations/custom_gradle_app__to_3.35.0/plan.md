@@ -1,0 +1,56 @@
+# Plan to Flutter 3.35.0
+
+complete: true
+
+## ANDROID_FLUTTER_GRADLE_PLUGIN_DSL (review, required, applied)
+
+Apply Flutter's Gradle plugins with plugins {} blocks.
+- note: A conditional `apply plugin: 'com.huawei.agconnect'` in android/app/build.gradle (line 29) was left unchanged.
+- note: Custom statement kept after the plugins block in android/settings.gradle: `project(':native_bridge').projectDir = new File(rootProject.projectDir, '../native/bridge')`.
+- note: The buildscript block in android/build.gradle contains other configuration and was kept; only the migrated classpath entries were removed.
+- note: These buildscript classpath entries have no documented plugin id and stay in android/build.gradle: com.huawei.agconnect:agcp:1.9.1.300. Plugins they provide keep working with `apply plugin`.
+- note: Removed "agp_version" from android/build.gradle; it was only used by the migrated classpath entries.
+- note: Plugin sources were not available (run flutter pub get), so Reforge could not check whether plugins read rootProject.ext.kotlin_version.
+- files: android/app/build.gradle, android/settings.gradle, android/build.gradle
+
+## ANDROID_GRADLE_WRAPPER (auto, required, applied)
+
+Upgrade the Gradle wrapper from 7.4 to 8.3.
+- note: Only the distribution is changed. The wrapper JAR and gradlew scripts keep working; `./gradlew wrapper` can refresh them later.
+- files: android/gradle/wrapper/gradle-wrapper.properties
+
+## ANDROID_AGP_VERSION (review, required, applied)
+
+Upgrade the Android Gradle Plugin from 7.2.2 to 8.1.1.
+- note: This is a major version upgrade (7.2.2 to 8.1.1).
+- note: Android Gradle Plugin 8 requires JDK 17 to run Gradle.
+- note: Android Gradle Plugin 8 requires android.namespace in the app module (see ANDROID_NAMESPACE).
+- note: Android Gradle Plugin 8 no longer generates BuildConfig by default and makes R classes non-transitive by default.
+- files: android/settings.gradle
+
+## ANDROID_KOTLIN_VERSION (auto, required, applied)
+
+Upgrade the Kotlin Gradle plugin from 1.7.10 to 1.8.10.
+- note: kotlin_version in android/build.gradle matched the Kotlin plugin version and is still used by dependencies; it is upgraded to 1.8.10 as well.
+- files: android/settings.gradle, android/build.gradle
+
+## ANDROID_NAMESPACE (auto, required, applied)
+
+Declare namespace "com.example.custom_gradle_app" and remove the package attribute from 3 manifest(s).
+- files: android/app/build.gradle, android/app/src/debug/AndroidManifest.xml, android/app/src/main/AndroidManifest.xml, android/app/src/profile/AndroidManifest.xml
+
+## IOS_DEPLOYMENT_TARGET (auto, required, applied)
+
+Raise the iOS deployment target to 13.0.
+- files: ios/Runner.xcodeproj/project.pbxproj, ios/Flutter/AppFrameworkInfo.plist
+
+## Skipped
+
+- DART_SDK_CONSTRAINT: environment.sdk ">=2.18.0 <3.0.0" allows Dart 3.9.0 (pub reads the <3.0.0 upper bound as <4.0.0).
+
+## Remaining findings
+
+- warning ANDROID_COMPILE_SDK_REQUIRES_NEWER_AGP
+- warning ANDROID_AGP_BELOW_FLUTTER_RECOMMENDED
+- warning ANDROID_GRADLE_BELOW_FLUTTER_RECOMMENDED
+- warning ANDROID_KOTLIN_BELOW_FLUTTER_RECOMMENDED

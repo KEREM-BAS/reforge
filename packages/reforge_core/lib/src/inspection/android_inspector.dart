@@ -271,12 +271,15 @@ final class AndroidInspector {
           notation.module != classpathModule) {
         continue;
       }
-      return _classpathVersion(rootBuild, notation, gradleProperties);
+      return classpathVersion(rootBuild, notation, gradleProperties);
     }
     return null;
   }
 
-  VersionDeclaration _classpathVersion(GradleScript script,
+  /// Resolves the version of a `classpath "group:name:version"` notation,
+  /// following `$variable` references to script variables and
+  /// `gradle.properties`.
+  static VersionDeclaration classpathVersion(GradleScript script,
       GradleDependencyNotation notation, PropertiesFile? gradleProperties) {
     final literal = notation.literal;
     final usage = script.refAt(notation.statement.start);

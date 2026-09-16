@@ -1,0 +1,4 @@
+project: melos_workspace
+target: 3.47.4
+acceptReviews: true
+includeRecommended: false

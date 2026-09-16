@@ -1,0 +1,4 @@
+project: firebase_flavors_app
+target: 3.47.4
+acceptReviews: true
+includeRecommended: false
