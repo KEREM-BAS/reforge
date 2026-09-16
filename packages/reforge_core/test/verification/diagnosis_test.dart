@@ -63,6 +63,23 @@ void main() {
           'AGP9_NEW_DSL');
     });
 
+    test('AAR metadata failures wrap over several lines', () {
+      const output = '''
+> An issue was found when checking AAR metadata:
+
+  1.  Dependency 'androidx.core:core:1.16.0' requires libraries and applications that
+      depend on it to compile against version 35 or later of the
+      Android APIs.
+
+      :app is currently compiled against android-34.
+''';
+      final diagnosis = single(output);
+      expect(diagnosis.id, 'COMPILE_SDK_BELOW_LIBRARY_MINIMUM');
+      expect(diagnosis.details,
+          {'library': 'androidx.core:core:1.16.0', 'required': '35'});
+      expect(diagnosis.relatedRecipes, [RecipeIds.androidCompileSdk]);
+    });
+
     test('secondary signatures only explain otherwise unexplained output', () {
       const kotlin = 'e: Class kotlin.Unit was compiled with an incompatible '
           'version of Kotlin. The binary version of its metadata is 2.1.0, '

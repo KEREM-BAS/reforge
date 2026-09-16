@@ -221,6 +221,17 @@ final class FlutterRelease {
               ? 'packages/flutter_tools/gradle/src/main/groovy/flutter.groovy'
               : 'packages/flutter_tools/gradle/flutter.gradle');
 
+  /// Where Flutter's Gradle plugin warns about plugins that compile against a
+  /// higher Android SDK than the app.
+  KnowledgeSource get pluginCompileSdkCheckSource => sourceFor(version >=
+          Version(3, 47, 0)
+      ? 'packages/flutter_tools/gradle/src/main/kotlin/tasks/ValidateCompileSdkVersionTask.kt'
+      : version >= Version(3, 32, 0)
+          ? 'packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt'
+          : version >= Version(3, 13, 0)
+              ? 'packages/flutter_tools/gradle/src/main/groovy/flutter.groovy'
+              : 'packages/flutter_tools/gradle/flutter.gradle');
+
   /// The source of [androidMigrations].
   KnowledgeSource get androidMigrationsSource =>
       sourceFor('packages/flutter_tools/lib/src/android/gradle.dart');

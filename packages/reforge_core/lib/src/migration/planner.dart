@@ -71,6 +71,9 @@ final class MigrationPlanner {
       final current = resolveCurrentFlutterVersion(original,
           environment: environment, knowledge: knowledge);
       currentFlutter[original.path] = current;
+      final dependencies = packageSources == null
+          ? null
+          : DependencyInspector(packageSources).inspect(original, overlay);
       final unapplied = <String>{};
 
       for (final recipe in recipes) {
@@ -91,6 +94,7 @@ final class MigrationPlanner {
           options: options,
           currentFlutter: current,
           environment: environment,
+          dependencies: dependencies,
         );
         final result = recipe.evaluate(context);
         switch (result) {
@@ -169,9 +173,7 @@ final class MigrationPlanner {
         migrated,
         release: target,
         environment: environment,
-        dependencies: packageSources == null
-            ? null
-            : DependencyInspector(packageSources).inspect(original, overlay),
+        dependencies: dependencies,
       ));
     }
 
@@ -240,6 +242,7 @@ final class MigrationPlanner {
       options: context.options,
       currentFlutter: context.currentFlutter,
       environment: context.environment,
+      dependencies: context.dependencies,
     ));
     return again is NotApplicable
         ? null

@@ -50,6 +50,7 @@ Raise the iOS deployment target to 13.0.
 ## Skipped
 
 - DART_SDK_CONSTRAINT: environment.sdk ">=2.18.0 <3.0.0" allows Dart 3.12.0 (pub reads the <3.0.0 upper bound as <4.0.0).
+- ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.44.0).
 - ANDROID_APP_KOTLIN_PLUGIN: Flutter 3.44.0 only warns about apps applying the Kotlin Gradle plugin with Android Gradle Plugin 9 or later; this project uses 7.1.2.
 - ANDROID_NAMESPACE: Android Gradle Plugin 7.1.2 still uses the manifest package attribute.
 - ANDROID_MIN_SDK: minSdk uses flutter.minSdkVersion.

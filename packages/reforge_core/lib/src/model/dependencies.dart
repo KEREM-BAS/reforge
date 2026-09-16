@@ -63,6 +63,8 @@ final class DependencyReport {
                 if (package.version != null) 'version': package.version,
                 'namespaceDeclared': android.declaresNamespace,
                 'kotlinPlugin': android.kotlinPlugin?.name,
+                if (android.compileSdk != null)
+                  'compileSdk': android.compileSdk,
                 if (android.v1EmbeddingReferences.isNotEmpty)
                   'v1EmbeddingReferences': [
                     for (final ref in android.v1EmbeddingReferences)
@@ -119,6 +121,7 @@ final class AndroidPluginFacts {
     required this.buildFile,
     required this.declaresNamespace,
     required this.kotlinPlugin,
+    this.compileSdk,
     this.v1EmbeddingReferences = const [],
   });
 
@@ -132,6 +135,10 @@ final class AndroidPluginFacts {
   /// How the build script applies the Kotlin Android Gradle plugin; `null`
   /// when the script could not be read reliably.
   final KotlinPluginApplication? kotlinPlugin;
+
+  /// The Android SDK the plugin compiles against, when its build script sets
+  /// `compileSdk` to a literal.
+  final int? compileSdk;
 
   /// Uses of `PluginRegistry.Registrar`, the Android v1 embedding API, in
   /// Java and Kotlin sources.

@@ -1,4 +1,5 @@
 import '../recipe.dart';
+import 'android/compile_sdk_recipe.dart';
 import 'android/flutter_gradle_plugin_dsl_recipe.dart';
 import 'android/flutter_tool_migration_recipes.dart';
 import 'android/gradle_properties_recipes.dart';
@@ -16,6 +17,7 @@ List<MigrationRecipe> builtInRecipes() => const [
       FlutterGradlePluginDslRecipe(),
       GradleWrapperRecipe(),
       Agp9OptOutsRecipe(),
+      CompileSdkRecipe(),
       AgpVersionRecipe(),
       KotlinVersionRecipe(),
       AppKotlinPluginRecipe(),

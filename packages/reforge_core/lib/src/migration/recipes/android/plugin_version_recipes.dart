@@ -27,6 +27,7 @@ final class AgpVersionRecipe extends MigrationRecipe {
           RecipeIds.androidFlutterGradlePluginDsl,
           RecipeIds.androidGradleWrapper,
           RecipeIds.androidAgp9OptOuts,
+          RecipeIds.androidCompileSdk,
         ],
         requires: [RecipeIds.androidGradleWrapper],
       );

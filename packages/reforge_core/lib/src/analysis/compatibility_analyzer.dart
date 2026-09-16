@@ -567,6 +567,54 @@ final class CompatibilityAnalyzer {
       }
     }
 
+    // Plugins compiling against a newer Android SDK than the app.
+    final appModule = project.android?.app;
+    final appCompileSdk = switch (appModule?.compileSdk) {
+      LiteralInt(:final value) => value,
+      FlutterDefaultReference(property: 'compileSdkVersion') =>
+        release.androidDefaults.compileSdk,
+      _ => null,
+    };
+    if (appModule != null && appCompileSdk != null) {
+      final higher = [
+        for (final package in report.packages)
+          if (package.android?.compileSdk case final sdk?)
+            if (sdk > appCompileSdk) (package, sdk),
+      ];
+      if (higher.isNotEmpty) {
+        final maximum = higher.map((h) => h.$2).reduce((a, b) => a > b ? a : b);
+        yield Finding(
+          code: 'PLUGIN_COMPILE_SDK_ABOVE_APP',
+          severity: Severity.warning,
+          title: 'Plugins compile against Android SDK $maximum, the app '
+              'against $appCompileSdk',
+          message: '${_list([
+                for (final (package, sdk) in higher) '${package.name} ($sdk)'
+              ])} compile against a higher Android SDK than the app.',
+          impact: "Flutter's Gradle plugin warns during builds, and the build "
+              'fails when an Android library used by these plugins requires '
+              'the higher compileSdk.',
+          suggestedAction: 'Set compileSdk in ${appModule.script.path} to '
+              '$maximum'
+              '${maximum <= release.androidDefaults.compileSdk ? ' or flutter.compileSdkVersion' : ''}.',
+          evidence: [
+            for (final (package, sdk) in higher)
+              Evidence(EvidenceKind.dependencyFile,
+                  '${package.name} compiles against Android SDK $sdk',
+                  location: package.android!.buildFile),
+            if (appModule.compileSdk case final value?)
+              Evidence.file('compileSdk ${value.text}', value.location),
+            Evidence.knowledge(
+                "Flutter's Gradle plugin warns when plugins compile against a "
+                'higher Android SDK than the app',
+                release.pluginCompileSdkCheckSource),
+          ],
+          relatedRecipes: const [RecipeIds.androidCompileSdk],
+          project: project.path,
+        );
+      }
+    }
+
     // Pods that need a newer iOS than the platform CocoaPods resolves for.
     final ios = project.ios;
     if (ios != null &&

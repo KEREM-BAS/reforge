@@ -5,6 +5,7 @@ import '../fs/project_file_system.dart';
 import '../inspection/current_flutter_version.dart';
 import '../knowledge/flutter_release.dart';
 import '../knowledge/knowledge_base.dart';
+import '../model/dependencies.dart';
 import '../model/finding.dart';
 import '../model/flutter_project.dart';
 import '../text/text_edit.dart';
@@ -166,6 +167,7 @@ final class RecipeContext {
     required this.options,
     this.currentFlutter,
     this.environment,
+    this.dependencies,
   });
 
   /// The project as it looks after earlier steps of the plan.
@@ -185,6 +187,11 @@ final class RecipeContext {
   /// The observed environment, when available. Recipes must produce the same
   /// file edits with or without it.
   final Environment? environment;
+
+  /// The packages the project resolved, when the planner reads them. They
+  /// are identified by `.dart_tool/package_config.json`, which is part of the
+  /// plan's inputs.
+  final DependencyReport? dependencies;
 }
 
 /// Edits to one file.

@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 
 import '../common/source.dart';
 import '../fs/project_file_system.dart';
+import '../model/declarations.dart';
 import '../model/dependencies.dart';
 import '../model/flutter_project.dart';
 import '../parsing/gradle/gradle_lexer.dart';
@@ -13,6 +14,7 @@ import '../parsing/parse_diagnostic.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
 import '../parsing/ruby/podspec.dart';
+import 'script_values.dart';
 
 /// Opens the directories of resolved packages for reading.
 abstract interface class PackageSources {
@@ -158,6 +160,7 @@ final class DependencyInspector {
               script.isReliable ? _declaresNamespace(script) : null,
           kotlinPlugin:
               script.isReliable ? kotlinPluginApplication(script) : null,
+          compileSdk: _literalCompileSdk(script),
           v1EmbeddingReferences: _v1EmbeddingReferences(package, files),
         );
       }
@@ -201,6 +204,19 @@ final class DependencyInspector {
       if (podspecs.length == 1) return podspecs.single;
     }
     return null;
+  }
+
+  /// `compileSdk` / `compileSdkVersion` of the `android {}` block when it is
+  /// an integer literal.
+  static int? _literalCompileSdk(GradleScript script) {
+    if (!script.isReliable) return null;
+    final found = findProperty(script.findBlock(const ['android']),
+        const ['compileSdk', 'compileSdkVersion']);
+    if (found == null) return null;
+    return switch (interpretScriptValue(script, found.$1, found.$2)) {
+      LiteralInt(:final value) => value,
+      _ => null,
+    };
   }
 
   /// Whether the script sets `namespace` inside an `android {}` block (at

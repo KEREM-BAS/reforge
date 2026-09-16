@@ -14,6 +14,7 @@ Raise the iOS deployment target to 15.0.
 - ANDROID_FLUTTER_GRADLE_PLUGIN_DSL: Flutter's Gradle plugins are already applied declaratively.
 - ANDROID_GRADLE_WRAPPER: Gradle 9.1.0 already satisfies Flutter 3.47.4 and Android Gradle Plugin 9.0.1.
 - ANDROID_AGP9_OPT_OUTS: android/gradle.properties already sets android.builtInKotlin and android.newDsl.
+- ANDROID_COMPILE_SDK: compileSdk uses flutter.compileSdkVersion (36 in Flutter 3.47.4).
 - ANDROID_AGP_VERSION: Android Gradle Plugin 9.0.1 already satisfies Flutter 3.47.4.
 - ANDROID_KOTLIN_VERSION: Kotlin Gradle plugin 2.3.20 already satisfies Flutter 3.47.4.
 - ANDROID_APP_KOTLIN_PLUGIN: The app module does not apply the Kotlin Gradle plugin.

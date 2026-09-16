@@ -413,6 +413,76 @@ void main() {
       });
     });
 
+    group('compileSdk', () {
+      MigrationPlan planWithPlugin(String compileSdk, {int? pluginSdk}) {
+        final files = {
+          ...declarativeApp(
+              agp: '8.11.1',
+              app: 'plugins {\n    id "com.android.application"\n'
+                  '    id "dev.flutter.flutter-gradle-plugin"\n}\n\n'
+                  'android {\n    namespace "com.example.app"\n'
+                  '    $compileSdk\n}\n'),
+          if (pluginSdk != null)
+            '.dart_tool/package_config.json':
+                '{"configVersion": 2, "packages": [{"name": "maps", '
+                    '"rootUri": "file:///cache/maps-1.0.0", "packageUri": "lib/"}]}',
+        };
+        return MigrationPlanner(
+                knowledge: knowledge,
+                recipes: builtInRecipes(),
+                reforgeVersion: reforgeVersion)
+            .plan(
+          files: MemoryProjectFileSystem(files, rootPath: '/work'),
+          target: knowledge.resolveFlutterVersion('3.47.4'),
+          options: const PlanOptions(
+              acceptAllReviews: true,
+              includedRecipes: {RecipeIds.androidCompileSdk}),
+          packageSources: MemoryPackageSources({
+            '/cache/maps-1.0.0': {
+              'pubspec.yaml': 'name: maps\nversion: 1.0.0\n'
+                  'flutter:\n  plugin:\n    platforms:\n      android:\n'
+                  '        pluginClass: Maps\n',
+              'android/build.gradle':
+                  'android {\n    compileSdk ${pluginSdk ?? 34}\n}\n',
+            },
+          }),
+        );
+      }
+
+      test('a literal below the Flutter default becomes the default', () {
+        final plan = planWithPlugin('compileSdkVersion 33');
+        final compileSdk = step(plan, RecipeIds.androidCompileSdk);
+        expect(compileSdk.status, StepStatus.review);
+        expect(compileSdk.proposal.summary,
+            'Raise compileSdk from 33 to flutter.compileSdkVersion (36).');
+        expect(fileAfter(plan, 'android/app/build.gradle'),
+            contains('    compileSdkVersion flutter.compileSdkVersion\n'));
+      });
+
+      test('plugins that need more than the default get a literal', () {
+        final plan = planWithPlugin('compileSdk = 35', pluginSdk: 37);
+        final compileSdk = step(plan, RecipeIds.androidCompileSdk);
+        expect(compileSdk.proposal.summary, 'Raise compileSdk from 35 to 37.');
+        expect(compileSdk.proposal.rationale, contains('maps (37)'));
+        expect(fileAfter(plan, 'android/app/build.gradle'),
+            contains('    compileSdk = 37\n'));
+        expect(plan.remainingFindings.map((f) => f.code),
+            isNot(contains('PLUGIN_COMPILE_SDK_ABOVE_APP')));
+
+        final flutterDefault = planWithPlugin(
+            'compileSdk = flutter.compileSdkVersion',
+            pluginSdk: 37);
+        expect(step(flutterDefault, RecipeIds.androidCompileSdk).status,
+            StepStatus.manual);
+        final warning = flutterDefault.remainingFindings
+            .singleWhere((f) => f.code == 'PLUGIN_COMPILE_SDK_ABOVE_APP');
+        expect(
+            warning.message,
+            'maps (37) compile against a higher Android '
+            'SDK than the app.');
+      });
+    });
+
     group('minSdk', () {
       String groovyApp(String minSdk) =>
           'plugins {\n    id "com.android.application"\n'

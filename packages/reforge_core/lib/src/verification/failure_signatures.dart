@@ -226,9 +226,36 @@ final List<_Signature> _signatures = [
           'flutter.compileSdkVersion get newer values from newer Flutter '
           'releases.',
       evidence: line,
+      relatedRecipes: const [RecipeIds.androidCompileSdk],
       details: {'required': match.group(1)!},
       source: _flutterHandler('minCompileSdkVersionHandler'),
     ),
+  ),
+  _Signature(
+    'COMPILE_SDK_BELOW_LIBRARY_MINIMUM',
+    RegExp('requires libraries and applications that'),
+    (match, line, context) {
+      final requirement = RegExp(
+              r"Dependency '([^']+)' requires libraries and applications that"
+              r'\s+depend on it to compile against version (\d+) or later')
+          .firstMatch(context.output);
+      if (requirement == null) return null;
+      return FailureDiagnosis(
+        id: 'COMPILE_SDK_BELOW_LIBRARY_MINIMUM',
+        explanation: '${requirement.group(1)} requires modules that depend on '
+            'it to compile against Android SDK ${requirement.group(2)} or '
+            'later.',
+        suggestion: 'Raise compileSdk of the failing module to '
+            '${requirement.group(2)}; for the app, flutter.compileSdkVersion '
+            'when it is high enough.',
+        evidence: line,
+        relatedRecipes: const [RecipeIds.androidCompileSdk],
+        details: {
+          'library': requirement.group(1)!,
+          'required': requirement.group(2)!,
+        },
+      );
+    },
   ),
   _Signature(
     'AGP_JDK_TOO_OLD',
