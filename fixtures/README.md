@@ -8,7 +8,7 @@ Flutter projects from specific eras, including their quirks.
 | Fixture | Origin | What it exercises |
 | --- | --- | --- |
 | `flutter_3_3_app` | `flutter create` templates of Flutter **3.3.0**, rendered with `tool/render_flutter_app_template.dart` | Imperative Gradle plugin apply, `package=` in manifests (no `namespace`), AGP 7.1.2 / Gradle 7.4 / Kotlin 1.6.10, `sdk: '>=2.18.0 <3.0.0'`, iOS 11.0 |
-| `flutter_3_13_app` | Flutter **3.13.0** templates | Imperative apply with `namespace`, AGP 7.3.0 / Gradle 7.5 / Kotlin 1.7.10, iOS 11.0 |
+| `flutter_3_13_app` | Flutter **3.13.0** templates | The transitional template: imperative `app_plugin_loader.gradle` in `settings.gradle` but a declarative `plugins {}` block in the app module, AGP/Kotlin still in the root `buildscript`; `namespace` present; AGP 7.3.0 / Gradle 7.5 / Kotlin 1.7.10, iOS 11.0 |
 | `flutter_3_22_app` | Flutter **3.22.0** templates | Declarative `plugins {}` (Groovy), AGP 7.3.0 / Gradle 7.6.3 / Kotlin 1.7.10, iOS 12.0 |
 | `flutter_3_44_app` | A real `flutter create` with Flutter **3.44.0** plus `shared_preferences` and `url_launcher` | Kotlin DSL, AGP 9.0.1 / Gradle 9.1.0 / Kotlin 2.3.20, generated `pubspec.lock`, `.flutter-plugins-dependencies`, `package_config.json` |
 | `firebase_flavors_app` | 3.13 base, customized | Firebase Gradle plugins in `buildscript`, plugins applied at the end of the file, flavors, release signing, hard-coded SDK levels, wrapper checksum, customized Podfile with a deployment target override |
