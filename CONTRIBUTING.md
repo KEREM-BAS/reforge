@@ -87,6 +87,8 @@ exercise the changed configuration.
 Add `docs/recipes/<RECIPE_ID>.md`: what it detects, why it exists, affected
 versions, what it changes, statuses, verification and manual follow-up. A
 recipe ID is permanent once released.
+Then run `dart run tool/generate_recipe_docs.dart` in `packages/reforge` to
+bundle the document for `reforge explain`; a test fails otherwise.
 
 ## Security
 

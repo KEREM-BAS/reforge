@@ -10,6 +10,7 @@ import 'commands/diagnose_command.dart';
 import 'commands/env_command.dart';
 import 'commands/inspect_command.dart';
 import 'commands/plan_command.dart';
+import 'commands/recipe_commands.dart';
 import 'commands/session_commands.dart';
 import 'commands/verify_command.dart';
 import 'exit_codes.dart';
@@ -50,7 +51,9 @@ Future<int> runReforge(List<String> arguments, {CliContext? context}) async {
     ..addCommand(DiagnoseCommand(ctx))
     ..addCommand(RollbackCommand(ctx))
     ..addCommand(HistoryCommand(ctx))
-    ..addCommand(EnvCommand(ctx));
+    ..addCommand(EnvCommand(ctx))
+    ..addCommand(RecipesCommand(ctx))
+    ..addCommand(ExplainCommand(ctx));
 
   ArgResults? parsed;
   try {

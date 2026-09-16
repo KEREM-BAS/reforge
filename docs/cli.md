@@ -153,6 +153,13 @@ names the tool when one did; `--force` restores the backups anyway.
 
 Lists migration sessions, their status and verification results.
 
+### `recipes` and `explain <RECIPE_ID>`
+
+`recipes` lists every recipe in evaluation order with its summary. `explain`
+prints the recipe's documentation (what it detects, the sources of its facts,
+what it changes, statuses and verification). The documents are bundled with
+Reforge, so both work offline.
+
 ## Continuous integration
 
 `plan --fail-on` turns a plan into a gate, and SARIF output lets code scanning

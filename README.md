@@ -81,6 +81,7 @@ a time. Reforge computes the whole chain up front, from facts:
 | `reforge plan --to <version>` | The migration plan. Never changes files. `--diff`, `--out plan.json`, `--fail-on incomplete`. |
 | `reforge apply --to <version>` | Applies the plan transactionally and verifies it statically. |
 | `reforge verify` | Static checks, `pub get`, `analyze`, Android and iOS builds, recorded in the journal. |
+| `reforge recipes`, `reforge explain <RECIPE_ID>` | Lists the recipes and shows their documentation offline. |
 | `reforge diagnose [--log build.log]` | Explains a failing build and confirms the cause from the project, its plugins and the environment. |
 | `reforge rollback [session]` | Restores the files of a migration session, including changes tools made during `verify`. |
 | `reforge history` | Migration sessions of the project. |
