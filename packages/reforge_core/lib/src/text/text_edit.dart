@@ -90,8 +90,8 @@ String applyTextEdits(String source, Iterable<TextEdit> edits) {
 
 /// Computes the smallest single edit that transforms [before] into [after].
 ///
-/// Useful when a structured editor (such as `yaml_edit`) returns a whole new
-/// document: the change is reduced back to a minimal, reviewable edit.
+/// Useful when a structured editor returns a whole new document: the change
+/// is reduced back to a minimal, reviewable edit.
 TextEdit? minimalEdit(String before, String after) {
   if (before == after) return null;
   var prefix = 0;
