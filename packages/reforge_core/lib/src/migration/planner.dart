@@ -58,13 +58,13 @@ final class MigrationPlanner {
     final steps = <PlanStep>[];
     final skipped = <SkippedRecipe>[];
     final remaining = <Finding>[];
-    final currentFlutter = <String, String?>{};
+    final currentFlutter = <String, CurrentFlutterVersion?>{};
     final recipesByPath = <String, List<String>>{};
 
     for (final original in projects) {
       final current = resolveCurrentFlutterVersion(original,
           environment: environment, knowledge: knowledge);
-      currentFlutter[original.path] = current?.release.version.toString();
+      currentFlutter[original.path] = current;
       final unapplied = <String>{};
 
       for (final recipe in recipes) {

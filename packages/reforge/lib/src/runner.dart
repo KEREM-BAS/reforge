@@ -5,8 +5,12 @@ import 'package:args/command_runner.dart' as args;
 import 'package:reforge_core/reforge_core.dart';
 
 import 'cli_context.dart';
+import 'commands/apply_command.dart';
 import 'commands/env_command.dart';
 import 'commands/inspect_command.dart';
+import 'commands/plan_command.dart';
+import 'commands/session_commands.dart';
+import 'commands/verify_command.dart';
 import 'exit_codes.dart';
 
 const _description = 'Reforge keeps Flutter apps upgradeable: it inspects '
@@ -38,6 +42,11 @@ Future<int> runReforge(List<String> arguments, {CliContext? context}) async {
 
   runner
     ..addCommand(InspectCommand(ctx))
+    ..addCommand(PlanCommand(ctx))
+    ..addCommand(ApplyCommand(ctx))
+    ..addCommand(VerifyCommand(ctx))
+    ..addCommand(RollbackCommand(ctx))
+    ..addCommand(HistoryCommand(ctx))
     ..addCommand(EnvCommand(ctx));
 
   ArgResults? parsed;

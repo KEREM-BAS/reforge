@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:meta/meta.dart';
 
+import '../inspection/current_flutter_version.dart';
 import '../knowledge/flutter_release.dart';
 import '../model/finding.dart';
 import '../text/unified_diff.dart';
@@ -136,7 +137,7 @@ final class MigrationPlan {
   final String knowledgeBaseVersion;
 
   /// The Flutter version each project uses today, by project path.
-  final Map<String, String?> currentFlutter;
+  final Map<String, CurrentFlutterVersion?> currentFlutter;
 
   Iterable<PlanStep> stepsWith(StepStatus status) =>
       steps.where((s) => s.status == status);
@@ -196,7 +197,10 @@ final class MigrationPlan {
           'flutter': '${target.version}',
           'dart': '${target.dartVersion}',
         },
-        'currentFlutter': currentFlutter,
+        'currentFlutter': {
+          for (final entry in currentFlutter.entries)
+            entry.key: entry.value?.toJson(),
+        },
         'options': options.toJson(),
         'summary': {
           'steps': steps.length,

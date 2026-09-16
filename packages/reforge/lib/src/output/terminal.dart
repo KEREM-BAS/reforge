@@ -51,25 +51,34 @@ final class Terminal {
     line(bold(text));
   }
 
-  /// Writes [text] wrapped to [width] columns with a hanging [indent].
-  void paragraph(String text, {int indent = 4, int width = 80}) {
+  /// Writes [text] wrapped to [width] columns. Continuation lines are
+  /// indented by [indent] plus [hanging].
+  void paragraph(String text,
+      {int indent = 4, int hanging = 0, int width = 80}) {
     final words = text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
-    final prefix = ' ' * indent;
+    var prefix = ' ' * indent;
+    var start = indent;
     var current = StringBuffer(prefix);
     var length = indent;
     for (final word in words) {
-      if (length > indent && length + 1 + word.length > width) {
+      if (length > start && length + 1 + word.length > width) {
         line(current.toString());
+        start = indent + hanging;
+        prefix = ' ' * start;
         current = StringBuffer(prefix);
-        length = indent;
+        length = start;
       }
-      if (length > indent) {
+      if (length > start) {
         current.write(' ');
         length++;
       }
       current.write(word);
-      length += word.length;
+      length += _visibleLength(word);
     }
-    if (length > indent) line(current.toString());
+    if (length > start) line(current.toString());
   }
+
+  static final _ansi = RegExp('\x1B\\[[0-9;]*m');
+
+  static int _visibleLength(String text) => text.replaceAll(_ansi, '').length;
 }
