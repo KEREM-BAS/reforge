@@ -107,8 +107,8 @@ void main() {
           reason: 'namespace inside if (hasProperty) counts');
       expect(modern.android!.v1EmbeddingReferences, isEmpty,
           reason: 'mentions in comments do not count');
-      expect(modern.android!.appliesKotlinPlugin, isTrue);
-      expect(legacy.android!.appliesKotlinPlugin, isFalse);
+      expect(modern.android!.kotlinPlugin, KotlinPluginApplication.always);
+      expect(legacy.android!.kotlinPlugin, KotlinPluginApplication.none);
 
       expect(legacy.ios!.minimumIos, '9.0');
       expect(modern.ios!.minimumIos, '17.0');
@@ -246,7 +246,9 @@ void main() {
                   buildFile:
                       const SourceRef('share_kgp 1.0.0/android/build.gradle'),
                   declaresNamespace: true,
-                  appliesKotlinPlugin: applies,
+                  kotlinPlugin: applies
+                      ? KotlinPluginApplication.always
+                      : KotlinPluginApplication.conditional,
                 ),
               ),
             ],

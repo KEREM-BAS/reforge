@@ -22,6 +22,18 @@ void main() {
     expect(platforms("  spec.platforms = { ios: '14.0' }"), {'ios': '14.0'});
   });
 
+  test('statements after hash literals and heredocs', () {
+    // From a real plugin podspec: the license hash used to swallow the lines
+    // after it.
+    expect(
+        platforms('  spec.description = <<-DESC\nCompress images.\n  DESC\n'
+            "  spec.license = { :file => '../LICENSE' }\n"
+            "  spec.author = { 'dev' => 'dev@example.com' }\n"
+            "  spec.ios.deployment_target = '9.0'\n"
+            "  spec.dependency 'Flutter'"),
+        {'ios': '9.0'});
+  });
+
   test('computed values are not evaluated', () {
     expect(platforms('  spec.ios.deployment_target = MINIMUM'), isEmpty);
     final broken = Podspec.parse('a.podspec', 'Pod::Spec.new do |s|\n');

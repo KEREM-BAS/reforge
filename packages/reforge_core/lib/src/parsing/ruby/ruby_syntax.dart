@@ -417,13 +417,18 @@ final class RubyParser {
     final blocks = <RubyBlock>[];
     var parens = 0;
     var loopKeyword = false;
+    // Whether the statement so far ends with a block (`{ ... }` or
+    // `... end`) rather than a token: `x = { a: 1 }` ends at the newline even
+    // though its last token is `=`.
+    var endsWithBlock = false;
     while (true) {
       final token = _peek;
       if (token.kind == RubyTokenKind.eof) break;
       if (parens == 0 &&
           (token.kind == RubyTokenKind.newline || token.isPunctuation(';'))) {
         final last = tokens.isEmpty ? null : tokens.last;
-        final continues = last != null &&
+        final continues = !endsWithBlock &&
+            last != null &&
             last.kind == RubyTokenKind.punctuation &&
             const {
               ',',
@@ -482,6 +487,7 @@ final class RubyParser {
         if (_peek.isWord('end')) {
           blocks.add(RubyBlock(token, parameters, body, _peek.end));
           _pos++;
+          endsWithBlock = true;
           continue;
         }
         blocks.add(RubyBlock(token, parameters, body, _peek.offset));
@@ -490,6 +496,7 @@ final class RubyParser {
       if (token.isWord('do') && loopKeyword) {
         tokens.add(token);
         _pos++;
+        endsWithBlock = false;
         continue;
       }
       if (token.isPunctuation('{')) {
@@ -499,6 +506,7 @@ final class RubyParser {
         if (_peek.isPunctuation('}')) {
           blocks.add(RubyBlock(token, parameters, body, _peek.end));
           _pos++;
+          endsWithBlock = true;
         } else {
           diagnostics.add(
               ParseDiagnostic(TextRange(token.offset, 1), 'Unterminated "{".'));
@@ -516,6 +524,7 @@ final class RubyParser {
         }
       }
       tokens.add(token);
+      endsWithBlock = false;
       _pos++;
     }
     if (parens != 0) {

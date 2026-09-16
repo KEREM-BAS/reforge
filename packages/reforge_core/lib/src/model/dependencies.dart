@@ -1,8 +1,11 @@
 import 'package:meta/meta.dart';
 
 import '../common/source.dart';
+import '../parsing/gradle/gradle_semantics.dart';
 import '../parsing/pub/pub_metadata.dart';
 import '../parsing/pub/pubspec.dart';
+
+export '../parsing/gradle/gradle_semantics.dart' show KotlinPluginApplication;
 
 /// The packages a project resolved with `pub get`, read from their package
 /// directories (usually the pub cache).
@@ -59,7 +62,7 @@ final class DependencyReport {
                 'name': package.name,
                 if (package.version != null) 'version': package.version,
                 'namespaceDeclared': android.declaresNamespace,
-                'appliesKotlinPlugin': android.appliesKotlinPlugin,
+                'kotlinPlugin': android.kotlinPlugin?.name,
                 if (android.v1EmbeddingReferences.isNotEmpty)
                   'v1EmbeddingReferences': [
                     for (final ref in android.v1EmbeddingReferences)
@@ -115,7 +118,7 @@ final class AndroidPluginFacts {
   const AndroidPluginFacts({
     required this.buildFile,
     required this.declaresNamespace,
-    required this.appliesKotlinPlugin,
+    required this.kotlinPlugin,
     this.v1EmbeddingReferences = const [],
   });
 
@@ -126,9 +129,9 @@ final class AndroidPluginFacts {
   /// condition). `null` when the script could not be read reliably.
   final bool? declaresNamespace;
 
-  /// Whether the build script applies the Kotlin Android Gradle plugin.
-  /// `null` when the script could not be read reliably.
-  final bool? appliesKotlinPlugin;
+  /// How the build script applies the Kotlin Android Gradle plugin; `null`
+  /// when the script could not be read reliably.
+  final KotlinPluginApplication? kotlinPlugin;
 
   /// Uses of `PluginRegistry.Registrar`, the Android v1 embedding API, in
   /// Java and Kotlin sources.

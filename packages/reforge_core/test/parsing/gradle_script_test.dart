@@ -435,4 +435,28 @@ val agpVersion: String = "8.2.0"
           '8.2.0');
     });
   });
+
+  test('Kotlin plugin application: always, conditional or none', () {
+    KotlinPluginApplication of(String source) =>
+        kotlinPluginApplication(GradleScript.parse('build.gradle', source));
+    expect(
+        of("apply plugin: 'com.android.library'\n"
+            "apply plugin: 'kotlin-android'\n"),
+        KotlinPluginApplication.always);
+    expect(of('plugins {\n    id "org.jetbrains.kotlin.android"\n}\n'),
+        KotlinPluginApplication.always);
+    expect(
+        of('plugins {\n    id "org.jetbrains.kotlin.android" version "2.2.0" '
+            'apply false\n}\n'),
+        KotlinPluginApplication.none);
+    // From real plugins that support built-in Kotlin (firebase_core 4.14.0).
+    expect(
+        of('if (agpMajor < 9 || !builtInKotlin) {\n'
+            "    apply plugin: 'kotlin-android'\n}\n"
+            'plugins.withId("org.jetbrains.kotlin.android") {\n'
+            '  kotlin { }\n}\n'),
+        KotlinPluginApplication.conditional);
+    expect(of("apply plugin: 'com.android.library'\n"),
+        KotlinPluginApplication.none);
+  });
 }

@@ -630,7 +630,14 @@ final class CompatibilityAnalyzer {
 
     final kotlinPlugins = [
       for (final package in report.packages)
-        if (package.android?.appliesKotlinPlugin ?? false) package,
+        if (package.android?.kotlinPlugin == KotlinPluginApplication.always)
+          package,
+    ];
+    final conditionalKotlinPlugins = [
+      for (final package in report.packages)
+        if (package.android?.kotlinPlugin ==
+            KotlinPluginApplication.conditional)
+          package.name,
     ];
     if (kotlinPlugins.isNotEmpty &&
         release.appliesKotlinPlugin &&
@@ -643,7 +650,8 @@ final class CompatibilityAnalyzer {
         title: '${names.length} plugin(s) apply the Kotlin Gradle plugin',
         message: '${_list(names)} apply the Kotlin Gradle plugin. With '
             'Android Gradle Plugin 9, Flutter ${release.version} warns that '
-            'future versions will fail to build apps using such plugins.',
+            'future versions will fail to build apps using such plugins.'
+            '${conditionalKotlinPlugins.isEmpty ? '' : ' ${_list(conditionalKotlinPlugins)} apply it only while built-in Kotlin is disabled; Flutter lists them too, but they already support built-in Kotlin.'}',
         impact: 'Builds print a warning; a future Flutter release will fail.',
         suggestedAction: 'Upgrade these plugins to versions that support '
             'built-in Kotlin (`flutter pub outdated` lists newer versions); '

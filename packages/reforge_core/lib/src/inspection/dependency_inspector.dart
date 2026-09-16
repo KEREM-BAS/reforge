@@ -156,9 +156,8 @@ final class DependencyInspector {
           buildFile: SourceRef(package.displayPath(buildPath)),
           declaresNamespace:
               script.isReliable ? _declaresNamespace(script) : null,
-          appliesKotlinPlugin: script.isReliable
-              ? kotlinAndroidPluginApplications(script).isNotEmpty
-              : null,
+          kotlinPlugin:
+              script.isReliable ? kotlinPluginApplication(script) : null,
           v1EmbeddingReferences: _v1EmbeddingReferences(package, files),
         );
       }

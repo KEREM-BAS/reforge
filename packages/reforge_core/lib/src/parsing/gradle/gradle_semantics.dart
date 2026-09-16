@@ -222,6 +222,37 @@ const kotlinAndroidPluginIds = {
   'org.jetbrains.kotlin.android'
 };
 
+/// How a build script applies the Kotlin Android Gradle plugin.
+enum KotlinPluginApplication {
+  /// The script does not apply it.
+  none,
+
+  /// Only inside a condition, typically `if (agpMajor < 9 || !builtInKotlin)`:
+  /// the script supports built-in Kotlin.
+  conditional,
+
+  /// Unconditionally, at the top level.
+  always,
+}
+
+/// How [script] applies the Kotlin Android Gradle plugin, looking at
+/// `apply plugin:` statements at any depth (a nested one is conditional)
+/// and at top-level `plugins {}` blocks.
+KotlinPluginApplication kotlinPluginApplication(GradleScript script) {
+  if (kotlinAndroidPluginApplications(script).isNotEmpty) {
+    return KotlinPluginApplication.always;
+  }
+  for (final statement in script.allStatements) {
+    final apply = parseApplyStatement(statement);
+    if (apply != null &&
+        apply.kind == 'plugin' &&
+        kotlinAndroidPluginIds.contains(apply.value?.constantValue)) {
+      return KotlinPluginApplication.conditional;
+    }
+  }
+  return KotlinPluginApplication.none;
+}
+
 /// Top-level statements of [script] that apply the Kotlin Android Gradle
 /// plugin: `plugins {}` declarations (including `kotlin("android")` and the
 /// `libs.plugins.kotlin.android` catalog alias, but not `apply false`) and
